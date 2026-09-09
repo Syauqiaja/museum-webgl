@@ -3,6 +3,7 @@
     "rootNamespace": "Museum.Core.Tests",
     "references": [
         "Museum.Core",
+        "Unity.TextMeshPro",
         "ColyseusSDK",
         "UnityEngine.TestRunner"
     ],

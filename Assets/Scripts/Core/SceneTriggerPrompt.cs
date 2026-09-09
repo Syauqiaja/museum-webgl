@@ -15,7 +15,8 @@ public class SceneTriggerPrompt : MonoBehaviour
 {
     [SerializeField] private string playerTag = "Player";
     [SerializeField] private GameObject promptUI;
-    [Tooltip("The label inside promptUI. Its text depends on the control scheme, so it is set at runtime.")]
+    [Tooltip("The keycap chip inside promptUI. Its text depends on the control scheme, so it is " +
+             "set at runtime. The sentence beside it is scheme-neutral and stays authored in the scene.")]
     [SerializeField] private TMP_Text promptLabel;
     [Tooltip("The game scene this doorway leads to. With Use Lobby on, the lobby loads it after the host starts.")]
     [SerializeField] private string sceneName;
@@ -42,8 +43,12 @@ public class SceneTriggerPrompt : MonoBehaviour
 
         if (promptLabel != null)
         {
+            // A keycap chip, not a sentence: the line under it already reads "Untuk memulai
+            // permainan ini" for either scheme. On touch there is no Enter key to press, and no
+            // keyboard to press it with, so the chip names the overlay button instead — the same
+            // word the Interaksi button carries, which is what the visitor is looking at.
             bool touch = SessionData.Instance != null && SessionData.Instance.IsTouch;
-            promptLabel.text = touch ? "Ketuk Interaksi" : "Tekan Enter";
+            promptLabel.text = touch ? "INTERAKSI" : "ENTER";
         }
     }
 

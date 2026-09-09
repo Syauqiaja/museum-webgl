@@ -215,6 +215,11 @@ namespace Museum.Core.EditorTools
         /// The doorways, and the prompt they raise. Every one shows the same "ENTER" panel — there is
         /// one prompt on the HUD, not one per door, and the trigger only switches it on and off.
         /// </summary>
+        /// <remarks>
+        /// <c>promptLabel</c> is wired here alongside <c>promptUI</c> because leaving it null does not
+        /// fail loudly: the panel still opens, still says ENTER, and a touch visitor is told to press
+        /// a key their device does not have. It was null on all four doorways until 2026-09-10.
+        /// </remarks>
         private static void WireDoorways(UnityEngine.SceneManagement.Scene scene)
         {
             GameObject prompt = FindPrompt(scene);
@@ -223,6 +228,15 @@ namespace Museum.Core.EditorTools
             {
                 Debug.LogWarning("SceneWiringRepair: no 'Enter' prompt under the HUD canvas.");
                 return;
+            }
+
+            Transform cap = prompt.transform.Find("Text (TMP)");
+            Object label = cap == null ? null : cap.GetComponent<TMPro.TMP_Text>();
+
+            if (label == null)
+            {
+                Debug.LogWarning("SceneWiringRepair: the 'Enter' prompt has no 'Text (TMP)' cap, so " +
+                                 "its wording cannot follow the control scheme.");
             }
 
             foreach (Doorway doorway in Doorways)
@@ -237,6 +251,7 @@ namespace Museum.Core.EditorTools
 
                 var serialized = new SerializedObject(trigger);
                 serialized.FindProperty("promptUI").objectReferenceValue = prompt;
+                if (label != null) serialized.FindProperty("promptLabel").objectReferenceValue = label;
                 serialized.FindProperty("useLobby").boolValue = true;
                 serialized.FindProperty("roomName").stringValue = doorway.RoomName;
                 serialized.FindProperty("displayName").stringValue = doorway.DisplayName;
