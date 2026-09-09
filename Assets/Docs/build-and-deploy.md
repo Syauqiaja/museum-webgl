@@ -147,6 +147,29 @@ effect on the next load without a hard refresh.
   the `.br` blocks never ran and the browser got raw Brotli as JavaScript
   (`SyntaxError: Invalid character '<27>'`). Use `location /Build/`. Regex beats a *plain*
   prefix, never `^~`.
+- **Every `Build/` URL carries a `?v=` cache buster, and it is load-bearing.** The four
+  payload filenames never change between builds and nginx serves them
+  `immutable, max-age=31536000`, so a returning visitor will pair a **cached
+  `framework.js.br` with a freshly downloaded `.wasm`**. That is fine until a build adds or
+  removes a `.jslib` function, at which point the stale framework cannot satisfy an import
+  the new wasm declares and the page dies at instantiate:
+
+  ```
+  abort(LinkError: WebAssembly.instantiate(): Import #129 "env" "MuseumIsTouchDevice":
+  function import requires a callable)
+  ```
+
+  It looks like a broken build and is not — the deployed bytes hash correctly. No reload
+  clears it, because the cache was explicitly told to keep that response for a year. It hit
+  on 2026-09-10, the first deploy after `MuseumPlatform.jslib` landed.
+
+  `Assets/WebGLTemplates/Wiraga/index.html` writes `?v=BUILDSTAMP` onto all four URLs and
+  `BuildWebGL.StampCacheBuster` rewrites the placeholder to the build time, logging it as
+  the `Cache:` line. `index.html` itself is `no-cache`, so a new build invalidates all four
+  on the next visit. **Do not remove the placeholder from the template** — the build warns
+  if it goes missing, and the warning is easy to miss. The query does not affect nginx's
+  `location` matching, which only sees the path, so the `.br` blocks still fire.
+
 - **Test header fixes in a private window.** `Build/` files carry
   `Cache-Control: public, max-age=31536000, immutable`; a browser that cached a broken
   response keeps serving it and Cmd+Shift+R will not evict it. Clear via DevTools →
@@ -184,8 +207,13 @@ Then open `https://museum.fajrsyauqi.com` in two tabs and play a room through.
 
 ## Payload
 
-Production is **29.5 MB** as of 2026-09-10 — `WebGL.data.br` 22.4 MB, `WebGL.wasm.br` 6.9 MB,
-`WebGL.framework.js.br` 0.08 MB, `WebGL.loader.js` 0.03 MB. It was **144.6 MB** the day before.
+Production is **40.5 MB** as of 2026-09-10 — `WebGL.data.br` 33.4 MB, `WebGL.wasm.br` 6.9 MB,
+`WebGL.framework.js.br` 0.1 MB, `WebGL.loader.js` 0 MB. It was **144.6 MB** the day before.
+
+**Read the size off `BuildWebGL.Report`, not off `ls`.** Brotli writes `WebGL.data.br`
+incrementally and pauses long enough mid-compression to look finished; polling the file
+size reports a payload a third of its real size. The `[BuildWebGL] Payload:` line the build
+prints is the only number to quote.
 See [asset-budget.md](asset-budget.md) for what was cut and the rules that keep it there.
 
 The single largest historical cause was **uncompressed textures**: the default platform

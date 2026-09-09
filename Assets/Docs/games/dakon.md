@@ -167,11 +167,20 @@ room.Send("drop_seed", new { seedId, holeIndex });  // holeIndex must equal next
 
 **Drops are pipelined.** The player can click a whole hand without waiting a round trip
 each time: the target hole is fully forward-known (`+1` per drop, reset only when the hand
-empties), so `NetDakonSession` sends `nextHoleIndex + <drops in flight>`. Only the clicked
-card locks — dimmed, not destroyed, so a fast click still looks like it landed. A refusal
-clears the whole in-flight queue and the hand is re-dealt from the next patch, because the
-server stopped at the drop it rejected and everything queued behind it was aimed one hole
-too far.
+empties), so `DakonHolePrediction` counts one past the last hole `drop_applied` reported and
+`NetDakonSession` sends that. Only the clicked card locks — dimmed, not destroyed, so a fast
+click still looks like it landed. A refusal clears the whole in-flight queue and the hand is
+re-dealt from the next patch, because the server stopped at the drop it rejected and
+everything queued behind it was aimed one hole too far.
+
+The anchor is `drop_applied`, not the synced `nextHoleIndex`, and that distinction is a bug
+that shipped. The server broadcasts `drop_applied` the moment it applies a drop; the state
+patch that moves `nextHoleIndex` follows on the room's patch interval. Aiming from the synced
+index inside that gap targets the hole that was just filled, and *every* drop comes back
+`invalid_hole`. The gap is a millisecond on localhost — unhittable by hand — and a full round
+trip over wss, so it only ever reproduced on a phone. The rule now lives in
+`Assets/Scripts/Net/DakonHolePrediction.cs`, pure C# and covered by
+`Assets/Scripts/Net/Tests/DakonHolePredictionTests.cs`.
 
 ### Animation
 

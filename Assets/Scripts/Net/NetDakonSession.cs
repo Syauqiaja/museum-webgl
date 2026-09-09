@@ -28,8 +28,8 @@ namespace Museum.Net
     ///
     /// One thing *is* predicted, though nothing is drawn from it: the hole a drop is aimed at.
     /// Requests are pipelined — the player can click a whole hand without waiting for a round trip
-    /// each time — so the target hole is `nextHoleIndex` plus however many drops are still in
-    /// flight (see <see cref="_inFlight"/>). A wrong guess is not a divergence, only a refusal.
+    /// each time — so the target hole is counted forward from the last drop the server accepted
+    /// (see <see cref="DakonHolePrediction"/>). A wrong guess is not a divergence, only a refusal.
     /// </summary>
     public sealed class NetDakonSession : IDakonSession
     {
@@ -43,16 +43,11 @@ namespace Museum.Net
         private readonly List<string> _seatNames = new List<string>();
 
         /// <summary>
-        /// Seed ids we have sent and not yet seen come back, in the order we sent them. This is
-        /// what lets the player keep clicking: the hole a drop lands in is not a server secret —
-        /// it advances by one per drop and only resets when the hand empties — so the nth
-        /// outstanding drop is predictably `nextHoleIndex + n`. Colyseus delivers one client's
-        /// messages in order, so the server applies them in the order they were predicted.
+        /// The aim of every outgoing drop, and the only prediction this session makes. Lives in
+        /// its own pure class so the race it exists to close can be asserted without a room —
+        /// see <see cref="DakonHolePrediction"/>.
         /// </summary>
-        private readonly List<string> _inFlight = new List<string>();
-
-        /// <summary>Hole the last sent drop was aimed at. Only meaningful while <see cref="_inFlight"/> is non-empty.</summary>
-        private int _predictedHole;
+        private readonly DakonHolePrediction _prediction = new DakonHolePrediction();
 
         private readonly List<Seed> _hand = new List<Seed>();
         private readonly List<SeedCategory> _holes = new List<SeedCategory>();
@@ -181,14 +176,7 @@ namespace Museum.Net
                 return;
             }
 
-            // With nothing outstanding the server's own index is the truth; inside a burst it is
-            // stale by however many drops it has not answered yet, so keep counting from our own
-            // last guess. Resyncing whenever the queue drains means a wrong guess cannot compound
-            // past the end of one burst.
-            int holeIndex = _inFlight.Count == 0 ? _nextHole : (_predictedHole + 1) % _holes.Count;
-
-            _predictedHole = holeIndex;
-            _inFlight.Add(seedId);
+            int holeIndex = _prediction.Aim(seedId, _nextHole, _holes.Count);
 
             _room.Send("drop_seed", new { seedId, holeIndex });
         }
@@ -230,7 +218,7 @@ namespace Museum.Net
             {
                 // A turn boundary (or a board arriving under us) resets the server's hole counter,
                 // so anything we were still predicting against the old one is meaningless now.
-                _inFlight.Clear();
+                _prediction.Reset();
             }
 
             // TEMP DIAG — remove once the empty-hand bug is closed.
@@ -336,8 +324,9 @@ namespace Museum.Net
 
             // By seed id, not by count: this message is broadcast for *every* accepted drop,
             // including the opponent's, and it carries no sessionId to tell them apart. Only a
-            // seed we sent ourselves can be one of ours in flight.
-            _inFlight.Remove(payload.seedId);
+            // seed we sent ourselves can be one of ours in flight — but the hole it landed in
+            // anchors the next aim either way, because both players walk the same ring.
+            _prediction.Applied(payload.seedId, payload.holeIndex, payload.turnEnded);
 
             DropApplied?.Invoke(new DakonDrop(
                 payload.seedId,
@@ -369,7 +358,7 @@ namespace Museum.Net
             // A refusal invalidates every prediction queued behind it — the server stopped at the
             // one it rejected, so the drops after it were aimed one hole too far. Drop them all
             // and let the view re-read the hand from the next patch, which is server truth.
-            _inFlight.Clear();
+            _prediction.Reset();
 
             switch (payload?.code)
             {

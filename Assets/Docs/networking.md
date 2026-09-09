@@ -136,7 +136,7 @@ reaches a client that was still loading the scene when the broadcast went out.
 
 | Game | Predicted | Not predicted |
 |---|---|---|
-| Dakon | the **target hole** of a queued drop (`nextHoleIndex + drops in flight`) | nothing is drawn until `drop_applied` — the board on screen is always one the server agrees with |
+| Dakon | the **target hole** of a queued drop (one past the last drop the server accepted) | nothing is drawn until `drop_applied` — the board on screen is always one the server agrees with |
 | Egrang | the **whole stride**: the bar grades the press and the racer walks immediately | the banked count, the places, the winner — all server numbers |
 
 Dakon's hole prediction exists so the player can click a whole hand without waiting a round
@@ -144,6 +144,16 @@ trip each time; Colyseus delivers one client's messages in order, so the server 
 burst in the order it was predicted. A wrong guess is a refusal, not a divergence, and a
 refusal clears the entire in-flight queue (the server stopped at the rejected drop, so
 everything queued behind it was aimed one hole too far).
+
+It counts forward from the last drop `drop_applied` reported — anyone's drop, since both
+players walk the same ring — and falls back to the synced `nextHoleIndex` only when nothing
+anchors it: the first drop of a turn, or after a refusal. Anchoring on `nextHoleIndex`
+instead is the bug that shipped: `drop_applied` is broadcast the instant a drop is applied,
+while the patch moving `nextHoleIndex` follows on the room's patch interval, so a tap inside
+that window aimed at the hole that had just been filled and was refused. On a LAN the window
+is a millisecond; over wss from a phone it is a round trip, which is why it looked
+mobile-only. `Assets/Scripts/Net/DakonHolePrediction.cs` owns the rule and is tested in
+EditMode without a room.
 
 Egrang predicts because the cursor sweeps a lap in 0.85–2.0 s: grading on arrival would turn
 a green press into a yellow one on any real connection. The server bounds the *rate* instead

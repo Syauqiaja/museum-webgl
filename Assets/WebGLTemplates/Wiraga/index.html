@@ -39,10 +39,19 @@
       window.addEventListener("resize", fitCanvas);
       window.addEventListener("orientationchange", fitCanvas);
 
+      // Build/ is served immutable for a year and the four payload filenames never change
+      // between builds, so a browser that has loaded this site before will happily pair a
+      // cached framework.js with a freshly downloaded wasm. When a build adds or removes a
+      // .jslib function that is exactly a LinkError at instantiate ("function import requires
+      // a callable") that no amount of reloading clears. BuildWebGL.StampCacheBuster rewrites
+      // BUILDSTAMP in the emitted index.html to the build time; index.html itself is no-cache,
+      // so a new build invalidates all four URLs on the next visit.
+      var v = "?v=BUILDSTAMP";
+
       var config = {
-        dataUrl: "Build/{{{ DATA_FILENAME }}}",
-        frameworkUrl: "Build/{{{ FRAMEWORK_FILENAME }}}",
-        codeUrl: "Build/{{{ CODE_FILENAME }}}",
+        dataUrl: "Build/{{{ DATA_FILENAME }}}" + v,
+        frameworkUrl: "Build/{{{ FRAMEWORK_FILENAME }}}" + v,
+        codeUrl: "Build/{{{ CODE_FILENAME }}}" + v,
         streamingAssetsUrl: "StreamingAssets",
         companyName: {{{ JSON.stringify(COMPANY_NAME) }}},
         productName: {{{ JSON.stringify(PRODUCT_NAME) }}},
@@ -51,7 +60,7 @@
       };
 
       var script = document.createElement("script");
-      script.src = "Build/{{{ LOADER_FILENAME }}}";
+      script.src = "Build/{{{ LOADER_FILENAME }}}" + v;
       script.onload = function () {
         createUnityInstance(canvas, config, function (progress) {
           fill.style.width = (100 * progress) + "%";
