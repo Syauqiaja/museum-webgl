@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d504aca1d624112a3a119f35b476e5, type: 3}
+  m_Name: egrang
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.GameLessonData
+  gameKey: egrang
+  displayName: Egrang
+  sections:
+  - heading: KONSEP SAINS
+    body: Konsep sains utama dalam game ini adalah keseimbangan tubuh, gerak, gaya,
+      tekanan, energi, dan sistem gerak manusia. Pada Fase D IPA, peserta didik diarahkan
+      untuk memahami pengukuran, gerak dan gaya, tekanan, pesawat sederhana, usaha
+      dan energi, serta hubungan sistem organ dengan fungsinya. Karena itu, permainan
+      egrang virtual sangat cocok digunakan sebagai konteks pembelajaran IPA SMP.
+      Saat karakter berjalan dengan egrang, siswa dapat mempelajari bahwa tubuh membutuhkan
+      keseimbangan agar pusat massa tetap berada di atas titik tumpu. Jika karakter
+      terlalu miring, gaya gravitasi akan membuat tubuh jatuh. Ketika egrang digunakan
+      di permukaan licin, gaya gesek menjadi kecil sehingga karakter lebih mudah
+      tergelincir. Ketika egrang melewati lumpur atau pasir, konsep tekanan dapat
+      dijelaskan melalui luas ujung egrang yang kecil sehingga tekanannya lebih besar.
+      Selain itu, siswa juga dapat mengamati kerja otot, tulang, sendi, sistem saraf,
+      pernapasan, dan peredaran darah saat tubuh melakukan aktivitas fisik.
+  - heading: SPORT SCIENCE
+    body: Anatomi Gerak = Permainan Egrang sangat mengandalkan kekuatan dan koordinasi
+      otot-otot ekstremitas bawah, terutama quadriceps dan hamstrings untuk kontrol
+      lutut, serta gastrocnemius dan soleus untuk stabilisasi pergelangan kaki pada
+      pijakan bambu yang sempit . Otot gluteus medius berperan krusial dalam stabilisasi
+      panggul secara lateral, mencegah tubuh oleng saat berdiri dan melangkah dengan
+      satu egrang yang tinggi . Selain itu, otot-otot inti tubuh (abdominal dan erector
+      spinae) bekerja secara isometrik untuk menjaga postur tegak dan memfasilitasi
+      perpindahan pusat massa tubuh secara efisien. Biomekanika Gerak= Permainan
+      Egrang secara drastis mengurangi base of support (BoS) dan meningkatkan ketinggian
+      center of gravity (CoG), sehingga menuntut penyesuaian keseimbangan yang konstan
+      dan cepat untuk mencegah jatuh . Gerakan berjalan di atas egrang dapat dimodelkan
+      sebagai sistem pendulum terbalik, di mana stabilitas dicapai melalui serangkaian
+      langkah korektif dinamis yang melibatkan koordinasi neuromuskular kompleks
+      . Penggunaan bambu sebagai perpanjangan tungkai meningkatkan leverage dan panjang
+      langkah, namun juga secara signifikan meningkatkan momen gaya pada sendi panggul
+      dan bahu, memerlukan kekuatan otot yang lebih besar untuk kontrol gerakan.
+  - heading: ASAL-USUL
+    body: Permainan ini diketahui dari alkuturasi budaya Tionghoa dan konon mengajarkan
+      anak-anak nilai filosofis dari peluang masa depan. Permainan ini mendorong
+      pemain untuk berpikir tentang masa depan dan peluang potensial yang ada di
+      depan, seperti halnya panggung bambu yang membutuhkan perencanaan dan eksekusi
+      yang cermat untuk menjaga keseimbangan.
+  - heading: SENI & BUDAYA
+    body: 'Nilai budaya yang terkandung dalam permainan Egrang adalah kerja keras,
+      keuletan, dan sportivitas. Nilai kerja keras tercermin dari semangat para pemain
+      yang berusaha agar dapat mengalahkan lawannya. Nilai keuletan tercermin dalam
+      proses pembuatan alat yang digunakan untuk berjalan yang memerlukan keuletan
+      dan ketekunan agar seimbang dan mudah digunakan untuk berjalan. Dan nilai sportivitas
+      tercermin tidak hanya dari sikap para pemain yang tidak berbuat curang saat
+      berlangsungnya permainan, tetapi juga mau menerima kekalahan dengan lapang
+      dada.
+
+
+      Filosofi permainan egrang yang pertama yaitu harus punya keseimbangan.
+      Dalam kehidupan pun kita harus seimbang. Tidak boleh berlebihan dalam berbagai
+      hal. Kedua, ketika bermain egrang harus terus berjalan agar tidak jatuh. Begitu
+      juga dalam menjalani hidup, anak-anak harus terus bergerak mencapai tujuan
+      dan cita-cita. Ketiga, dalam bermain, mereka sangat mungkin akan mengalami
+      jatuh,tapi ketika jatuh kita harus bangkit lagi. Begitu pula ketika ada masalah.
+      Kita harus bangkit menghadapi setiap masalah.
+
+'

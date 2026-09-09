@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5995dd68e6ba63c6e719b44787416a4c, type: 3}
+  m_Name: Jagung
+  m_EditorClassIdentifier: 
+  typeId: jagung
+  displayName: Biji Jagung
+  cardSprite: {fileID: 21300000, guid: 51d06f8164e18644ab86a47d3b700c9c, type: 3}
+  seedPrefab: {fileID: 1709254077376921, guid: 5052297d2ebdb524a9b452c44b1c5c34, type: 3}
+  category: 1

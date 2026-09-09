@@ -1,0 +1,67 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d504aca1d624112a3a119f35b476e5, type: 3}
+  m_Name: blarak_sempal
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.GameLessonData
+  gameKey: blarak_sempal
+  displayName: Blarak Sempal
+  sections:
+  - heading: KONSEP SAINS
+    body: "Interaksi sifat material alami dengan gaya dan gerakan; pengaruh bentuk,
+      ukuran, tekstur, dan gesekan terhadap arah serta kestabilan gerak; hubungan
+      struktur\u2013fungsi pada objek alami; serta pengembangan keterampilan ilmiah
+      melalui observasi karakteristik material dan interpretasi perilaku gerak."
+  - heading: SPORT SCIENCE
+    body: Anatomi pada Blarak Sempal = Permainan Blarak Sempal melibatkan koordinasi
+      otot tangan, kaki, dan mata dalam aktivitas berlari, melempar, serta menghindar
+      selama permainan berlangsung. Aktivitas ini membantu meningkatkan kemampuan
+      motorik kasar, kelincahan, dan koordinasi tubuh pemain. Gerakan melempar dan
+      bergerak cepat menggunakan kerja otot bahu, lengan, tungkai, serta otot inti
+      untuk menjaga keseimbangan tubuh. Sendi lutut, panggul, dan pergelangan kaki
+      juga berperan penting dalam mendukung perpindahan gerak yang dinamis. Aktivitas
+      fisik dalam Blarak Sempal dapat meningkatkan daya tahan tubuh, koordinasi neuromuskular,
+      dan kontrol gerak karena dilakukan secara aktif dan berulang. Permainan ini
+      juga membantu melatih konsentrasi serta respons gerak pemain. Biomekanika Gerak
+      pada Blarak Sempal= Blarak Sempal melibatkan prinsip biomekanika berupa gaya
+      lemparan, kecepatan gerak, dan keseimbangan tubuh saat bergerak maupun menghindar.
+      Pemain harus mampu mengontrol pusat massa tubuh agar tetap stabil selama permainan.
+      Gerakan melempar dan berpindah posisi membutuhkan koordinasi antara kekuatan
+      otot dan pengaturan posisi sendi untuk menghasilkan gerakan yang efektif. Ketepatan
+      arah dan kekuatan gerak sangat memengaruhi keberhasilan pemain. Aktivitas gerak
+      cepat dan multidirectional dalam Blarak Sempal membantu meningkatkan agility,
+      waktu reaksi, dan koordinasi neuromuskular pemain. Pola gerak tersebut mendukung
+      efisiensi gerakan dan keseimbangan dinamis tubuh.
+  - heading: ASAL-USUL
+    body: Kata blarak-blarak sempal berasal dari bahasa Jawa. B/arakberarti daun
+      kelapa yang sudah kering dan sempal artinya patah dari batangnya maka arti
+      keseluruhan daun kelapa yang patah. Latar belakang sosial budaya permainan
+      ini merupakan alat pergaulan, menghilangkan, rasa malu, mendatangkan rasa senang
+      dan lain sebagainya.
+  - heading: SENI & BUDAYA
+    body: "Lagu blarak-blarak sempal pada lirik lagu pertama \u201Cblarak blarak
+      sempal\u201D ibarat seseorang yang seperti pohon kelapa. Tangangnya seperti
+      daunnya yang kumleyang atau kumlawe. Orang tersebut akan suka menolong kepada
+      sesame, dengan tangannya yang ringan itu akan suka menolong kesana kesini.
+      Dan jika mencari ilmu akan dimudahkan oleh Allah SWT. Pada lirik lagu yang
+      kedua \u201Cdincik-i mendal mendal\u201D maksudnya yaitu tangan seseorang itu
+      seperti daun kelapa (godhong krambil). Jika tangannya di senggol atau menatap
+      sesuatu akan mantul-mantul. Pada lirik lagu yang ketiga dan keempat sama \u201Clegendre
+      tak pancale\u201D artinya \u201Corang yang mencari ilmu harus ditambah terus
+      ilmunya dan tidak ada habisnya\u201D. Pada lirik lagu tersebut diulang dua
+      kali, tujuannya untuk menegaskan supaya orang tidak berhenti mencari ilmu.
+      Jika orang tersebut masih mampu untuk mencari ilmu kejenjang yang lebih tinggi
+      dan menambah ilmunya. Pada lirik lagu yang terakhir \u201Cyen tiba tangi ya
+      dhewe\u201D artinya \u201Cjika jatuh bangun sendiri\u201D. Orang yang ingin
+      mencapai kesuksesan harus mampu mengalami proses yang rumit terlebih dahulu.
+      kesuksesan butuh proses yang panjang, kita harus mengalami banyak cobaan dan
+      ujian. Jika kita kita ingin mencapai kesuksesan itu, kita harus lebih banyak
+      bersabar dan bertawakal serta tidak lupa berdo\u2019a kepada Allah SWT."

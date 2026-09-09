@@ -1,0 +1,23 @@
+{
+    "name": "Museum.Games.Dakon.Editor",
+    "rootNamespace": "Museum.Games.Dakon.EditorTools",
+    "references": [
+        "Museum.Core",
+        "Museum.Core.Editor",
+        "Museum.Games.Dakon",
+        "Museum.Net",
+        "UnityEngine.UI",
+        "Unity.TextMeshPro"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

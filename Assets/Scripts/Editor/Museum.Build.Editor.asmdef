@@ -1,0 +1,19 @@
+{
+    "name": "Museum.Build.Editor",
+    "rootNamespace": "Museum.Build.Editor",
+    "references": [
+        "Museum.Core",
+        "UnityEngine.UI"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d504aca1d624112a3a119f35b476e5, type: 3}
+  m_Name: gobak_sodor
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.GameLessonData
+  gameKey: gobak_sodor
+  displayName: Gobak Sodor
+  sections:
+  - heading: KONSEP SAINS
+    body: Interaksi sistem gerak dan respons tubuh terhadap perubahan lingkungan;
+      pengaturan kecepatan, arah, dan koordinasi gerakan dalam ruang; mekanisme persepsi
+      dan pengambilan keputusan saat menghadapi stimulus dinamis; serta pengembangan
+      keterampilan ilmiah melalui observasi pola gerak dan analisis strategi adaptif.
+  - heading: SPORT SCIENCE
+    body: Anatomi pada Gobak Sodor= Gobak Sodor melibatkan kerja otot tungkai, otot
+      inti, serta koordinasi saraf dan otot untuk menghasilkan gerakan cepat dan
+      seimbang.Koordinasi neuromuskular sangat penting dalam aktivitas gerak dinamis.
+      Permainan ini mengaktifkan sendi lutut, panggul, dan pergelangan kaki sehingga
+      meningkatkan kekuatan, fleksibilitas, dan kemampuan motorik kasar.  Gerak multidirectional
+      membantu efisiensi neuromuskular tubuh. Aktivitas Gobak Sodor juga meningkatkan
+      kerja jantung dan paru-paru karena dilakukan dengan intensitas tinggi. Biomekanika
+      Gerak = pada Gobak Sodor Gobak Sodor melibatkan sprint, berhenti mendadak,
+      dan perubahan arah yang membutuhkan keseimbangan dan kontrol pusat massa tubuh.
+      Pentingnya stabilitas postural dalam gerak cepat. Gerakan mengejar dan menghindar
+      menunjukkan konsep kecepatan, percepatan, dan perpindahan berat badan secara
+      efisien. Efisiensi gerak dipengaruhi koordinasi otot dan posisi sendi. Pola
+      gerak zig-zag dan lateral dalam Gobak Sodor melatih agility dan keseimbangan
+      dinamis pemain. Perubahan arah cepat meningkatkan koordinasi neuromuskular.
+  - heading: ASAL-USUL
+    body: "Gobak Sodor adalah permainan tradisional yang terisnpirasi dari kegiatan
+      yang dilakukan oleh para prajurit untuk melatih atau meningkatkan kemampuan
+      bertempur mereka selama perang. Permainan ini awalnya disebut \u201Csodoran\u201D
+      dan sejak saat itu berevolusi menjadi versi modern yang dikenal dengan nama
+      Gobak Sodor."
+  - heading: SENI & BUDAYA
+    body: Dalam permainan Gobak Sodor ini sangat dibutuhkan kerja sama tim yang akan
+      membantu menyukseskan tujuan dari kelompok tersebut. Dalam permainan ini memiliki
+      makna bahwa hidup harus memanfaatkan sebuah peluang dengan baik untuk mencapai
+      sebuah keberhasilan. Gobak sodor merupakan permainan yang diibaratkan seperti
+      melewati pintu menyiratkan bahwa bila ada satu pintu yang tertup dalam hidup,
+      maka ada satu pintu lain yang terbuka.

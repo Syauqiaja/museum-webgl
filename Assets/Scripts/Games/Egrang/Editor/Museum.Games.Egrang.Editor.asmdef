@@ -1,0 +1,23 @@
+{
+    "name": "Museum.Games.Egrang.Editor",
+    "rootNamespace": "Museum.Games.Egrang.EditorTools",
+    "references": [
+        "Museum.Core",
+        "Museum.Core.Editor",
+        "Museum.Games.Egrang",
+        "UnityEngine.UI",
+        "Unity.TextMeshPro",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

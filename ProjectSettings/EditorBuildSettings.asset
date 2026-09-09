@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1045 &1
+EditorBuildSettings:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: 6d0efff9ff1efe347b236362b396fd2f
+  - enabled: 1
+    path: Assets/Scenes/Museum.unity
+    guid: 8b61ddd8888009848a7cbceb283351fb
+  - enabled: 1
+    path: Assets/Scenes/Dakon.unity
+    guid: da2cab041a198c941ba53275f953fc98
+  - enabled: 1
+    path: Assets/Scenes/Lobby.unity
+    guid: e6161b8744dbd6e4584c0c4a0ee84afd
+  - enabled: 1
+    path: Assets/Scenes/Egrang.unity
+    guid: ccf92580a7bc9ce4ab1afb6b2340753f
+  m_configObjects:
+    com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}
+  m_UseUCBPForAssetBundles: 0

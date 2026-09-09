@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d504aca1d624112a3a119f35b476e5, type: 3}
+  m_Name: gatheng
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.GameLessonData
+  gameKey: gatheng
+  displayName: Gatheng
+  sections:
+  - heading: KONSEP SAINS
+    body: Perilaku gerak objek dan koordinasi sensorimotor dalam aktivitas manipulatif;
+      pengaruh bentuk, ukuran, dan massa terhadap akurasi dan kontrol; mekanisme
+      prediksi lintasan berdasarkan pengamatan; serta pengembangan keterampilan ilmiah
+      melalui klasifikasi, pengukuran, dan evaluasi hasil gerakan.
+  - heading: SPORT SCIENCE
+    body: Anatomi pada Gatheng = Permainan Gatheng melibatkan koordinasi otot jari,
+      tangan, dan mata dalam mengambil serta melempar biji gatheng secara tepat.
+      Aktivitas ini membantu meningkatkan keterampilan motorik halus dan koordinasi
+      gerak tubuh. Gerakan menggenggam, melempar, dan menangkap pada permainan Gatheng
+      menggunakan kerja otot lengan bawah, pergelangan tangan, dan jari tangan secara
+      berulang. Hal tersebut dapat meningkatkan fleksibilitas dan ketepatan gerak
+      tangan pemain. Permainan ini juga melatih konsentrasi, keseimbangan postur,
+      dan kontrol gerak tubuh saat pemain duduk atau bergerak mengambil biji gatheng.
+      Aktivitas tersebut mendukung perkembangan koordinasi neuromuskular secara baik.
+      Biomekanika Gerak pada Gatheng=  Gatheng melibatkan gerak manipulatif berupa
+      melempar dan menangkap yang membutuhkan koordinasi waktu, ketepatan, dan kontrol
+      gaya gerak. Pemain harus mampu mengatur kekuatan lemparan agar objek dapat
+      ditangkap kembali dengan baik. Gerakan tangan pada permainan Gatheng menunjukkan
+      prinsip biomekanika tentang koordinasi segmental dan kontrol gerak halus. Posisi
+      jari dan pergelangan tangan sangat memengaruhi akurasi saat mengambil maupun
+      menangkap biji gatheng. Aktivitas berulang dalam permainan Gatheng membantu
+      meningkatkan kecepatan reaksi, koordinasi mata dan tangan, serta efisiensi
+      gerak tubuh. Pola gerak tersebut mendukung kemampuan kontrol motorik halus
+      pemain.
+  - heading: ASAL-USUL
+    body: Berasal dari Jawa dan alat permainannya berujud batu gatheng. Permainan
+      gatheng mirip sekali dengan permainan bekelan tetapi berbeda alat permainannya.
+      Permainan gatheng dapat disebut permainan Jawa asli dengan bukti diketemukannya
+      batu gatheng milik Raden Ronggo, putera Panembahan Senopati, raja Mataram pertama.
+      Sekarang batu tersebut disimpan di Kotagedhe bekas ibukota Mataram.
+  - heading: SENI & BUDAYA
+    body: "Gatheng sudah ada sejak lama, kira-kira pada zaman Mataram (abad XVII).
+      Putra raja Mataram pada saat itu, Raden Rangga, memiliki alat bermain watu
+      gatheng yang berukuran lebih besar dari watu gatheng biasa. Besarnya batu tersebut
+      membuktikan betapa saktinya Raden Rangga. Watu gatheng yang diyakini milik
+      Raden Rangga tersebut, sekarang masih tersimpan di Kotagede, Yogyakarta. Di
+      dalam permainan gatheng terdapat iringan lagu genjeng sambil memukul pelan\u2022
+      pelan lutut kiri peserta yang kalah. Adapun syair lagu tersebut adalah \"genjeng-genjeng
+      debog bosok, jambe wangen, mur murtigung-mur murtigung walang wadung dening
+      cengkung, rondhe-rondhe pira, salah pira luwe, salawe aja na badhe, picak jenggol
+      pira kiye, cakuthu-cakuthu badhoganmu tahu besu aku dewe carang madu\""

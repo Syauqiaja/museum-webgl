@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d504aca1d624112a3a119f35b476e5, type: 3}
+  m_Name: cirak
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.GameLessonData
+  gameKey: cirak
+  displayName: Cirak
+  sections:
+  - heading: KONSEP SAINS
+    body: "Hubungan antara gaya, arah, dan ketepatan gerakan dalam menghasilkan hasil
+      aktivitas yang diinginkan; mekanisme interaksi sistem sensorik dan sistem gerak
+      dalam mengendalikan posisi serta lintasan gerakan; pengaruh perubahan besar
+      gaya, sudut, dan koordinasi terhadap hasil permainan; serta pengembangan keterampilan
+      ilmiah melalui pengamatan pola gerak, pengukuran hasil, dan interpretasi hubungan
+      sebab\u2013akibat."
+  - heading: SPORT SCIENCE
+    body: Anatomi pada Cirak = Permainan Cirak melibatkan koordinasi otot tangan,
+      jari, mata, dan tungkai dalam aktivitas melempar, menangkap, serta bergerak
+      cepat. Aktivitas ini membantu meningkatkan kemampuan motorik kasar dan halus
+      pemain. Gerakan melempar dan menangkap menggunakan kerja otot bahu, lengan,
+      pergelangan tangan, dan jari secara terkoordinasi. Selain itu, otot inti dan
+      tungkai membantu menjaga keseimbangan tubuh saat bergerak dan menghindar. Aktivitas
+      fisik dalam Cirak dapat meningkatkan kelincahan, koordinasi tubuh, dan daya
+      tahan fisik pemain karena melibatkan gerak aktif secara berulang. Permainan
+      ini juga mendukung perkembangan respons neuromuskular dan konsentrasi gerak.
+      Biomekanika Gerak pada Cirak = Cirak melibatkan prinsip biomekanika berupa
+      gaya lemparan, kecepatan gerak, dan koordinasi tubuh saat menangkap maupun
+      menghindari objek. Ketepatan arah dan kekuatan gerakan sangat memengaruhi keberhasilan
+      pemain. Gerakan melempar dan bergerak dalam Cirak membutuhkan perpindahan berat
+      badan dan keseimbangan tubuh yang baik agar gerak tetap efisien. Posisi tubuh
+      dan koordinasi sendi membantu menghasilkan gerakan yang cepat dan terkontrol.
+      Aktivitas reaktif dalam permainan Cirak membantu meningkatkan agility, waktu
+      reaksi, dan koordinasi neuromuskular pemain. Pola gerak cepat dan multidirectional
+      mendukung kemampuan kontrol tubuh secara dinamis.
+  - heading: ASAL-USUL
+    body: 'Sejak abad pertengahan permainan cirak atau kelereng ini sudah ada dan
+      seringkali dimainkan oleh kalangan aristokrat dan bangsawan. Permainan ini
+      tidak hanya terkenal di kalangan masyarakat kita saja, di Perancis pun permainan
+      ini ternyata sangat digemari oleh kalangan di sana dan mereka memanggilnya
+      dengan sebutan Pentaque. Bedanya, jika permainan kelereng menggunakan gundu
+      yang berukuran kecil, Pentaque memerlukan dua jenis bola yang mempunyai ukuran
+      yang cukup besar yang terbuat dari kayu jati dan baja. Pentaque ini pertama
+      kali diperkenalkan oleh Suku Gaule(Perancis Kuno). Dari Perancis permainan
+      ini menyebar ke wilayah lainnya seperti Yunani dan Mesir melalui orang-orang
+      Romawi. Seperti halnya Nekeran, Pentaque awalnya juga merupakan permainan untuk
+      mengisi waktu luang. Sejarah pun berlanjut hingga sampai ke zaman Renaissance
+      atau pencerahan. Pentaquemenjadi mainan di kalangan aristokrat dan bangsawan
+      bahkan kabarnya pernah disejajarkan dengan olahraga Tennis yang dipandang cukup
+      elit di masa itu. Yang diperbolehkan untuk bermain olahraga itu hanyalah orang-orang
+      tertentu saja.
+
+
+      Terhitung sejak tahun 1850, sebuah organisasi sosial
+      Clos Jouve memperkenalkan kembali Pentaque yang semakin hari kian dilupakan
+      oleh masyarakat. Menginjak abad ke-20 permainan ini mulai dipatenkan seiring
+      dengan semakin banyaknya bermunculan klub-klub Pentaque sebagai pelestarian
+      kebudayaan tradisional.
+
+
+'
+  - heading: SENI & BUDAYA
+    body: Filosofi dari permainan cirak atau kelereng yaitu anak-anak menjadi konsentrasi
+      dalam mencapai sasaran atau keinginan, menjadikan anak-anak lebih sabar dan
+      tidak gegabah dalam mengambil putusan, melatih anak dalam menjunjung kebersamaan,
+      sportivitas dan melatih bekerja sama dengan baik dalam tim.

@@ -1,0 +1,61 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d504aca1d624112a3a119f35b476e5, type: 3}
+  m_Name: bekelan
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.GameLessonData
+  gameKey: bekelan
+  displayName: Bekelan
+  sections:
+  - heading: KONSEP SAINS
+    body: "Koordinasi gerak halus melalui integrasi sistem saraf dan sistem gerak;
+      hubungan gaya, waktu, dan lintasan objek selama aktivitas lempar\u2013tangkap;
+      kemampuan prediksi dan respons terhadap perubahan posisi objek; serta pengembangan
+      keterampilan ilmiah melalui pengamatan pola dan interpretasi gerakan."
+  - heading: SPORT SCIENCE
+    body: Anatomi pada Bekelan= Permainan Bekelan melibatkan koordinasi otot jari,
+      tangan, dan mata untuk melakukan gerakan melempar, menangkap, dan mengambil
+      biji bekel secara tepat. Aktivitas ini membantu meningkatkan kemampuan motorik
+      halus dan ketepatan gerak. Gerakan pada Bekelan banyak menggunakan otot lengan
+      bawah, pergelangan tangan, dan jari tangan yang bekerja secara berulang untuk
+      menjaga kontrol gerakan. Selain itu, koordinasi saraf dan otot sangat berperan
+      dalam menjaga konsentrasi dan akurasi pemain. Permainan Bekelan juga melatih
+      keseimbangan postur tubuh dan kontrol gerak saat pemain duduk atau bergerak
+      mengambil biji bekel. Aktivitas tersebut mendukung perkembangan koordinasi
+      neuromuskular dan konsentrasi gerak. Biomekanika Gerak pada Bekelan= Bekelan
+      melibatkan gerak manipulatif berupa melempar dan menangkap bola kecil yang
+      membutuhkan pengaturan gaya, waktu, dan koordinasi gerak secara tepat. Ketepatan
+      gerakan sangat dipengaruhi oleh sinkronisasi mata dan tangan. Gerakan mengambil
+      biji bekel menunjukkan prinsip biomekanika tentang kontrol gerak halus dan
+      koordinasi segmental tangan. Posisi jari dan kecepatan gerakan menentukan keberhasilan
+      pemain dalam mengambil objek tanpa kehilangan kontrol bola. Aktivitas berulang
+      dalam Bekelan membantu meningkatkan kecepatan reaksi, ketepatan gerak, dan
+      efisiensi koordinasi neuromuskular. Pola gerak ini mendukung perkembangan keterampilan
+      motorik halus dan kontrol tubuh pemain.
+  - heading: ASAL-USUL
+    body: Permainan bekel merupakan permainan tradisional yang mendapat pengaruh
+      dari budaya Belanda, sebab kata bekel sendiri berasal dari bahasa Belanda bikkelspel
+      atau bikkelen. Permainan ini menjadi salah satu permainan populer yang dapat
+      dimainkan oleh laki-laki dan kebanyakan dimainkan oleh perempuan dengan minimal
+      2 pemain mulai dari kalangan anak-anak hingga dewasa.
+  - heading: SENI & BUDAYA
+    body: "Filosofi pada permainan bekelan yaitu saat bola dilempar ke atas, dimaknai
+      sebagai orang hidup harus selalu ingat pada Tuhan Yang maha Esa, setelah itu
+      bola akan kembali turun dan ditangkap oleh pemainnya menggambarkan bahwa selain
+      ingat pada Tuhan Yang Maha Esa, manusia juga harus ingat pada sesame manusia
+      untuk hidup bersosialisasi. Setelah itu, biji atau bekel yang ada diraup jadi
+      satu dalam genggaman dan disebar, maknanya adalah bahwa manusia hidup harus
+      ingat pada sesamanya dan selalu berbuat baik pada sesamanya yang berasal dari
+      Tuhan yang \u201CSatu\u201D. Setelah bekel disebar, bola kembali dilempar ke
+      atas sambil membolak-balik timbel (bekel) dari urutan 1 sampai 5. Hal ini menggambarkan
+      bahwa manusia hidup harus hidup sesuai aturan dan harus bisa mengendalikan
+      hawa nafsu, karena sesuatu hal dalam hidup manusia akan berhubungan dengan
+      hal yang lain.\n\n"

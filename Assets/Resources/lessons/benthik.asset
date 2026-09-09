@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d504aca1d624112a3a119f35b476e5, type: 3}
+  m_Name: benthik
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.GameLessonData
+  gameKey: benthik
+  displayName: Benthik
+  sections:
+  - heading: KONSEP SAINS
+    body: "Hubungan gaya, energi, dan gerak pada objek; pengaruh sudut, arah, dan
+      besar gaya terhadap lintasan dan jarak tempuh; interaksi antara karakteristik
+      material dan hasil gerakan; serta pengembangan keterampilan ilmiah melalui
+      eksperimen sederhana dan interpretasi hubungan sebab\u2013akibat."
+  - heading: SPORT SCIENCE
+    body: Anatomi pada Bethik = Permainan Bethik melibatkan koordinasi otot lengan,
+      bahu, pergelangan tangan, serta otot tungkai untuk melakukan gerakan memukul
+      dan berlari. Aktivitas ini membantu meningkatkan kekuatan otot, koordinasi
+      mata dan tangan, serta kemampuan motorik pemain. Gerakan memukul pada Bethik
+      menggunakan kerja sendi bahu, siku, dan pergelangan tangan yang berfungsi menghasilkan
+      ayunan secara optimal. Selain itu, otot inti juga berperan menjaga keseimbangan
+      tubuh saat melakukan pukulan dan perpindahan gerak. Aktivitas berlari dan bergerak
+      cepat dalam Bethik dapat meningkatkan kerja jantung dan paru-paru sehingga
+      membantu meningkatkan daya tahan fisik. Permainan ini juga mendukung perkembangan
+      kelincahan dan kebugaran jasmani pemain. Biomekanika Gerak pada Bethik = Bethik
+      melibatkan gerak ayunan yang memanfaatkan prinsip gaya, kecepatan, dan koordinasi
+      segmental tubuh untuk menghasilkan pukulan yang efektif. Semakin baik koordinasi
+      gerak tubuh, semakin besar tenaga yang dihasilkan saat memukul. Gerakan memukul
+      dan berlari pada Bethik membutuhkan keseimbangan tubuh serta perpindahan berat
+      badan yang tepat agar gerak menjadi efisien. Posisi tubuh dan sudut ayunan
+      sangat memengaruhi arah serta kekuatan pukulan. Aktivitas mengejar dan menghindar
+      dalam Bethik melatih agility, kecepatan reaksi, dan koordinasi neuromuskular
+      pemain. Pola gerak cepat dan multidirectional membantu meningkatkan kemampuan
+      kontrol tubuh saat bergerak dinamis.
+  - heading: ASAL-USUL
+    body: Pada permainan ini terjadi benturan antara kedua alat permainan ini sehingga
+      menimbulkan suara "thik". Oleh karena itu permainan tersebut disebut dengan
+      benthik. Sejarah perkembangan permainan benthik sudah ada sejak lama dan berasal
+      dari daerah pedesaan.
+  - heading: SENI & BUDAYA
+    body: Filosofi yang terkandung dalam permainan ini bertujuan untuk melatih jiwa
+      sportifitas dan berkompetisi secara jujur, terampil, dan cekatan yang harus
+      ditanamkan sejak kecil. Permainan Benthik tak sekedar menyenangkan, namun di
+      dalamnya juga terkandung falsafah kehidupan yang dapat kita petik dan semai
+      pada kehidupan nyata. ?Hongpimpa Alaium Gambreng?, kalimat yang biasa diucapkan
+      oleh para pemain sebelum permainan dimulai untuk menentukan siapa yang berhak
+      bermain dahulu memiliki makna agung yaitu ?Dari Tuhan, Kembali ke Tuhan, Mari
+      Kita Bermain?. Kalimat ini merupakan sebuah pengingat saat bermain sekalipun
+      bahwa manusia adalah milik Tuhan. Karena kita ada yang memiliki, maka dari
+      itu setiap perbuatan akan dipertanggung-jawabkan kepada Dzat pemilik kita,
+      yaitu Tuhan yang Maha Esa.

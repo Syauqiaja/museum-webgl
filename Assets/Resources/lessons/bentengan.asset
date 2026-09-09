@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d504aca1d624112a3a119f35b476e5, type: 3}
+  m_Name: bentengan
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.GameLessonData
+  gameKey: bentengan
+  displayName: Bentengan
+  sections:
+  - heading: KONSEP SAINS
+    body: "Respons fisiologis tubuh terhadap aktivitas intensitas sedang\u2013tinggi;
+      mekanisme penggunaan energi dan adaptasi tubuh selama aktivitas berulang; pengaruh
+      persepsi ruang dan pengambilan keputusan terhadap efektivitas gerak; serta
+      pengembangan keterampilan ilmiah melalui pengamatan pola aktivitas dan interpretasi
+      perubahan performa."
+  - heading: SPORT SCIENCE
+    body: Anatomi pada Bentengan= Permainan Bentengan melibatkan kerja otot tungkai,
+      otot inti, dan koordinasi tubuh untuk mendukung aktivitas berlari, mengejar,
+      dan menghindar secara cepat. Gerakan tersebut membantu meningkatkan kekuatan
+      otot, keseimbangan, dan koordinasi motorik pemain. Aktivitas dalam Bentengan
+      banyak menggunakan sendi lutut, panggul, dan pergelangan kaki sehingga meningkatkan
+      fleksibilitas serta daya tahan otot tubuh bagian bawah. Permainan ini juga
+      melatih respons neuromuskular melalui perubahan gerak yang cepat dan berulang.
+      Intensitas gerak pada Bentengan dapat meningkatkan kerja sistem kardiovaskular
+      dan pernapasan karena pemain melakukan aktivitas fisik secara aktif selama
+      permainan berlangsung. Kondisi ini membantu meningkatkan kebugaran jasmani
+      dan daya tahan aerobik tubuh. Biomekanika Gerak pada Bentengan= Bentengan melibatkan
+      gerakan sprint, akselerasi, deselerasi, dan perubahan arah yang membutuhkan
+      kontrol keseimbangan tubuh yang baik. Pemain harus mampu mengatur pusat massa
+      tubuh agar tetap stabil saat bergerak cepat. Gerakan menyerang dan menghindar
+      dalam Bentengan menunjukkan penerapan kecepatan, kelincahan, serta perpindahan
+      berat badan secara efisien. Koordinasi antara otot dan sendi sangat penting
+      untuk menghasilkan gerak yang efektif dan aman. Pola gerak multidirectional
+      pada Bentengan membantu meningkatkan agility, reaksi gerak, dan koordinasi
+      neuromuskular pemain. Aktivitas ini juga melatih kemampuan tubuh dalam mempertahankan
+      stabilitas saat bergerak dinamis.
+  - heading: ASAL-USUL
+    body: "Nama \u201CBentengan\u201D berasal dari kata \u201Cbenteng\u201D dalam
+      bahasa Indonesia, yang berarti \u201Cbenteng\u201D. Nama ini mencerminkan elemen
+      strategis dan defensif dari permainan ini. Bentengan diyakini berasal dari
+      strategi bertahan hidup yang digunakan oleh orang Indonesia selama era kolonial.
+      Permainan ini meniru taktik pertahanan yang digunakan oleh masyarakat untuk
+      melindungi diri dari serangan, menggunakan \u201Cbenteng\u201D yang ditunjuk
+      sebagai zona aman"
+  - heading: SENI & BUDAYA
+    body: Permainan benteng diibaratkan dengan tempat menimba ilmu. jika salah satu
+      regu keluar, maka orang tersebut tidak memiliki pegangan ilmu lagi. Sehingga
+      dalam permainan ini kita harus berpegang teguh dalam menjaga dan mnyelamatkan
+      suatu hal yang dimiliki dari serangan. Nilai filosofi lainnya dalam permainan
+      bentengan yakni kita harus berpegang teguh. Manfaat lainnya adalah melatih
+      keprajuritan, kemiliteran dan kelincahan sejak dini.

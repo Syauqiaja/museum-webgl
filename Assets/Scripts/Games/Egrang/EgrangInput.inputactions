@@ -1,0 +1,45 @@
+{
+    "name": "EgrangInput",
+    "maps": [
+        {
+            "name": "Egrang",
+            "id": "6f0a1d1e-3d5c-4f2a-9c3e-1a7b5d0c9e11",
+            "actions": [
+                {
+                    "name": "Step",
+                    "type": "Button",
+                    "id": "b1c4e7a2-8f30-4a6d-9b21-5c8e2f4a7d33",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "d2e5f8b3-91a4-4b7e-8c32-6d9f3a5b8e44",
+                    "path": "<Keyboard>/space",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Step",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "e3f6a9c4-a2b5-4c8f-9d43-7e0a4b6c9f55",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Step",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}

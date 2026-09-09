@@ -1,0 +1,71 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d504aca1d624112a3a119f35b476e5, type: 3}
+  m_Name: engklek
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.GameLessonData
+  gameKey: engklek
+  displayName: Engklek
+  sections:
+  - heading: KONSEP SAINS
+    body: "Sistem gerak manusia sebagai hasil interaksi otot, tulang, dan sistem
+      saraf dalam menghasilkan gerakan; transformasi energi selama aktivitas fisik;
+      mekanisme keseimbangan dinamis dan pengaturan pusat massa saat tubuh bertumpu
+      pada satu kaki; serta pengembangan keterampilan ilmiah melalui pengamatan perubahan
+      gerak, pengukuran respons tubuh, dan interpretasi hubungan aktivitas\u2013energi."
+  - heading: SPORT SCIENCE
+    body: Anatomi Gerak = Permainan Engklek secara primer mengaktivasi ekstremitas
+      bawah, dengan sendi panggul, lutut, dan pergelangan kaki bekerja secara sinergis
+      untuk melompat dan menjaga keseimbangan . Otot-otot utama seperti quadriceps
+      dan gluteus maximus memberikan daya dorong eksplosif saat melompat, sementara
+      gastrocnemius dan soleus berperan dalam plantar fleksi untuk take-off . Stabilisasi
+      inti tubuh, terutama oleh otot-otot core, sangat krusial untuk mempertahankan
+      postur tegak dan keseimbangan dinamis selama fase melayang dan mendarat dengan
+      satu kaki. Biomekanika Gerak =  Permainan Engklek menuntut keseimbangan dinamis
+      yang tinggi, di mana pusat gravitasi tubuh harus terus-menerus disesuaikan
+      di atas base of support yang sempit (satu kaki) selama fase melompat dan mendarat
+      . Gaya reaksi tanah (ground reaction force) yang signifikan terjadi saat mendarat,
+      memerlukan aktivasi otot-otot ekstensor lutut dan pergelangan kaki secara eksentrik
+      untuk meredam benturan dan mencegah cedera . Penggunaan ayunan lengan secara
+      efektif membantu menjaga momentum dan stabilitas tubuh, mendukung perpindahan
+      massa dan keseimbangan selama transisi antar kotak
+  - heading: ASAL-USUL
+    body: "Permainan tradisional Engklek memiliki sejarah yang kaya dan diyakini
+      memiliki banyak asal-usul. Salah satu teori menyatakan bahwa permainan ini
+      diperkenalkan ke Indonesia oleh Belanda selama masa penjajahan mereka. Dalam
+      bahasa Belanda, permainan ini dikenal dengan nama \u201CZondag Maandag,\u201D
+      yang diterjemahkan menjadi \u201CMinggu Senin\u201D dan kemudian diadopsi ke
+      dalam bahasa lokal sebagai \u201CSunda Manda\u201D atau \u201CEngklek\u201D
+      di beberapa daerah. Teori lain mengatakan bahwa Engklek mirip dengan permainan
+      Inggris kuno yang disebut \u201CHopscotch,\u201D yang berakar dari Kekaisaran
+      Romawi. Engklek bukanlah permainan yang seragam di seluruh Indonesia; permainan
+      ini memiliki nama dan variasi yang berbeda di berbagai daerah. Misalnya, permainan
+      ini dikenal dengan nama \u201CSetatak\u201D di Riau, \u201CTejek-tejekan\u201D
+      di Jambi, dan \u201CMarsitekka\u201D di Batak Toba."
+  - heading: SENI & BUDAYA
+    body: 'Nilai yang terkandung dalam permainan engklek yaitu nilai kedisiplinan
+      ini ditunjukkan secara tidak langsung yaitu saat pemain mematuhi peraturan
+      yang ada pada permainan engklek. Selain itu, ditunjukkan juga saat pemain mengantri
+      menunggu gilirannya untuk bermain. Nilai ketangkasan dapat dilihat dari gerakan
+      anak saat melakukan permainan. Gerakan melompat dengan satu kaki dapat melatih
+      ketangkasan anak dan juga melatih keseimbangan. Nilai Sosial ditunjukan dengan
+      permainan ini dimainkan oleh lebih dari satu orang sehingga mereka harus bersosialisasi
+      dan saling berkomunikasi satu sama lain. Serta nilai kesehatan yang dilihat
+      dari gerakan saat melakukan permainan yaitu melompat-lompat. Saat melompat
+      secara tidak langsung anak telah melakukan olah raga sehingga mendapatkan tubuh
+      yang sehat.
+
+
+      Permainan engklek juga bermakna sebagai perjuangan manusia
+      dalam meraih wilayah kekuasaan dengan aturan tertentu yang harus disepakati
+      untuk mendapatkan tempat berpijak.
+
+'

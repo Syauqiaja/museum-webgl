@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d504aca1d624112a3a119f35b476e5, type: 3}
+  m_Name: cublak_cublak_suweng
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.GameLessonData
+  gameKey: cublak_cublak_suweng
+  displayName: Cublak-cublak Suweng
+  sections:
+  - heading: KONSEP SAINS
+    body: Sistem sensorik manusia dalam menerima dan mengolah informasi melalui pendengaran,
+      sentuhan, dan persepsi ruang; mekanisme transduksi rangsang dan integrasi multisensorik
+      dalam pengambilan keputusan; serta pengembangan keterampilan ilmiah melalui
+      observasi respons, identifikasi pola, dan interpretasi informasi sensorik.
+  - heading: SPORT SCIENCE
+    body: Anatomi Gerak= Dalam permainan Cublak-cublak Suweng, pemain yang membungkuk
+      (dadi) mengandalkan kontraksi isometrik otot erector spinae untuk mempertahankan
+      posisi tulang belakang yang terfleksi, didukung oleh stabilisasi hamstrings
+      dan gluteus maximus pada panggul . Pemain yang melingkar secara ritmis menggerakkan
+      tangan dan lengan bawah, melibatkan otot-otot intrinsic hand muscles untuk
+      manipulasi kerikil dan forearm flexors/extensors untuk gerakan pergelangan
+      tangan yang terkoordinasi . Stabilisasi shoulder girdle juga penting untuk
+      menjaga posisi lengan saat tangan diletakkan di punggung pemain dadi, memastikan
+      gerakan mengoper yang lancar. Biomekanika Gerak= Posisi membungkuk pemain dadi
+      menciptakan torque signifikan pada tulang belakang lumbar, menuntut aktivasi
+      otot erector spinae yang kuat untuk menjaga stabilitas postur dan mencegah
+      cedera . Perpindahan kerikil antar tangan melibatkan kinematika tangan yang
+      ritmis dan sinkron dengan lagu, di mana umpan balik taktil dan modulasi gaya
+      sangat penting untuk keberhasilan transfer tanpa terdeteksi . Keseimbangan
+      statis pemain dadi juga krusial, memastikan center of mass tubuh tetap berada
+      di atas base of support yang stabil meskipun ada beban dan gerakan tangan pemain
+      lain di punggungnya.
+  - heading: ASAL-USUL
+    body: Cublak-Cublak Suweng adalah permainan tradisional yang berasal dari Jawa,
+      Indonesia, khususnya dari daerah Jawa Tengah, Daerah Istimewa Yogyakarta, dan
+      Jawa Timur. Permainan ini dipercaya diciptakan oleh Sunan Giri, salah satu
+      dari Wali Songo (Sembilan Wali) yang memainkan peran penting dalam menyebarkan
+      agama Islam di Indonesia, khususnya di Jawa, sekitar tahun 1442 M.
+  - heading: SENI & BUDAYA
+    body: "Lagu \u201Ccublak-cublak suweng\u201D \"cublak-cublak suweng, suwenge
+      teng ge/enter, mambu kethundhung gudel Pak empong orong-orong, pak empong orong-orong.
+      Sir sir plek/plong dhele kaplak/gosong, ora enak, sir sir plak/plong dhele
+      keplak/gosong ora enak \".\n\nMakna lirik yang terkandung pada lirik Cublak-cublak
+      suweng adalah untuk mencari harta janganlah menuruti hawa nafsu tetapi semuanya
+      kembali ke hati nurani yang bersih. Kalimat \u201Cmambu ketundhung gud\xE8l\u201D
+      Bermakna bahkan orang bodoh minim (pendidikan) mencari harta duniawi tersebut
+      dengan penuh nafsu ego, tindakan korupsi, jual beli jabatan tujuannya untuk
+      mencari kebahagiaan sesaat. \u201CSopo ngguyu Ndhelikake\u201D diartikan siapa
+      tertawa dia yang menyembunyikan. Mengandung pesan bahwa siapa yang bijaksana,
+      merekalah yang menemukan kebahagian abadi yang hakiki. \u201CSir\u201D (hati
+      nurani/suara hati) \u201Cpong dele kopong\u201D (kedelai kosong tanpa isi).
+      Maksudnya hati nurani yang kosong. Untuk sampai kepada kebahagiaan abadi harus
+      menghindari dari kecintaan kepada kekayaan duniawi, rendah hati, tidak meremehkan
+      orang lain, serta selalu melatih kepekaan Sir/hati nuraninya. Maknanya bahwa
+      untuk sampai kepada tempat harta sejati (Cublak Suweng) atau kebahagiaan sejati,
+      orang harus melepaskan diri dari kecintaan pada harta benda duniawi, mengosongkan
+      diri, rendah hati, tidak merendahkan sesama, serta senantiasa memakai rasa
+      dan mengasah tajam sir-nya atau hati nuraninya.\n"

@@ -1,0 +1,74 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d504aca1d624112a3a119f35b476e5, type: 3}
+  m_Name: ancak_ancak_alis
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.GameLessonData
+  gameKey: ancak_ancak_alis
+  displayName: Ancak-ancak Alis
+  sections:
+  - heading: KONSEP SAINS
+    body: Interaksi antarindividu dalam membentuk pola adaptasi terhadap perubahan
+      situasi; mekanisme pengambilan keputusan berdasarkan informasi lingkungan;
+      hubungan dinamika gerak dan organisasi kelompok; serta pengembangan keterampilan
+      ilmiah melalui observasi pola interaksi dan interpretasi strategi adaptif.
+  - heading: SPORT SCIENCE
+    body: Anatomi pada Ancak-Ancak Alis = Permainan Ancak-Ancak Alis melibatkan koordinasi
+      otot tangan, kaki, dan tubuh dalam aktivitas berjalan, melompat, serta bergerak
+      mengikuti irama permainan. Aktivitas ini membantu meningkatkan koordinasi motorik
+      dan keseimbangan tubuh pemain. Gerakan berpindah posisi dan membentuk formasi
+      menggunakan kerja otot tungkai, panggul, dan otot inti untuk menjaga stabilitas
+      tubuh. Selain itu, koordinasi saraf dan otot membantu pemain bergerak secara
+      sinkron dengan teman bermain. Aktivitas fisik dalam Ancak-Ancak Alis mendukung
+      perkembangan fleksibilitas, kelincahan, dan kontrol gerak tubuh melalui pola
+      gerak yang dilakukan secara berulang. Permainan ini juga membantu meningkatkan
+      konsentrasi dan koordinasi neuromuskular pemain. Biomekanika Gerak pada Ancak-Ancak
+      Alis= Ancak-Ancak Alis melibatkan gerakan ritmis dan perpindahan posisi yang
+      membutuhkan keseimbangan serta kontrol pusat massa tubuh. Pemain harus mampu
+      menjaga stabilitas saat bergerak dan berubah arah. Gerakan berjalan, melompat,
+      dan membentuk pola permainan menunjukkan prinsip biomekanika tentang koordinasi
+      gerak, pengaturan gaya tubuh, dan efisiensi langkah. Ketepatan posisi tubuh
+      sangat memengaruhi kelancaran gerakan pemain. Aktivitas gerak dinamis dalam
+      Ancak-Ancak Alis membantu meningkatkan agility, koordinasi neuromuskular, dan
+      kemampuan reaksi tubuh terhadap perubahan gerak. Pola gerak berirama tersebut
+      juga mendukung kontrol motorik dan keseimbangan dinamis pemain.
+  - heading: ASAL-USUL
+    body: "Permainan ancak-ancak alis berasal dari bahasa Jawa yaitu dari kata ancak-ancak
+      dan alis. Kata ancak berarti bujur sangkar dengan berbingkai pelepah daun pisang
+      untuk tempat sesaji sedangkan kata alis dalam lagu permainan ini yang dimaksud
+      adalah nama seeker kerbau. Latar belakang permainan ancak-ancak alis ini menitikberatkan
+      kepada kehidupan pertanian yang sebagian besar merupakan mata pencaharian penduduk
+      di Indonesia. Oleh sebab itu secara tidak langsung permainan ini mendidik anak-anak
+      untuk mengetahui dunia pertanian. Misalnya, mengenalkan nama-nama tanaman,
+      nama hama tanaman, cara\u2022 cara bertani dan sebagainya."
+  - heading: SENI & BUDAYA
+    body: 'Adapun iringan dalam permainan ini berupa lagu ancak-ancak alis tanpa
+      menggunakan bunyi-bunyian. Syair tersebut adalah sebagai berikut:
+
+
+      "Ancak-ancak
+      alis, si alis kebo janggitan, anak-anak kebo dhungkul, Si dhungkul bangbang
+      teyo, tiga rendeng, enceng-enceng gogo beluk, unine paling cerepluk, ula sawa,
+      ula dumung, gedhene sak lumbung bandhung, sawahira lagi apa ?". Makna dari
+      lagu ancak-ancak alis yaitu alam semua tumbuhan dan hewan itu bisa mendatangkan
+      kemakmuran tetapi juga sumber hambatan dalam hidup baik dimusim kemarau maupun
+      penghujan. Oleh karena itu interaksi saling menanyakan kabar tentang sawah
+      ladang dan kebun serta kondisi alam antar warga adalah penting sehingga bisa
+      diantisipasi bersama-sama.
+
+
+      Permainan ini menunjukkan hidup tidak bisa
+      instan, harus ada proses yang harus dilewati. Setiap orang harus berusaha keras
+      untuk mencapai tujuan yang diinginkan. Melalui permainan ini, anak belajar
+      untuk bekerja keras agar mendapatkan hasil yang diimpikan.
+
+
+'

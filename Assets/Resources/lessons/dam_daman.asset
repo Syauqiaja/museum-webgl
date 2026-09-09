@@ -1,0 +1,59 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d504aca1d624112a3a119f35b476e5, type: 3}
+  m_Name: dam_daman
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.GameLessonData
+  gameKey: dam_daman
+  displayName: Dam-daman
+  sections:
+  - heading: KONSEP SAINS
+    body: Pengenalan pola dan hubungan antarvariabel dalam pengambilan keputusan;
+      kemampuan prediksi berbasis observasi; mekanisme berpikir logis dalam memilih
+      strategi; serta pengembangan keterampilan ilmiah melalui identifikasi pola
+      dan penyusunan penjelasan berbasis bukti.
+  - heading: SPORT SCIENCE
+    body: Anatomi pada Dam-daman Permainan = Dam-daman melibatkan koordinasi otot
+      jari, tangan, dan mata dalam memindahkan bidak secara tepat pada papan permainan.
+      Aktivitas ini membantu meningkatkan kemampuan motorik halus dan konsentrasi
+      pemain. Gerakan memegang dan menggeser bidak menggunakan kerja otot lengan
+      bawah, pergelangan tangan, dan jari tangan secara terkontrol. Selain itu, postur
+      duduk saat bermain juga melibatkan otot inti untuk menjaga kestabilan tubuh.
+      Permainan ini mendukung koordinasi neuromuskular melalui aktivitas berpikir
+      dan gerak tangan yang dilakukan secara bersamaan. Konsentrasi dan ketepatan
+      gerak menjadi faktor penting dalam menjalankan strategi permainan. Biomekanika
+      Gerak pada Dam-daman= Dam-daman melibatkan gerak manipulatif sederhana berupa
+      mengambil dan memindahkan bidak dengan kontrol gerak yang presisi. Ketepatan
+      posisi tangan dan jari memengaruhi efisiensi gerakan pemain. Gerakan pada permainan
+      ini menunjukkan prinsip biomekanika tentang koordinasi segmental tangan dan
+      kontrol gerak halus. Pengaturan gaya gerak yang tepat membantu pemain memindahkan
+      bidak dengan stabil dan akurat. Aktivitas berulang dalam Dam-daman membantu
+      meningkatkan koordinasi mata dan tangan, kecepatan reaksi, serta efisiensi
+      kontrol motorik halus. Pola gerak tersebut mendukung kemampuan konsentrasi
+      dan ketepatan gerak pemain.
+  - heading: ASAL-USUL
+    body: Permainan dam-daman merupakan permainan tradisional yang dibesarakan di
+      Pulau Jawa dan memiliki aturan mirip dengan permainan catur. Akan tetapi, Dam-Daman
+      tidak memerlukan pion mewah seperti catur. Kita hanya perlu menyiapkan 16-20
+      pion kecil yang bisa dari apa saja, seperti biji-bijian atau batu-batuan. Jadi,
+      terlihat mengapa permainan ini sering dimainkan oleh anak-anak kecil zaman
+      dulu karena permainannya sederhana dan mudah untuk mencari alat-alat yang dibutuhkan
+      Dam-daman di mana pun.
+  - heading: SENI & BUDAYA
+    body: Semua manusia hakikatnya sama di sisi Tuhan Yang Maha Esa. Tuhan tidak
+      membedakan manusia berdasarkan pangkat dan jabatan. Selain itu, bermain dam-daman
+      juga mengajarkan kepada kita agar dalam melangkah harus hati-hati. Meski bebas
+      dan banyak pilihan, tetapi untuk setiap langkah yang kita jalankan akan ada
+      dampak yang ditimbulkan. Bisa positif dan juga bisa negatif. Nah sebagai manusia
+      biasa, kita juga harus berani dalam menghadapi cobaan dari Tuhan supaya seseorang
+      bisa lebih maju. Di samping itu semua, bermain dam-daman juga bisa bermanfaat
+      untuk melatih kecerdasan dan melatih kita dalam mengambil resiko di setiap
+      pilihan hidup kita.

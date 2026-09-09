@@ -1,0 +1,23 @@
+{
+    "name": "Museum.Games.Dakon.Tests.PlayMode",
+    "rootNamespace": "Museum.Games.Dakon.Tests",
+    "references": [
+        "Museum.Games.Dakon",
+        "Museum.Core",
+        "UnityEngine.UI",
+        "UnityEngine.TestRunner"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,19 @@
+{
+    "name": "Museum.Net",
+    "rootNamespace": "Museum.Net",
+    "references": [
+        "ColyseusSDK",
+        "Museum.Core",
+        "Museum.Games.Dakon",
+        "Museum.Games.Egrang"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

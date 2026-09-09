@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d504aca1d624112a3a119f35b476e5, type: 3}
+  m_Name: bitingan
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.GameLessonData
+  gameKey: bitingan
+  displayName: Bitingan
+  sections:
+  - heading: KONSEP SAINS
+    body: "Hubungan antara gaya, arah, dan lintasan gerak; mekanisme kontrol dan
+      ketepatan gerakan; pengaruh perubahan posisi terhadap hasil aktivitas; serta
+      pengembangan keterampilan ilmiah melalui pengukuran, pengamatan pola, dan evaluasi
+      hubungan sebab\u2013akibat."
+  - heading: SPORT SCIENCE
+    body: Anatomi pada Bitingan= Permainan Bitingan melibatkan koordinasi otot tangan,
+      jari, mata, dan tungkai dalam aktivitas melempar, mengambil, dan bergerak cepat.
+      Aktivitas ini membantu meningkatkan kemampuan motorik halus maupun kasar pemain.
+      Gerakan melempar dan mengambil benda menggunakan kerja otot bahu, lengan, pergelangan
+      tangan, dan jari secara terkoordinasi. Selain itu, otot tungkai dan inti tubuh
+      membantu menjaga keseimbangan saat pemain bergerak dan berpindah posisi. Aktivitas
+      dalam Bitingan dapat meningkatkan kelincahan, konsentrasi, dan koordinasi neuromuskular
+      karena dilakukan dengan gerakan cepat dan berulang. Permainan ini juga mendukung
+      perkembangan kontrol gerak tubuh pemain. Biomekanika Gerak pada Bitingan= Bitingan
+      melibatkan prinsip biomekanika berupa gaya lemparan, ketepatan gerak, dan koordinasi
+      tubuh saat melempar maupun mengambil objek. Pengaturan kekuatan dan arah gerakan
+      sangat memengaruhi keberhasilan pemain. Gerakan mengambil dan berpindah posisi
+      membutuhkan keseimbangan tubuh serta perpindahan berat badan yang efisien agar
+      gerak tetap stabil. Posisi sendi dan koordinasi otot membantu menghasilkan
+      gerakan yang cepat dan terkontrol. Aktivitas gerak cepat dan reaktif dalam
+      Bitingan membantu meningkatkan agility, waktu reaksi, dan koordinasi neuromuskular
+      pemain. Pola gerak multidirectional tersebut mendukung kemampuan kontrol tubuh
+      secara dinamis.
+  - heading: ASAL-USUL
+    body: Permainan tradisional yang dikenal dengan nama lurah-lurahan atau bitingan
+      ini pada dasarnya merupakan simbol kehidupan bermasyarakat di desa. Permainan
+      ini disimbolkan dengan sebuah alat, yaitu lidi (biting). Mungkin dari permainan
+      ini yang kemudian menjadikan orang-orang di Jogja dan Jawa Tengah menyebut
+      suara pada pemilihan umum dengan sebutan biting. Kira-kira wong kui bakal entuk
+      biting piro? (kira-kira orang itu akan dapat suara berapa?)
+  - heading: SENI & BUDAYA
+    body: Selain belajar berhitung, ternyata ada hal lain yang bisa dipelajari anak.
+      Diantaranya adalah belajar menunggu giliran, belajar sportif (dengan mengakui
+      ada lidi yang goyang meski pemain lain tidak melihat), juga belajar strategi
+      pemecahan masalah.

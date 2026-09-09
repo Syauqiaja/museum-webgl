@@ -1,0 +1,70 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d504aca1d624112a3a119f35b476e5, type: 3}
+  m_Name: sluku_sluku_bathok
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.GameLessonData
+  gameKey: sluku_sluku_bathok
+  displayName: Sluku-sluku Bathok
+  sections:
+  - heading: KONSEP SAINS
+    body: "Interaksi antara rangsangan suara, ritme, dan respons tubuh dalam menghasilkan
+      pola gerakan terkoordinasi; mekanisme persepsi pendengaran dan sinkronisasi
+      gerak terhadap stimulus berulang; hubungan antara ritme, keteraturan gerakan,
+      dan adaptasi respons tubuh; serta pengembangan keterampilan ilmiah melalui
+      pengamatan pola respons, interpretasi hubungan stimulus\u2013respons, dan refleksi
+      terhadap fenomena gerak kolektif."
+  - heading: SPORT SCIENCE
+    body: Anatomi pada Sluku-Sluku Bathok= Permainan Sluku-Sluku Bathok melibatkan
+      koordinasi otot tangan, kaki, dan tubuh melalui gerakan tepukan, ayunan, dan
+      perubahan posisi tubuh secara ritmis. Aktivitas ini membantu meningkatkan koordinasi
+      motorik dan keseimbangan tubuh pemain. Gerakan dalam permainan ini menggunakan
+      kerja otot lengan, pergelangan tangan, dan tungkai yang dilakukan secara berulang
+      mengikuti irama lagu. Otot inti juga berperan menjaga stabilitas postur tubuh
+      selama permainan berlangsung. Aktivitas ritmis pada Sluku-Sluku Bathok dapat
+      membantu meningkatkan koordinasi neuromuskular, konsentrasi, dan kontrol gerak
+      tubuh. Permainan ini juga mendukung perkembangan fleksibilitas dan keterampilan
+      motorik anak. Biomekanika Gerak pada Sluku-Sluku Bathok= Sluku-Sluku Bathok
+      melibatkan gerakan ritmis yang membutuhkan koordinasi waktu, keseimbangan,
+      dan sinkronisasi gerak tubuh. Ketepatan gerak sangat dipengaruhi oleh kesesuaian
+      ritme dan kontrol tubuh pemain. Gerakan tepukan dan ayunan tangan menunjukkan
+      prinsip biomekanika tentang koordinasi segmental dan efisiensi gerak berulang.
+      Posisi tubuh yang stabil membantu menghasilkan gerakan yang lebih terkontrol
+      dan harmonis. Aktivitas gerak berirama dalam permainan ini membantu meningkatkan
+      koordinasi neuromuskular, reaksi gerak, dan keseimbangan dinamis. Pola gerak
+      ritmis tersebut juga mendukung efisiensi kontrol motorik pemain.
+  - heading: ASAL-USUL
+    body: Sluku-sluku bathok adalah lagu dolanan yang berasal dari Jawa Tengah yang
+      mengandung unsur religi. hal ini karena lagu sluku-sluku bathok diciptakan
+      oleh salah satu wali songo, yaitu Sunan Kalijogo. lagu ini digunakan sunan
+      kalijogo untuk menyebarkan agama Islam.
+  - heading: SENI & BUDAYA
+    body: "Lagu sluku-sluku bathok :\nSluku Sluku Bathok Bathoke Ela Elo\nSi Rama
+      Menyang Sala Oleh olehe Payung Mutho Mak Jenthit Lolo Lo Bah Yen Mati Ora Obah\nYen
+      Obah Medeni Bocah Yen Urip Goleko Duwit\n\nMakna dalam syair/tembanag tersebut:\n1.\t\u2018Sluku
+      Sluku Bathok\u2019 bermakna bahwa hidup tak hanya soal bekerja, sehingga seseorang
+      perlu mengistirahatkan kepala (pikiran) agar jiwa, dan raga kita dapat kembali
+      bekerja dengan maksimal esok hari.\n2.\t\u2018Bathoke Ela Elo\u2019 bermakna
+      bahwa pikiran kita harus selalu mengingat lafadz dzikir \u201CLaa Ilaaha Illallah\u201D
+      agar lebih tenang dan tentram dalam menjalani kehidupan.\n3.\t\u2018Si Rama
+      Menyang Sala\u2019 mengambil makna dari kata \u201Csiram\u201D yang berarti
+      mandi atau bersuci, \u201Cmenyang\u201D yang artinya menuju, dan Solo yang
+      dimaknai dengan salat. Sehingga lirik tersebut meminta kita untuk menyucikan
+      diri untuk mendirikan salat.\n4.\t\u2018Oleh olehe Payung Mutho\u2019 bermakna
+      bahwa ibadah yang kita lakukan akan membuat kita mendapatkan \u201Cpayung\u201D
+      yang melambangkan perlindungan dari Tuhan.\n5.\t\u2018Mak Jenthit Lolo Lo Bah\u2019
+      bermakna bahwa waktu menjelang kematian tak akan bergerak maju ataupun mundur
+      sehingga kita harus selalu mendekatkan diri kepada Tuhan.\n6.\t\u2018Yen Mati
+      Ora Obah\u2019 bermakna bahwa waktu setelah kematian tidak ada lagi yang bisa
+      diubah.\n\n7.\t\u2018Yen Obah Medeni Bocah\u2019 bermakna bahwa jika yang sudah
+      mati akan dihidupkan kembali maka akan menakutkan.\n8.\t\u2018Yen Urip Goleko
+      Duwit\u2019 bermakna bahwa manusia harus memanfaatkan waktu dengan baik, dengan
+      beribadah, beramal, dan bekerja agar tak menyesal di kemudian hari.\n\n"

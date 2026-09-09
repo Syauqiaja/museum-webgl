@@ -1,0 +1,38 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: df41c92ccb5c7578cf385535057abab0, type: 3}
+  m_Name: EgrangStick_Lingkaran
+  m_EditorClassIdentifier: Museum.Games.Egrang::Museum.Games.Egrang.EgrangStickProfile
+  shape: 1
+  displayName: Egrang Lingkaran
+  shapeText: Lingkaran
+  sizeText: Diameter 8 cm
+  formulaText: "L = \u03C0 \xD7 r\xB2"
+  areaText: "50,24 cm\xB2"
+  zones:
+    zones:
+    - Start: 0
+      End: 0.31
+      Result: 0
+    - Start: 0.31
+      End: 0.41
+      Result: 1
+    - Start: 0.41
+      End: 0.59000003
+      Result: 2
+    - Start: 0.59000003
+      End: 0.69000006
+      Result: 1
+    - Start: 0.69000006
+      End: 1
+      Result: 0
+  sweepSeconds: 1.25

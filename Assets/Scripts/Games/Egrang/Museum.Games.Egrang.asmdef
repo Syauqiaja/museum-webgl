@@ -1,0 +1,19 @@
+{
+    "name": "Museum.Games.Egrang",
+    "rootNamespace": "Museum.Games.Egrang",
+    "references": [
+        "GUID:e12f4d09be4854089a7c9b2d9876dd1a",
+        "UnityEngine.UI",
+        "Unity.TextMeshPro",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

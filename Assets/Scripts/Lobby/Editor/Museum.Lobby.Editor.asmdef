@@ -1,0 +1,23 @@
+{
+    "name": "Museum.Lobby.Editor",
+    "rootNamespace": "Museum.Lobby.EditorTools",
+    "references": [
+        "Museum.Core",
+        "Museum.Core.Editor",
+        "Museum.Lobby",
+        "UnityEngine.UI",
+        "Unity.TextMeshPro",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

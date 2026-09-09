@@ -1,0 +1,18 @@
+{
+    "name": "Museum.Games.Dakon",
+    "rootNamespace": "Museum.Games.Dakon",
+    "references": [
+        "GUID:e12f4d09be4854089a7c9b2d9876dd1a",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:7d8788162c0190c4c8b801543ada1607"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

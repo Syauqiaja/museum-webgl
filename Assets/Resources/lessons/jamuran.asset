@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d504aca1d624112a3a119f35b476e5, type: 3}
+  m_Name: jamuran
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.GameLessonData
+  gameKey: jamuran
+  displayName: Jamuran
+  sections:
+  - heading: KONSEP SAINS
+    body: Pengenalan pola dan respons terhadap perubahan stimulus dalam aktivitas
+      kelompok; mekanisme persepsi ruang dan koordinasi gerak kolektif; hubungan
+      ritme dan sinkronisasi terhadap keteraturan gerakan; serta pengembangan keterampilan
+      ilmiah melalui observasi pola interaksi dan interpretasi dinamika kelompok.
+  - heading: SPORT SCIENCE
+    body: Anatomi pada Jamuran = Permainan Jamuran melibatkan koordinasi otot tungkai,
+      tangan, dan tubuh dalam aktivitas berjalan, berputar, serta bergerak mengikuti
+      irama permainan. Aktivitas ini membantu meningkatkan koordinasi motorik dan
+      keseimbangan tubuh pemain. Gerakan berputar dan berpindah posisi menggunakan
+      kerja otot kaki, panggul, dan otot inti untuk menjaga stabilitas tubuh selama
+      permainan berlangsung. Selain itu, koordinasi saraf dan otot berperan penting
+      dalam menjaga ritme gerakan pemain. Aktivitas dalam Jamuran mendukung perkembangan
+      kelincahan, fleksibilitas, dan kontrol gerak tubuh melalui pola gerak yang
+      dilakukan secara berulang. Permainan ini juga membantu meningkatkan konsentrasi
+      dan koordinasi neuromuskular. Biomekanika Gerak pada Jamuran= Jamuran melibatkan
+      gerakan ritmis dan perpindahan posisi yang membutuhkan keseimbangan serta kontrol
+      pusat massa tubuh. Pemain harus mampu menjaga stabilitas saat bergerak memutar
+      dan berpindah arah. Gerakan berjalan melingkar dan berhenti secara tiba-tiba
+      menunjukkan prinsip biomekanika tentang koordinasi gerak, keseimbangan, dan
+      pengaturan gaya tubuh. Ketepatan langkah dan posisi tubuh memengaruhi efisiensi
+      gerakan pemain. Aktivitas gerak dinamis dalam Jamuran membantu meningkatkan
+      agility, koordinasi neuromuskular, dan kemampuan reaksi tubuh terhadap perubahan
+      gerak. Pola gerak berirama tersebut juga mendukung efisiensi kontrol motorik
+      pemain.
+  - heading: ASAL-USUL
+    body: Jamuran merupakan salah satu lagu atau tembang dolanan yang berasal dari
+      tanah Jawa. Umumnya, lagu dolanan satu ini digunakan untuk mengiringi permainan
+      dengan nama yang sama. Lagu atau tembang jamuran sendiri aslinya berasal dari
+      Jawa Timur dan diciptakan oleh Sunan Giri sebagai media penyebaran agama islam.
+      Lagu "Jamuran" berasal dari Jawa Tengah dan merupakan karya ciptaan Ki Hadi
+      Sukatno. Lagu ini cukup singkat dan hanya terdiri dari empat baris. Isi liriknya
+      pun menggambarkan permainan "Jamuran" yang intinya menirukan gaya dari jenis-jenis
+      jamur.
+  - heading: SENI & BUDAYA
+    body: "Adapun lirik dari tembang dolanan Jamuran sebagai berikut:\nJamuran (jamuran)\nJamuran
+      ya gege thok (jamuran ya bohongan)\nJamur apa ya gege thok (jamur apa yang
+      bohong)\nJamur gajih mbejijih sa ara-ara (jamur lemak yang lembek menyelimuti
+      padang)\nSira mbedhek jamur apa? (kamu menebak jamur apa?)\n\nTembang dolanan
+      ini mengajarkan anak-anak untuk mengikuti arahan pemimpin ketika mereka berada
+      di masyarakat. Selain itu, karya ini mengajarkan kita cara hidup yang lebih
+      bersosialisasi dan bermasyarakat. Dengan berpartisipasi dalam permainan Jamuran,
+      kita juga dididik untuk menghadapi hukuman jika melakukan kesalahan. Selain
+      mengajarkan kita tanggung jawab, daya ingat kita dan apa yang kita ketahui
+      juga dilatih. Oleh karena itu, \"Sira mbadh\xE9 jamur apa?\" adalah pertanyaan
+      yang muncul setelah lirik dan mengajak kita untuk mempelajari berbagai nama
+      jamur. Banyak variasi jenis jamur ini bisa menjadi pelajaran hidup bagi kita
+      semua. Ada jamur yang dapat diolah menjadi sayur dan bermanfaat bagi kehidupan,
+      tetapi ada juga jamur yang beracun.\n"

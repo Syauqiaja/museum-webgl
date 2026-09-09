@@ -1,0 +1,62 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d504aca1d624112a3a119f35b476e5, type: 3}
+  m_Name: lompat_tali
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.GameLessonData
+  gameKey: lompat_tali
+  displayName: Lompat Tali
+  sections:
+  - heading: KONSEP SAINS
+    body: "Transformasi energi dalam aktivitas gerak berulang; hubungan aktivitas
+      otot, kebutuhan oksigen, dan respons fisiologis tubuh; mekanisme adaptasi terhadap
+      ritme dan intensitas aktivitas; serta pengembangan keterampilan ilmiah melalui
+      pengukuran respons tubuh dan interpretasi hubungan aktivitas\u2013energi."
+  - heading: SPORT SCIENCE
+    body: Anatomi pada Lompat Tali= Permainan Lompat Tali melibatkan kerja otot tungkai,
+      seperti quadriceps, hamstring, dan gastrocnemius, untuk menghasilkan gerakan
+      melompat secara berulang. Aktivitas ini membantu meningkatkan kekuatan otot
+      kaki dan daya tahan tubuh. Gerakan melompat menggunakan koordinasi sendi lutut,
+      panggul, dan pergelangan kaki untuk menjaga keseimbangan serta stabilitas tubuh
+      saat mendarat. Otot inti juga berperan penting dalam mempertahankan postur
+      tubuh selama permainan berlangsung. Aktivitas Lompat Tali dapat meningkatkan
+      kerja jantung dan paru-paru karena dilakukan dengan intensitas gerak yang kontinu.
+      Permainan ini mendukung peningkatan kebugaran aerobik, koordinasi tubuh, dan
+      kelincahan pemain. Biomekanika Gerak pada Lompat Tali = Lompat Tali melibatkan
+      prinsip biomekanika berupa gaya dorong, keseimbangan, dan koordinasi gerak
+      tubuh saat melakukan tolakan dan pendaratan. Pemain harus mampu mengontrol
+      pusat massa tubuh agar tetap stabil ketika melompat. Gerakan melompat membutuhkan
+      perpindahan energi dari otot tungkai untuk menghasilkan daya ledak dan ritme
+      gerak yang konsisten. Posisi kaki dan sudut lutut sangat memengaruhi efisiensi
+      serta keamanan saat mendarat. Aktivitas melompat berulang dalam permainan ini
+      membantu meningkatkan agility, koordinasi neuromuskular, dan kemampuan reaksi
+      tubuh. Pola gerak ritmis tersebut juga mendukung efisiensi gerakan dan kontrol
+      keseimbangan dinamis pemain.
+  - heading: ASAL-USUL
+    body: 'Lompat tali atau dalam bahasa Inggris disebut skipping, skipping rope
+      atau skipping jump merupakan olahraga dan permainan yang sudah ada sejak zaman
+      dahulu. Tidak diketahui siapa yang menciptakan permainan lompat karet atau
+      lompat tali. Sekitar tahun 1600 SM, permainan ini sudah dimainkan di Mesir.
+
+
+      Pendapat
+      lain menyatakan bahwa permainan ini berasal dari China dan Jepang. Di samping
+      itu, ada juga yang berpendapat bahwa lompat tali dimainkan oleh Suku Aborigin
+      di Australia. Mereka memainkan lompat tali menggunakan tali dari tanaman rambat
+      dan bambu hutan. Pada abad ke-19, lompat tali dimainkan oleh anak- anak perempuan
+      dengan tiga pemain, dua pemain memegang dan memutar tali, sedangkan satu pemain
+      bertugas melompat di tengah sambil bernyanyi.
+
+'
+  - heading: SENI & BUDAYA
+    body: Filosofi dari permainan ini adalah setiap kali kita selesai menaklukkan
+      tantangan, maka akan ada tantangan lain yang lebih tinggi atau sulit dari sebelumnya.
+      Oleh karena itu, kita tidak boleh menyerah dan harus tetap berusaha.

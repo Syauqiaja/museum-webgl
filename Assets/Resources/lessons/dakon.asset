@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d504aca1d624112a3a119f35b476e5, type: 3}
+  m_Name: dakon
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.GameLessonData
+  gameKey: dakon
+  displayName: Dakon
+  sections:
+  - heading: KONSEP SAINS
+    body: "Keanekaragaman hayati dan variasi karakteristik biji sebagai representasi
+      sumber daya hayati; hubungan struktur\u2013fungsi pada biji (ukuran, bentuk,
+      massa, tekstur) terhadap pola distribusi dan strategi permainan; klasifikasi
+      dan pengukuran sebagai dasar pengenalan variasi biologis; konsep aliran dan
+      distribusi sumber daya dalam sistem agroekosistem; serta pengembangan keterampilan
+      ilmiah melalui observasi, perbandingan, pengelompokan, dan interpretasi pola
+      permainan."
+  - heading: SPORT SCIENCE
+    body: 'Anatomi Gerak : Permainan Dakon secara primer mengaktifkan ekstremitas
+      atas, dengan fokus pada tangan dan jari, didukung oleh lengan dan bahu. Koordinasi
+      neuromuskular yang presisi sangat esensial. Sendi yang Terlibat = Sendi Bahu
+      (Glenohumeral): Berperan dalam stabilisasi lengan dan jangkauan minimal untuk
+      memposisikan tangan di atas papan. Sendi Siku (Elbow): Melakukan fleksi dan
+      ekstensi untuk mengatur jarak tangan dari papan, serta pronasi/supinasi lengan
+      bawah untuk orientasi telapak tangan. Sendi Pergelangan Tangan (Radiocarpal):
+      Dipertahankan dalam posisi netral atau sedikit ekstensi untuk stabilitas, mendukung
+      gerakan jari yang presisi. Sendi Jari (MCP, PIP, DIP): Sendi-sendi ini krusial
+      untuk gerakan motorik halus, memungkinkan fleksi dan ekstensi yang presisi
+      untuk menjepit (pincer grasp) dan melepaskan biji. Otot yang Terlibat Gerakan
+      Dakon melibatkan otot ekstrinsik (berasal dari lengan bawah) dan intrinsik
+      (berada di dalam tangan). Biomekanika Gerak = Biomekanika Dakon berfokus pada
+      analisis gaya dan gerakan selama manipulasi biji, didominasi oleh fine motor
+      skills dan merupakan contoh open kinetic chain untuk tangan dan jari. Kontrol
+      Motorik Halus: Kemampuan mengatur kekuatan otot-otot kecil di tangan dan jari
+      untuk gerakan presisi adalah inti permainan'
+  - heading: ASAL-USUL
+    body: Latar belakang dakon ini adalah dari kehidupan petani bagaimana bertani
+      menghasilkan panen sebanyak mungkin dan dimasukkan ke dalam lumbung. Setiap
+      lubang itu dinamakan lumbung sawah. Sawah yang tidak dikerjakan dinamakan bera.
+      Sawah yang hasilnya sangat kurang dinamakan ngacang atau nandur kacang.
+  - heading: SENI & BUDAYA
+    body: 'Pada papan dakon terdapat tujuh area lumbung kecil yang saling berhadapan,
+      bermakna bahwa semua orang mempunyai kesempatan yang sama. Biji dakon diambil
+      kemudian diletakkan lagi, memiliki makna bahwa dalam hidup kita harus mau memberi
+      dan menerima. Biji dakon diletakkan satu persatu pada area lubang, memiliki
+      makna kita harus menyelesaikan masalah satu persatu asalkan jujur dan baik.
+      Meletakkan biji dakon satu persatu secara memutar ke kanan memiliki arti bahwa
+      jika kita mempunyai rejeki, kita dapat menyimpannya. Kita menyimpan di area
+      lumbung dalam satu kali putaran bermakna jika kita masih mempunyai kelebihan,
+      bisa kita berikan ke yang lain. Pemain tidak diperkenankan meletakkan biji
+      di dalam area lumbung milik lawan (lubang besar), memiliki makna kita harus
+      menghormati orang lain untuk bertanggungjawab terhadap dirinya sendiri. Pemenangnya
+      adalah pemain yang mempunyai jumlah biji paling banyak di lubang besar miliknya,
+      mempunyai arti bahwa mereka yang berhasil adalah yang mempunyai banyak tabungan
+      amalnya.
+
+
+      Permainan ini juga mengajarkan bahwa jika kita mempunyai rejeki,
+      kita dapat membaginya untuk kebutuhan kita sendiri satu per satu (tidak perlu
+      berlebih). Ketika rejeki itu berlebih, kita boleh menyimpannya di lumbung (lobang
+      besar). Lagi-lagi cukup hanya satu. Dan jika kita masih mempunyai lebihnya,
+      kita bagikan ke saudara, tetangga, teman, dan lain-lain.
+
+'

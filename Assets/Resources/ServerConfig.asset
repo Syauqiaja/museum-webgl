@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6f7fac8a7d8b6bfc1714d84620ff767b, type: 3}
+  m_Name: ServerConfig
+  m_EditorClassIdentifier: Assembly-CSharp::Museum.Core.ServerConfig
+  devEndpoint: ws://localhost:2567
+  prodEndpoint: wss://api.museum.fajrsyauqi.com
+  useDevEndpoint: 0
