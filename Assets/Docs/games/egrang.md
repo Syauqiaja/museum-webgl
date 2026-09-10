@@ -210,7 +210,16 @@ the local one, which ran on unscaled time while the tab was frozen.
 - `EgrangRacer` (per lane) — pairs a track, a mover and a seat; counts strides locally so an
   echo can confirm or correct without measuring the transform back into units.
 - `EgrangStepMover` — plays the step. Movement is **code-driven** (`applyRootMotion` off), so
-  a stride is exactly `stepLength` whatever the clips were authored to do.
+  a stride is exactly `stepLength` whatever the clips were authored to do. It also **follows
+  the ground**: on Awake it measures how high the scene placed the walker over the terrain, and
+  every stride end and snap keeps that height (a ray from 1.5 m above the walker). The lanes
+  fall ~0.5 m from start to finish, and a stride moves along the flat, so without it a walker
+  standing on its stilts at the start line floats off them by the finish. No ground below — the
+  tests — and nothing changes. The step clips' state speeds in `Anim_Egrang.controller` are set
+  so each clip plays out in the time the mover takes: Walk Egrang ×1.62 (1.82 s of clip over a
+  1.12 s full step), Walk Half ×1.63 (0.82 s over 0.5 s), Fail ×1.53 (0.54 s over the 0.35 s
+  shake). At ×1 the legs kept walking for 0.3–0.7 s after the racer had stopped. Retune them
+  together with `moveDuration` / `interStrideSettle` / `shakeDuration`.
 - `SkillCheckBar` — cursor sweep, zone evaluation, lockout, and the **baked** track texture:
   its `onStepResult` is subscribed **in code** by `EgrangRace` and must have **no persistent
   UnityEvent target in the scene**. A call wired straight to a mover drives that lane on every
@@ -220,6 +229,17 @@ the local one, which ran on unscaled time while the tab was frozen.
 - `EgrangStick` (×2 per racer) — a two-pivot follower: the footplate is welded to the foot
   bone, the grip slides along the shaft to reach the hand. Animation is authored on the
   character, never on the stick. `Rebind(hand, foot)` points it at another body's bones.
+  **The binding is captured in metres** — marker positions times the stick root's scale —
+  because the stilt FBX is imported at ×151. Measured in raw local units (before 2026-09-11)
+  the footplate offset came out 0.0025 m instead of 0.38 m: the pole's *tip* was welded to the
+  foot, the footplate floated up the shin, the grip was pinned at the top of a travel range too
+  short for the hand, and the right pole leaned into the kid's body where it could not be seen —
+  "he only holds one stick". `EgrangStickScaleTests` pins it; the solver's own tests are unit
+  scale and could not. Each stick's `footOffset` moves the contact point from the ankle pivot to
+  the sole (0.10 m, in foot-bone space), `handleTravel` is 0.35 m so the grip reaches the hand,
+  and each walker (with its lane's start and finish markers) is lifted so the pivot stands
+  ~0.30 m over its own ground — the height at which the tips touch it: lanes 1/2/3 +0.326 /
+  +0.320 / +0.126, lane 3's ground being 0.2 m lower.
 - `EgrangRacerBody` (on each `Egrang Player`) — dresses the walker in its player's chosen
   character (`IEgrangSession.AvatarOf` ← `players[].avatar`; offline, lane 1 wears
   `SessionData.PlayerAvatar`), called from `EgrangRace.DrawRoster` on every seat change.

@@ -133,12 +133,21 @@ namespace Museum.Games.Egrang
         /// <summary>
         /// Reads the authored marker layout and resolves the grip's travel range. Call again if the
         /// stick model is swapped at runtime.
+        ///
+        /// Every offset is captured in <b>metres along the root's local axes</b> — the local marker
+        /// positions times the root's scale. The solver backs the root out from the foot and slides
+        /// the grip in world metres, and the shipped stilt FBX is imported at ×151: measured in raw
+        /// local units the footplate sat 0.0025 "metres" above the tip, so the tip was welded to the
+        /// foot, the footplate floated 0.33 m up the shin, and the grip was pinned at the top of a
+        /// travel range 150× too short for the hand to ever reach (2026-09-11). Unit-scale sticks,
+        /// which is all the solver's tests use, never showed it.
         /// </summary>
         public void CaptureBinding()
         {
-            Vector3 footstepLocal = transform.InverseTransformPoint(footstep.position);
-            Vector3 gripLocal = transform.InverseTransformPoint(handle.position);
-            Vector3 tipLocal = tip != null ? transform.InverseTransformPoint(tip.position) : footstepLocal;
+            Vector3 scale = transform.lossyScale;
+            Vector3 footstepLocal = Vector3.Scale(transform.InverseTransformPoint(footstep.position), scale);
+            Vector3 gripLocal = Vector3.Scale(transform.InverseTransformPoint(handle.position), scale);
+            Vector3 tipLocal = tip != null ? Vector3.Scale(transform.InverseTransformPoint(tip.position), scale) : footstepLocal;
 
             _binding = EgrangStickBinding.Create(footstepLocal, gripLocal, tipLocal);
 
@@ -203,9 +212,10 @@ namespace Museum.Games.Egrang
             transform.SetPositionAndRotation(pose.Position, pose.Rotation);
 
             // Root moved first, so this lands the grip on the shaft at the solved height regardless
-            // of how deep in the hierarchy the marker sits.
-            handle.position = transform.TransformPoint(
-                _binding.FootstepLocalOffset + _binding.ShaftAxisLocal * pose.HandleDistance);
+            // of how deep in the hierarchy the marker sits. Rotation only, never TransformPoint: the
+            // binding is already in metres, and TransformPoint would apply the root's scale twice.
+            handle.position = pose.Position + pose.Rotation *
+                (_binding.FootstepLocalOffset + _binding.ShaftAxisLocal * pose.HandleDistance);
 
             HandleDistance = pose.HandleDistance;
             Slack = pose.Slack;

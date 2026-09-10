@@ -328,7 +328,15 @@ Structural rules that are easy to get wrong:
   `Script attached to 'Player N Point' … is missing`). The symptom is "the bar works, the
   character does not walk" — check the lane roots before the input path.
 - Each `EgrangStick` needs `markerFilter` set to `_L_` or `_R_` — the shipped FBXs hold both
-  stilts, and without the filter both components bind the same side.
+  stilts, and without the filter both components bind the same side. (Both poles in the FBX
+  share the one `EgrangAnak_Lingkaran_L` mesh — the R object showing the `_L` mesh is the
+  model, not a mis-wire.) `footOffset` is set (ankle → sole, 0.10 m) and `handleTravel` is 0.35;
+  the wipe left both at their defaults, which parks the footplate inside the ankle.
+- **The walkers stand on their stilts, not on the ground.** `Egrang Player` and its lane's
+  `Start Line` / `Finish Line` are lifted together (+0.326 / +0.320 / +0.126 for lanes 1/2/3,
+  set 2026-09-11) so each pivot is ~0.30 m over its own ground and the stilt tips touch it. Move
+  the walker without its markers and the first reconnect snap puts it back down; move the
+  terrain and re-measure. `EgrangStepMover` keeps that stand height over the slope as it walks.
 - `EgrangRace.racers` must be in **seat order**: `Player 1 Point`, `Player 2 Point`,
   `Player 3 Point`. `Museum/Egrang/Wire Scene References` now fills `racers` and
   `nameplates` in that order. It is the tool that numbers the lanes, so it owns the arrays

@@ -44,7 +44,19 @@ namespace Museum.Games.Egrang
         [Tooltip("Metres of sideways wobble at the start of the shake. It decays to nothing.")]
         [SerializeField] private float shakeAmplitude = 0.06f;
 
+        [Header("Ground")]
+        [Tooltip("Keep the walker at the height the scene placed it above the terrain as it walks, so the stilt tips stay on the ground down a sloping lane. The height is measured once, on Awake.")]
+        [SerializeField] private bool followGround = true;
+        [Tooltip("What counts as ground for followGround. Triggers are always ignored.")]
+        [SerializeField] private LayerMask groundMask = ~0;
+
+        /// <summary>How far above the walker's pivot the ground probe starts — under any roof, over any slope a stride can climb.</summary>
+        const float ProbeLift = 1.5f;
+        const float ProbeDepth = 5f;
+
         Coroutine _routine;
+        bool _hasStandHeight;
+        float _standHeight;
 
         /// <summary>
         /// Seconds the longest step — a full one — takes to play out: two strides with the mid-step
@@ -73,12 +85,44 @@ namespace Museum.Games.Egrang
                 _routine = null;
             }
 
-            transform.position = position;
+            transform.position = OnGround(position);
         }
 
         void Awake()
         {
             if (animator == null) animator = GetComponentInChildren<Animator>();
+
+            // The scene lifts each walker onto its stilts — pivot high enough that the tips reach the
+            // ground. That lift is only right for the ground under the start line: the lanes fall
+            // ~0.5 m to the finish, and a stride moves along the flat, so without this the racer
+            // floats off the end of its own stilts by the finish line.
+            _hasStandHeight = TryGroundHeight(transform.position, out float ground);
+            if (_hasStandHeight) _standHeight = transform.position.y - ground;
+        }
+
+        /// <summary>
+        /// <paramref name="position"/> at the walker's stand height over the ground beneath it.
+        /// Unchanged when ground following is off, was never measured, or finds nothing below — a
+        /// scene with no terrain (the tests) walks exactly where it is told.
+        /// </summary>
+        Vector3 OnGround(Vector3 position)
+        {
+            if (!followGround || !_hasStandHeight) return position;
+            if (TryGroundHeight(position, out float ground)) position.y = ground + _standHeight;
+            return position;
+        }
+
+        bool TryGroundHeight(Vector3 position, out float height)
+        {
+            if (Physics.Raycast(position + Vector3.up * ProbeLift, Vector3.down, out RaycastHit hit,
+                                ProbeLift + ProbeDepth, groundMask, QueryTriggerInteraction.Ignore))
+            {
+                height = hit.point.y;
+                return true;
+            }
+
+            height = 0f;
+            return false;
         }
 
         /// <summary>
@@ -135,7 +179,7 @@ namespace Museum.Games.Egrang
         IEnumerator StrideRoutine()
         {
             Vector3 start = transform.position;
-            Vector3 end = start + transform.forward * stepLength;
+            Vector3 end = OnGround(start + transform.forward * stepLength);
 
             if (moveDuration > 0f)
             {

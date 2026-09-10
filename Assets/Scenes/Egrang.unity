@@ -4023,7 +4023,7 @@ Transform:
   m_GameObject: {fileID: 12}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -3}
+  m_LocalPosition: {x: 0, y: 0.326, z: -3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4156,7 +4156,7 @@ Transform:
   m_GameObject: {fileID: 49}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -3}
+  m_LocalPosition: {x: 0, y: 0.32, z: -3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4171,7 +4171,7 @@ Transform:
   m_GameObject: {fileID: 51}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 22}
+  m_LocalPosition: {x: 0, y: 0.126, z: 22}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4298,7 +4298,7 @@ Transform:
   m_GameObject: {fileID: 74}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -3}
+  m_LocalPosition: {x: 0, y: 0.126, z: -3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4369,7 +4369,7 @@ Transform:
   m_GameObject: {fileID: 92}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 22}
+  m_LocalPosition: {x: 0, y: 0.32, z: 22}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4384,7 +4384,7 @@ Transform:
   m_GameObject: {fileID: 93}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 22}
+  m_LocalPosition: {x: 0, y: 0.326, z: 22}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -6096,7 +6096,7 @@ Transform:
   m_GameObject: {fileID: 212}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -3}
+  m_LocalPosition: {x: 0, y: 0.326, z: -3}
   m_LocalScale: {x: 2.340178, y: 2.340178, z: 2.340178}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7292,7 +7292,7 @@ Transform:
   m_GameObject: {fileID: 289}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -3}
+  m_LocalPosition: {x: 0, y: 0.32, z: -3}
   m_LocalScale: {x: 2.340178, y: 2.340178, z: 2.340178}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -7312,7 +7312,7 @@ Transform:
   m_GameObject: {fileID: 290}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -3}
+  m_LocalPosition: {x: 0, y: 0.126, z: -3}
   m_LocalScale: {x: 2.340178, y: 2.340178, z: 2.340178}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -15232,6 +15232,10 @@ MonoBehaviour:
   interStrideSettle: 0.12
   shakeDuration: 0.35
   shakeAmplitude: 0.06
+  followGround: 1
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!114 &1048
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15253,6 +15257,10 @@ MonoBehaviour:
   interStrideSettle: 0.12
   shakeDuration: 0.35
   shakeAmplitude: 0.06
+  followGround: 1
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!114 &1049
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15274,6 +15282,10 @@ MonoBehaviour:
   interStrideSettle: 0.12
   shakeDuration: 0.35
   shakeAmplitude: 0.06
+  followGround: 1
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
 --- !u!114 &1050
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15288,13 +15300,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   handBone: {fileID: 328}
   footBone: {fileID: 399}
-  footOffset: {x: 0, y: 0, z: 0}
+  footOffset: {x: 0.00526, y: 0.02123, z: 0.03671}
   handOffset: {x: 0, y: 0, z: 0}
   markerFilter: _L_
   footstep: {fileID: 423}
   handle: {fileID: 445}
   tip: {fileID: 390}
-  handleTravel: 0.25
+  handleTravel: 0.35
   minHandleDistance: 0
   maxHandleDistance: 0
   drawGizmos: 1
@@ -15312,13 +15324,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   handBone: {fileID: 414}
   footBone: {fileID: 408}
-  footOffset: {x: 0, y: 0, z: 0}
+  footOffset: {x: 0.00526, y: 0.02123, z: 0.03671}
   handOffset: {x: 0, y: 0, z: 0}
   markerFilter: _L_
   footstep: {fileID: 386}
   handle: {fileID: 458}
   tip: {fileID: 426}
-  handleTravel: 0.25
+  handleTravel: 0.35
   minHandleDistance: 0
   maxHandleDistance: 0
   drawGizmos: 1
@@ -15336,13 +15348,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   handBone: {fileID: 413}
   footBone: {fileID: 409}
-  footOffset: {x: 0, y: 0, z: 0}
+  footOffset: {x: 0.00526, y: 0.02123, z: 0.03671}
   handOffset: {x: 0, y: 0, z: 0}
   markerFilter: _L_
   footstep: {fileID: 387}
   handle: {fileID: 459}
   tip: {fileID: 425}
-  handleTravel: 0.25
+  handleTravel: 0.35
   minHandleDistance: 0
   maxHandleDistance: 0
   drawGizmos: 1
@@ -15360,13 +15372,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   handBone: {fileID: 329}
   footBone: {fileID: 392}
-  footOffset: {x: 0, y: 0, z: 0}
+  footOffset: {x: -0.00724, y: 0.02122, z: 0.03637}
   handOffset: {x: 0, y: 0, z: 0}
   markerFilter: _R_
   footstep: {fileID: 417}
   handle: {fileID: 411}
   tip: {fileID: 382}
-  handleTravel: 0.25
+  handleTravel: 0.35
   minHandleDistance: 0
   maxHandleDistance: 0
   drawGizmos: 1
@@ -15384,13 +15396,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   handBone: {fileID: 330}
   footBone: {fileID: 391}
-  footOffset: {x: 0, y: 0, z: 0}
+  footOffset: {x: -0.00724, y: 0.02122, z: 0.03637}
   handOffset: {x: 0, y: 0, z: 0}
   markerFilter: _R_
   footstep: {fileID: 416}
   handle: {fileID: 410}
   tip: {fileID: 383}
-  handleTravel: 0.25
+  handleTravel: 0.35
   minHandleDistance: 0
   maxHandleDistance: 0
   drawGizmos: 1
@@ -15408,13 +15420,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   handBone: {fileID: 421}
   footBone: {fileID: 428}
-  footOffset: {x: 0, y: 0, z: 0}
+  footOffset: {x: -0.00724, y: 0.02122, z: 0.03637}
   handOffset: {x: 0, y: 0, z: 0}
   markerFilter: _R_
   footstep: {fileID: 333}
   handle: {fileID: 401}
   tip: {fileID: 422}
-  handleTravel: 0.25
+  handleTravel: 0.35
   minHandleDistance: 0
   maxHandleDistance: 0
   drawGizmos: 1
