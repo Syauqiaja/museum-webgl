@@ -12,8 +12,8 @@ Visual rules (canvas setup, palette, typography, frames, buttons, motion) live i
 
 ```
 Boot ─► MainMenu ─► Museum hub ─► game doorway ─► Lobby ─► game scene ─► Results ─┬─► Play Again
-        (nickname)  (single-player, (SceneTrigger-  (create /   (per game)         └─► Return to Museum
-                     no room)        Prompt)         join /
+        (nickname)  (presence room  (SceneTrigger-  (create /   (per game)         └─► Return to Museum
+                     `museum`)       Prompt)         join /
                                                      host start)
 
         ?room=CODE deep-link ─► auto-JoinById ─► Lobby room panel   ← NOT YET IMPLEMENTED
@@ -44,14 +44,16 @@ with a 3D background.
   `SessionData`, which survives scene loads; every room later sends it as `displayName`.
   It is also written to PlayerPrefs, so the field comes back pre-filled after a tab
   refresh and the name panel in the lobby stays the fallback it was meant to be.
-- **Enter Museum** → load Museum scene (no room). The button stays **disabled until the
+- **Enter Museum** → load Museum scene (it joins the `museum` presence room by itself; no lobby). The button stays **disabled until the
   typed name is valid**, so nobody can reach a room unnamed.
 - **Deep-link — not yet implemented.** The intent stands: on WebGL boot, read `?room=CODE`
   from the page URL (via `Application.absoluteURL` / jslib) and skip straight to auto-join
   in the Lobby. It waits on the real transport (see the Lobby note below).
 
 ### Museum hub
-- Single-player walkable scene, no room.
+- Walkable scene. `MuseumPresence` on the player rig joins the server's `museum` room so
+  other visitors appear as tinted capsules with nameplates; no match, no seat, and the
+  scene is fully usable alone when the server is down (see [networking.md §11](networking.md)).
 - Each game has a doorway (`SceneTriggerPrompt`): walk in, press Enter. With `useLobby` on
   the doorway does **not** load the game — it fills in `LobbyRequest.Pending`
   (`roomName`, `maxPlayers`, its `sceneName` as the destination, and a `displayName` for the

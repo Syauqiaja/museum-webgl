@@ -137,7 +137,7 @@ back to offline — a museum kiosk with no server still gets a game.
 `Assets/Resources/ServerConfig.asset` is the single place a server URL is written down:
 
 - `devEndpoint` — `ws://localhost:2567`, matching the server's `npm start`.
-- `prodEndpoint` — `wss://api.museum.fajrsyauqi.com`. **Must** be `wss://`: the page is
+- `prodEndpoint` — `wss://api.museumethnofun.com`. **Must** be `wss://`: the page is
   served over `https://` and browsers block mixed-content WebSockets.
 - `useDevEndpoint` — currently **on**. `Museum/Build/WebGL (Production)` flips it for the
   duration of the build and restores it afterwards, so a production build cannot ship the

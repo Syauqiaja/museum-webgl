@@ -10,7 +10,7 @@ a demonstrable in-browser fact, not a checklist.
   Unity SDK `0.17.17`.
 - Five scenes: `MainMenu`, `Museum`, `Lobby`, `Dakon`, `Egrang`. No Engklak.
 - Both games are complete on both sides and have been played end to end against the
-  deployed server. The client is live at `https://museum.fajrsyauqi.com`.
+  deployed server. The client is live at `https://museumethnofun.com`.
 - **Blocking the exhibit today:** scene wiring lost in the 2026-08-19 recovery and the video
   CDN's 403. Neither is a code problem. MainMenu and the Lobby have since been repaired
   (`e11c10b`, `696d214`); the **Museum doorways**, the whole **Dakon view** and the eight

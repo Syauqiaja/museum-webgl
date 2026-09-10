@@ -135,9 +135,15 @@ year-long cache would pin a visitor to the first build they ever loaded. The byt
 identical between builds only when nothing changed, and nginx's ETag makes revalidation a
 304.
 
-The **game server is still the old VPS** — `wss://api.museum.fajrsyauqi.com` at
-`101.32.239.188` — and the build's `prodEndpoint` points there. Moving it is a server-repo
-job; when it happens, `ServerConfig.prodEndpoint` changes and this client is rebuilt.
+The **game server moved to the same box on 2026-09-10** — `wss://api.museumethnofun.com`,
+`ServerConfig.prodEndpoint` follows it and the client was rebuilt. The server is a PM2
+process (`colyseus-app`, user `museum`, `/srv/museum`, port 2567) reached through the same
+Traefik that fronts the client, via a **file-provider** route
+(`/docker/traefik-3z6t/dynamic/museum-api.yml` → `http://127.0.0.1:2567`, Traefik is
+`network_mode: host`). The host `nginx` package is **disabled** — it cannot bind 80/443
+under Traefik and showed as `failed` until it was turned off. Server-side redeploy and the
+route itself are documented in the server repo's `deploy/README.md` §5b; the old
+`101.32.239.188` box no longer serves anything for this project.
 
 ### Previous host — `museum.fajrsyauqi.com` (nginx on `101.32.239.188`)
 

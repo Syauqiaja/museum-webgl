@@ -18,7 +18,7 @@ Lobby) are not.
 | **Egrang** | ✅ Wired — race, racers, bar, selector, results, countdown, roster, nameplates, stick profiles all resolve |
 | **MainMenu** | ✅ Styling and wiring restored (commit `e11c10b`) |
 | **Lobby** | ✅ Regenerated from `LobbyUIBuilder` (commit `696d214`) — all twelve controller references resolve. `useFakeService` is now **off**, and the field's own default is `false`, so the generator cannot put it back |
-| **Museum** | ✅ Both `SceneTriggerPrompt` doorways wired (Dakon, Egrang). `Vid LT1/Vid Engklek/Cube` carries a `ComingSoonNotice` instead — Engklek is not a shipped game — with its label at `Vid LT1/Segera Hadir (Engklek)`. The Egrang trigger is trimmed at the bay wall (z ≤ 2.4) so the shared Enter prompt no longer leaks into the Engklek bay (2026-09-11) |
+| **Museum** | ✅ `MuseumPresence` on the rig and the full bootstrap trio (2026-09-11). Both `SceneTriggerPrompt` doorways wired (Dakon, Egrang). `Vid LT1/Vid Engklek/Cube` carries a `ComingSoonNotice` instead — Engklek is not a shipped game — with its label at `Vid LT1/Segera Hadir (Engklek)`. The Egrang trigger is trimmed at the bay wall (z ≤ 2.4) so the shared Enter prompt no longer leaks into the Engklek bay (2026-09-11) |
 | **Dakon** | ✅ Rewired by `DakonUIBuilder` (`ed0f884`) — 20 hole anchors, 4 store anchors, hand container, card prefab, HUD labels, `seedTypes`, plus the toast and the results-panel exit |
 | `Assets/Resources/seeds/*.asset` | ✅ All eight carry `typeId`, `displayName`, `cardSprite`, `seedPrefab` and `category`; the ids match the server's `DAKON_DEFAULTS` |
 | `Assets/Data/Egrang/*.asset` | ✅ Correct — regenerated from `EgrangStickPresets` |
@@ -28,15 +28,17 @@ Lobby) are not.
 ## Bootstrap
 
 Three components on one `DontDestroyOnLoad` GameObject: `SessionData`,
-`ColyseusNetManager`, `SceneLoader`. Present in **MainMenu** and **Lobby**; **Museum** has
-`SceneLoader` only; **Dakon** and **Egrang** have none.
+`ColyseusNetManager`, `SceneLoader`. Present in **MainMenu**, **Lobby** and — since
+2026-09-11, for the presence room — **Museum**; **Dakon** and **Egrang** have none.
+`SceneWiringRepair.CompleteBootstrap` adds the missing two to the Museum's `Scene Loader`
+object on every run.
 
 That is correct for the normal path — the bootstrap travels from MainMenu — but it decides
 what happens when a scene is opened **directly** in the Editor:
 
 | Opened directly | Result |
 |---|---|
-| Museum | Walks fine; a doorway press throws on `SceneLoader.Instance` only if the loader is missing |
+| Museum | Walks fine and joins the `museum` presence room against `ServerConfig`'s endpoint (walks alone, with one warning, if the server is down) |
 | Lobby | Its own bootstrap runs; no name set → the name panel appears (its documented fallback) |
 | Dakon | No `SessionData` → no seat → offline hotseat. Both exits fall back to `SceneManager.LoadScene` when there is no `SceneLoader`, so they still reach the museum |
 | Egrang | Same: offline race in lane 1 |
@@ -62,7 +64,10 @@ what happens when a scene is opened **directly** in the Editor:
 
 ## Museum
 
-- `SceneLoader` (bootstrap arrives from MainMenu).
+- Full bootstrap trio on `Scene Loader` (the copies from MainMenu win when arriving normally).
+- `MuseumPresence` on the `Capsule` rig (`player` = the rig, `nameFont` = Roboto SemiBold),
+  added by `Museum/Rebuild UI/Wire Scene References`. It draws other visitors as
+  `MuseumVisitorAvatar`s under a runtime `Visitors (Presence)` root — nothing to author.
 - Player rig: `FPSController` (Rigidbody + Collider, `groundMask` set, camera parented under
   the player) driven by `FPSInputReader` with `Assets/Scripts/Player/FPSInput.inputactions`
   — action map `Player`, actions `Move`, `Look`, `Sprint`, `Jump`. Tag the player `Player`,
