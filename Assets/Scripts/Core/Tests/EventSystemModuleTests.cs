@@ -9,7 +9,7 @@ using UnityEngine.InputSystem.UI;
 namespace Museum.Core.Tests
 {
     /// <summary>
-    /// Every screen a finger touches — Dakon's cards, the lobby, the menus, Egrang's tap zone —
+    /// Every screen a finger touches — Dakon's cards, the lobby, the menus, Egrang's JALAN button —
     /// reaches uGUI through the EventSystem's input module. Only InputSystemUIInputModule routes
     /// touch under the Input System backend, so a scene that loses it loses touch silently.
     /// </summary>

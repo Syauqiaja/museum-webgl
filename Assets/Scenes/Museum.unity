@@ -467,6 +467,7 @@ GameObject:
   - component: {fileID: 4587}
   - component: {fileID: 4519}
   - component: {fileID: 4703}
+  - component: {fileID: 4708}
   m_Layer: 5
   m_Name: Tutorial
   m_TagString: Untagged
@@ -105553,6 +105554,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 5.05
+--- !u!114 &4708
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 27}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d9c47b1a06e4f2ab8c5d1e7f4a20b93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.DesktopOnly
 --- !u!114 &4709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -141639,6 +141652,8 @@ GameObject:
   - component: {fileID: 364936187}
   - component: {fileID: 364936186}
   - component: {fileID: 364936185}
+  - component: {fileID: 364936189}
+  - component: {fileID: 364936188}
   m_Layer: 0
   m_Name: Halaman Berikutnya
   m_TagString: Untagged
@@ -141760,6 +141775,31 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 364936183}
   m_CullTransparentMesh: 1
+--- !u!114 &364936188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 364936183}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b41f6ce90d24a5cb2e83f17c65d0a48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.ShownWhenAvailable
+  cue: 1
+--- !u!225 &364936189
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 364936183}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &365902391
 GameObject:
   m_ObjectHideFlags: 0
@@ -161471,6 +161511,8 @@ GameObject:
   - component: {fileID: 589967112}
   - component: {fileID: 589967111}
   - component: {fileID: 589967110}
+  - component: {fileID: 589967114}
+  - component: {fileID: 589967113}
   m_Layer: 0
   m_Name: Interaksi Button
   m_TagString: Untagged
@@ -161592,6 +161634,31 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 589967108}
   m_CullTransparentMesh: 1
+--- !u!114 &589967113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 589967108}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b41f6ce90d24a5cb2e83f17c65d0a48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.ShownWhenAvailable
+  cue: 0
+--- !u!225 &589967114
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 589967108}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &590959900
 GameObject:
   m_ObjectHideFlags: 0
@@ -185161,6 +185228,8 @@ GameObject:
   - component: {fileID: 807488538}
   - component: {fileID: 807488537}
   - component: {fileID: 807488536}
+  - component: {fileID: 807488540}
+  - component: {fileID: 807488539}
   m_Layer: 0
   m_Name: Halaman Sebelumnya
   m_TagString: Untagged
@@ -185282,6 +185351,31 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 807488534}
   m_CullTransparentMesh: 1
+--- !u!114 &807488539
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 807488534}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b41f6ce90d24a5cb2e83f17c65d0a48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.ShownWhenAvailable
+  cue: 1
+--- !u!225 &807488540
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 807488534}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &807626059
 GameObject:
   m_ObjectHideFlags: 0

@@ -87,8 +87,8 @@ namespace Museum.Games.Egrang
         public bool IsLocked => _lockoutRemaining > 0f;
 
         /// <summary>
-        /// While true every press is ignored, whatever it came from — Space, the JALAN button, the
-        /// touch tap zone — and the cursor keeps sweeping. Held by <see cref="EgrangPauseMenu"/>:
+        /// While true every press is ignored, whatever it came from — Space or the JALAN button —
+        /// and the cursor keeps sweeping. Held by <see cref="EgrangPauseMenu"/>:
         /// the race is real-time and the server keeps its clock, so a pause cannot stop the race,
         /// only stop a key typed at the menu from walking the racer behind it.
         /// </summary>

@@ -5,7 +5,7 @@ namespace Museum.Core
     /// <summary>What has to be in reach before a control is worth putting on screen.</summary>
     public enum InteractionCue
     {
-        /// <summary>A doorway the player is standing in — the Interaksi button.</summary>
+        /// <summary>Something the Interaksi button can act on — a doorway or a gallery station.</summary>
         Doorway = 0,
 
         /// <summary>A lesson plaque the player is standing at — the ‹ › page buttons.</summary>
@@ -40,7 +40,7 @@ namespace Museum.Core
 
         /// <summary>True when the router currently holds what this control acts on.</summary>
         public bool Available => cue == InteractionCue.Doorway
-            ? TouchInteractRouter.CurrentPrompt != null
+            ? TouchInteractRouter.CurrentPrompt != null || TouchInteractRouter.CurrentInteractable != null
             : TouchInteractRouter.CurrentReader != null;
 
         private void Awake()

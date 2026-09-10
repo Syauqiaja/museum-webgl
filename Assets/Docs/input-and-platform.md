@@ -126,13 +126,21 @@ The overlay's parts:
   control has to say it by being on screen.
 - **Lompat** — the jump button.
 - **Interaksi** — routed by `TouchInteractRouter.Interact()` to whatever the player is
-  currently standing in front of (see below). **Shown only while a doorway is registered.**
+  currently standing in front of (see below). **Shown only while a doorway or a gallery
+  station is registered** (`CurrentPrompt` or `CurrentInteractable`).
 - **‹ ›** — page-turn buttons for lesson plaques, routed by `TouchInteractRouter.PageNext()`
   / `PagePrev()`. **Shown only while a plaque is registered.**
-- **Egrang's tap zone** — a full-screen button that calls `SkillCheckBar.Press()`, the same
-  public method the desktop build's Space-bound `Step` action calls. It lives on its own
-  canvas at `sortingOrder = -10` so the run HUD (timing bar, progress strip, roster) always
-  paints on top of it rather than the tap zone eating the pointer meant for something else.
+- **Egrang's JALAN button** — `Egrang UI/Run Root/Skill Check Bar/Step Button`, calling
+  `SkillCheckBar.Press()`, the same method the desktop build's Space-bound `Step` action
+  calls. It is the only touch step: it lives under the run root, so it exists only during the
+  race, on the same Screen Space – Camera canvas as every other Egrang button.
+
+  There used to be a full-screen tap zone on its own **Screen Space – Overlay** canvas at
+  `sortingOrder = -10`. The -10 never put it behind anything: uGUI ranks an Overlay canvas's
+  raycaster by its `sortingOrder` and a Camera canvas's by `int.MinValue`, so the invisible
+  zone won every tap on a phone — the stick cards, Lanjutkan and Kembali ke Museum all
+  stepped the racer instead (2026-09-11). It and its generator were removed. **Never mix an
+  Overlay canvas into a scene whose buttons live on a Camera canvas.**
 
 `VirtualStickModel` and `LookDragModel` are the pure, EditMode-tested math behind the
 joystick and the drag-to-look area — no `UnityEngine` dependency, same discipline as the game
@@ -212,13 +220,11 @@ Pointer lock is skipped entirely under the touch scheme (`UsesCursorLock` is fal
 all — trying to request it there is not a graceful no-op, it is a control scheme that never
 engages.
 
-## The three rebuild menu items
+## The two rebuild menu items
 
 - **`Museum/Rebuild UI/Touch Controls`** (`TouchControlsUIBuilder`) — the joystick, look area,
   Lompat, Interaksi and ‹ › overlay used in the Museum scene (and anywhere else the player
   walks around in first person).
-- **`Museum/Rebuild UI/Egrang Touch`** (`EgrangTouchUIBuilder`) — the tap zone canvas for
-  Egrang's skill-check bar.
 - **`Museum/Rebuild UI/Main Menu`** (`MainMenuUIBuilder`) — the platform picker and the name
   screen behind it.
 

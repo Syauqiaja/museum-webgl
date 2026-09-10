@@ -191,6 +191,34 @@ namespace Museum.Core.Tests
         }
 
         [UnityTest]
+        public IEnumerator The_Interaksi_button_appears_at_a_gallery_station()
+        {
+            // Interact() acts on a station as well as a doorway, so a gate that only watched
+            // doorways hid the one button that would have rung the gong.
+            GivenScheme(ControlScheme.Sentuh);
+            CanvasGroup group = GivenAGatedButton(InteractionCue.Doorway);
+
+            var station = new StationStandIn();
+            TouchInteractRouter.Register(station);
+            try
+            {
+                yield return null;
+
+                Assert.AreEqual(1f, group.alpha);
+                Assert.IsTrue(group.blocksRaycasts);
+            }
+            finally
+            {
+                TouchInteractRouter.Unregister(station);
+            }
+        }
+
+        private sealed class StationStandIn : IInteractable
+        {
+            public void Interact() { }
+        }
+
+        [UnityTest]
         public IEnumerator The_page_arrows_ignore_a_doorway()
         {
             // A doorway is not a plaque: standing in one must not light up the page arrows.
