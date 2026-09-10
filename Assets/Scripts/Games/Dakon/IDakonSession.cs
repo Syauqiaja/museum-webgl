@@ -53,16 +53,9 @@ namespace Museum.Games.Dakon
         bool IsMyTurn { get; }
 
         IReadOnlyList<Seed> Hand { get; }
+        int NextHoleIndex { get; }
         int HoleCount { get; }
-
-        /// <summary>Holes per seat: ring indices below this are seat 0's, the rest seat 1's.</summary>
-        int HolesPerSide { get; }
-
         SeedCategory HoleTypeAt(int index);
-
-        /// <summary>True when this hole already took a seed in the current turn, so it is closed until the turn passes.</summary>
-        bool IsSown(int index);
-
         int PoolCount { get; }
         int Total(int seat);
 
@@ -76,12 +69,8 @@ namespace Museum.Games.Dakon
         /// <summary>Winner seat, or null for a tie (and while the match is unfinished).</summary>
         int? Winner { get; }
 
-        /// <summary>
-        /// Ask to drop this seed into this hole. The hole must be one of the active seat's own
-        /// and not yet sown this turn; the session (locally the board, online the server)
-        /// answers with <see cref="DropApplied"/> or <see cref="DropRejected"/>.
-        /// </summary>
-        void RequestDrop(string seedId, int holeIndex);
+        /// <summary>Ask to drop this seed into the forced next hole.</summary>
+        void RequestDrop(string seedId);
     }
 
     /// <summary>An applied drop, in the terms the view animates: which seed, where, who scored.</summary>

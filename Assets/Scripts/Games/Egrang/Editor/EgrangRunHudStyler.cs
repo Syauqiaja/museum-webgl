@@ -277,6 +277,10 @@ namespace Museum.Games.Egrang.EditorTools
                     image.type = Image.Type.Sliced;
                     image.pixelsPerUnitMultiplier = ButtonPixelsPerUnitMultiplier;
                     image.color = Color.white;
+                    // The button's only raycast target. Off, the click falls straight through and
+                    // JALAN is a label that looks like a button — Space still worked, so nothing
+                    // looked broken on a keyboard (found off in the scene, 2026-09-10).
+                    image.raycastTarget = true;
                     button.targetGraphic = image;
                 }
 

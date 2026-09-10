@@ -112,7 +112,12 @@ what happens when a scene is opened **directly** in the Editor:
 - **Video screens** — each screen is a `StreamedVideoScreen` (with a `VideoPlayer`) plus a
   `VideoTriggerPlayer` on a trigger collider, and a `RawImage` on a world-space canvas. The
   screen carries a **catalog key**, never a URL. `Museum/Video/Report Video Assignments`
-  prints what every screen is currently pointed at.
+  predates streaming and only reports embedded clips ("no clip" everywhere) — read
+  `videoKey` on each `StreamedVideoScreen` instead.
+  `CIRAK.mp4` and `BEKELAN.mp4` point at ImageKit's **transformed** URL (no `tr=orig-true`)
+  because the originals would not play on the live site; every other entry is `orig-true`.
+  Transformed URLs count against ImageKit's video-transformation quota — the `403 Video
+  transformations limit exceeded` in [build-and-deploy.md](build-and-deploy.md) is that quota.
 - **Lesson panels** — one per game, all eighteen, under a scene-root `Lessons (Generated)`
   container: a world-space `LessonPanel` canvas on the wall beside that game's exhibit screen,
   plus a `LessonReader` **on the screen's existing `VideoTriggerPlayer` volume** — the lessons
@@ -182,10 +187,7 @@ Needs, on `DakonView`:
 
 - `holeAnchors[20]` — ring order 0–19, indices 0–9 the near side (seat 0), 10–19 the far
   side. `holeLabels[20]` optional.
-- `highlightMarker` — moved onto the hole under the pointer while a card is selected; hidden otherwise.
-- `holeTapLayers` — physics layers the hole-tap ray may hit (default: everything). The
-  `DakonHoleTarget` trigger spheres are built at runtime under `Dakon Hole Targets`, one per
-  anchor at `holeBowlRadius`, so nothing needs authoring for taps to find a hole.
+- `highlightMarker` — moved onto `nextHoleIndex`.
 - `handContainer` + `cardPrefab` (a `DakonCard`), `handRoot`, `waitingForTurnPanel`,
   `waitingForTurnLabel`.
 - HUD: `turnLabel`, `poolLabel`, `scoreP0Label`, `scoreP1Label`, `toastLabel`,
@@ -301,7 +303,16 @@ Structural rules that are easy to get wrong:
 - Each `EgrangStick` needs `markerFilter` set to `_L_` or `_R_` — the shipped FBXs hold both
   stilts, and without the filter both components bind the same side.
 - `EgrangRace.racers` must be in **seat order**: `Player 1 Point`, `Player 2 Point`,
-  `Player 3 Point`.
+  `Player 3 Point`. `Museum/Egrang/Wire Scene References` now fills `racers` and
+  `nameplates` in that order. It is the tool that numbers the lanes, so it owns the arrays
+  indexed by them. `nameplates` had shipped as lanes 3, 1, 2, because the names builder sorted
+  by `lane` before those numbers were set; the order was rewired on 2026-09-10. At runtime a
+  plate under a lane's racer wins over the array anyway.
+- **`EgrangRacer.cs.meta` must keep `guid: 691cf244747874953809000733f2f4b7`**, the GUID the
+  scene's three lane racers reference. Until 2026-09-10 the committed `.meta` said
+  `d46f714f…` while the Editor's cached AssetDatabase still held `691cf…`. It worked in the
+  running Editor, but a fresh clone or Library rebuild would have turned all three racers
+  into Missing Script, leaving no lane that moves.
 - **`SkillCheckBar.onStepResult` must have an empty persistent-call list.** `EgrangRace`
   subscribes to it in `Awake` and routes the press to *this client's* lane. A persistent call
   wired in the inspector — the shape the single-player scene used, `→ Player 1 Point`'s
@@ -316,7 +327,13 @@ Structural rules that are easy to get wrong:
   it now resolves through `EgrangRace.bar` instead. **Pre-existing, not caused by the touch
   work — do not fix it here.**
 - A pre-existing `Step Button` in the scene still has its `onClick` wired straight to the
-  orphaned `&985` bar's `Press()`, present since before the touch work. Left as found.
+  orphaned `&985` bar's `Press()`, present since before the touch work. Left as found. It sits
+  under the inactive `Canvas` and never shows.
+- The live **`JALAN`** button (`Egrang UI/Run Root/Skill Check Bar/Step Button`, `onClick` →
+  the live bar's `Press()`) needs **`raycastTarget` on its `Image`**. That Image is its only
+  raycast target, and the label's raycast is deliberately off. The Image was found off on
+  2026-09-10, so the button drew but never took a click and only Space walked. It was fixed in
+  the scene, and `Style Run HUD` now forces it on.
 
 ## After rewiring anything
 

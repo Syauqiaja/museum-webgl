@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
@@ -20,10 +18,9 @@ namespace Museum.Games.Dakon
     /// Online, input is only live on this client's own turn; in hotseat both sides share the
     /// screen and whoever's turn it is plays.
     ///
-    /// Interaction is two-step: pick a card, then tap one of your own holes. The card stays
-    /// selected until a hole takes it, so a wrong tap (opponent's side, a hole already filled
-    /// this turn) costs a toast and nothing else. The highlight marker follows the hole under
-    /// the pointer while a card is selected — a destination preview, not a rule.
+    /// Interaction is single-action: the target hole is always the forced
+    /// <see cref="DakonBoard.NextHoleIndex"/>, so the player only picks a card. The next hole
+    /// stays highlighted as the destination indicator, not a second required click.
     /// </summary>
     public sealed class DakonView : MonoBehaviour
     {
@@ -44,11 +41,8 @@ namespace Museum.Games.Dakon
         [SerializeField] private Transform[] holeAnchors = new Transform[20];
         [Tooltip("Optional per-hole labels (len 20) showing each hole's type after StartGame.")]
         [SerializeField] private Text[] holeLabels = new Text[20];
-        [Tooltip("Marker object moved onto the hole under the pointer while a card is selected. Optional.")]
+        [Tooltip("Marker object moved onto the current nextHoleIndex anchor. Optional.")]
         [SerializeField] private Transform highlightMarker;
-
-        [Tooltip("Physics layers the hole tap raycast may hit. The hole targets are built on the Default layer.")]
-        [SerializeField] private LayerMask holeTapLayers = ~0;
 
         [Header("Hand (card layout)")]
         [SerializeField] private RectTransform handContainer;
@@ -143,16 +137,6 @@ namespace Museum.Games.Dakon
         /// </summary>
         readonly HashSet<string> _pending = new HashSet<string>();
 
-        /// <summary>The card waiting for a hole, or null. Only one: a seed goes one place.</summary>
-        string _selectedSeedId;
-
-        /// <summary>Runtime trigger spheres over the anchors, one per hole, so a tap can name a hole.</summary>
-        readonly List<DakonHoleTarget> _holeTargets = new List<DakonHoleTarget>();
-        Transform _holeTargetRoot;
-
-        /// <summary>Scratch for the UI raycast that decides whether a tap belongs to a hole or a button.</summary>
-        readonly List<RaycastResult> _uiHits = new List<RaycastResult>();
-
         struct SpawnedSeed
         {
             public Transform Obj;
@@ -198,39 +182,6 @@ namespace Museum.Games.Dakon
             // Down before the first frame, whatever the scene was saved with: the toast only
             // ever answers a refused drop, and there cannot be one yet.
             HideToast();
-
-            BuildHoleTargets();
-        }
-
-        /// <summary>
-        /// One trigger sphere per hole anchor, unscaled, the size of the bowl. The anchors
-        /// themselves are 0.05-scaled placement transforms with no collider, and adding one to
-        /// them would be scaled with them — so the bodies are built here instead of authored.
-        /// </summary>
-        void BuildHoleTargets()
-        {
-            if (_holeTargetRoot == null)
-            {
-                _holeTargetRoot = new GameObject("Dakon Hole Targets").transform;
-                _holeTargetRoot.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
-            }
-
-            foreach (var target in _holeTargets)
-                if (target != null) Destroy(target.gameObject);
-            _holeTargets.Clear();
-
-            if (holeAnchors == null) return;
-
-            for (int i = 0; i < holeAnchors.Length; i++)
-            {
-                if (holeAnchors[i] == null) continue;
-                _holeTargets.Add(DakonHoleTarget.Create(_holeTargetRoot, holeAnchors[i], i, holeBowlRadius));
-            }
-        }
-
-        void Update()
-        {
-            PollHoleTap();
         }
 
         void Start()
@@ -339,7 +290,6 @@ namespace Museum.Games.Dakon
             // A fresh session is a fresh board: whatever the last one left us mid-animation, no
             // input is outstanding on this one.
             _pending.Clear();
-            _selectedSeedId = null;
 
             // The config's TypeId -> SeedType map is what resolves sprites and 3D prefabs, and a
             // networked session never calls BuildConfig — so build it here too.
@@ -375,7 +325,6 @@ namespace Museum.Games.Dakon
         {
             if (gameOverExitButton != null) gameOverExitButton.onClick.RemoveListener(BackToMainMenu);
             Detach();
-            if (_holeTargetRoot != null) Destroy(_holeTargetRoot.gameObject);
         }
 
         // Build the pure model config from the authored SeedType catalog. Also (re)builds the
@@ -525,30 +474,19 @@ namespace Museum.Games.Dakon
             return $"Giliran {_session.DisplayNameOf(_session.ActivePlayer)}";
         }
 
-        /// <summary>
-        /// The marker is a preview of where the selected card would go: it sits on the hole
-        /// under the pointer, and only while a card is selected. With nothing selected there is
-        /// nothing to preview, so it hides — the old "forced next hole" it used to mark is gone.
-        /// </summary>
         void MoveHighlight()
         {
             if (highlightMarker == null) return;
-
-            int i = _selectedSeedId != null && _session != null && _session.Phase == Phase.InProgress
-                ? HoleUnderPointer()
-                : -1;
-
-            bool show = i >= 0 && holeAnchors != null && i < holeAnchors.Length && holeAnchors[i] != null;
-            if (show) highlightMarker.position = holeAnchors[i].position;
-            highlightMarker.gameObject.SetActive(show);
+            int i = _session.NextHoleIndex;
+            if (holeAnchors != null && i >= 0 && i < holeAnchors.Length && holeAnchors[i] != null)
+            {
+                highlightMarker.position = holeAnchors[i].position;
+                highlightMarker.gameObject.SetActive(_session.Phase == Phase.InProgress);
+            }
         }
 
         // ---- input ----
 
-        /// <summary>
-        /// Step one of a drop: the card. It is not sent anywhere yet — the seed needs a hole, and
-        /// the hole is the player's next tap. Picking the selected card again puts it back.
-        /// </summary>
         void OnCardChosen(string seedId)
         {
             // Only this card is off limits, and only because it is already sent. Clicking the
@@ -561,64 +499,6 @@ namespace Museum.Games.Dakon
                 return;
             }
 
-            Select(_selectedSeedId == seedId ? null : seedId);
-        }
-
-        void Select(string seedId)
-        {
-            _selectedSeedId = seedId;
-
-            foreach (var card in _cards)
-                if (card != null) card.SetSelected(card.SeedId == seedId);
-
-            MoveHighlight();
-        }
-
-        /// <summary>
-        /// Step two: a tap on the board while a card is selected. Taps that land on UI belong to
-        /// the UI (the card row sits over the near edge of the board), and a tap that misses
-        /// every hole leaves the selection alone rather than cancelling it — cancelling is the
-        /// card's own job.
-        /// </summary>
-        void PollHoleTap()
-        {
-            if (_selectedSeedId == null || _session == null || _session.Phase != Phase.InProgress) return;
-
-            var pointer = Pointer.current;
-            if (pointer == null) return;
-
-            MoveHighlight();
-
-            if (!pointer.press.wasPressedThisFrame) return;
-
-            Vector2 screen = pointer.position.ReadValue();
-            if (PointerIsOverUI(screen)) return;
-
-            int hole = HoleAt(screen);
-            if (hole < 0) return;
-
-            TryDrop(_selectedSeedId, hole);
-        }
-
-        /// <summary>
-        /// The drop itself, once both halves are known. The obvious refusals are answered here
-        /// so a tap on the wrong hole reads instantly; the session answers the rest, and online
-        /// the server still has the final say through <see cref="OnDropRejected"/>.
-        /// </summary>
-        void TryDrop(string seedId, int hole)
-        {
-            if (DakonBoard.SideOf(hole, _session.HolesPerSide) != _session.MySeat)
-            {
-                ShowToast(DakonErrorText.InvalidHole);
-                return;
-            }
-
-            if (_session.IsSown(hole))
-            {
-                ShowToast(DakonErrorText.HoleAlreadySown);
-                return;
-            }
-
             // Nothing is animated here: the drop is a request. Locally the session answers before
             // this returns; online it answers when the server says so. Either way the picture
             // changes in OnDropApplied and nowhere else, so the two modes cannot diverge.
@@ -627,56 +507,7 @@ namespace Museum.Games.Dakon
             var chosen = _cards.Find(c => c != null && c.SeedId == seedId);
             if (chosen != null) chosen.SetInteractable(false);
 
-            Select(null);
-            _session.RequestDrop(seedId, hole);
-        }
-
-        int HoleUnderPointer()
-        {
-            var pointer = Pointer.current;
-            return pointer == null ? -1 : HoleAt(pointer.position.ReadValue());
-        }
-
-        /// <summary>
-        /// Ring index of the hole body under a screen point, or -1. All hits are read, not the
-        /// first: seeds already in the bowl carry colliders of their own and would otherwise
-        /// shadow the hole they sit in.
-        /// </summary>
-        int HoleAt(Vector2 screen)
-        {
-            var cam = boardCamera != null ? boardCamera : Camera.main;
-            if (cam == null) return -1;
-
-            Ray ray = cam.ScreenPointToRay(screen);
-            RaycastHit[] hits = Physics.RaycastAll(ray, 100f, holeTapLayers, QueryTriggerInteraction.Collide);
-
-            int best = -1;
-            float bestDistance = float.MaxValue;
-            foreach (var hit in hits)
-            {
-                var target = hit.collider.GetComponent<DakonHoleTarget>();
-                if (target == null || hit.distance >= bestDistance) continue;
-
-                best = target.HoleIndex;
-                bestDistance = hit.distance;
-            }
-
-            return best;
-        }
-
-        /// <summary>
-        /// A raycast of our own rather than <c>IsPointerOverGameObject</c>: on the press frame of
-        /// a touch the input module has not always registered the pointer yet, and the answer
-        /// there is "no" for a finger squarely on a card.
-        /// </summary>
-        bool PointerIsOverUI(Vector2 screen)
-        {
-            if (EventSystem.current == null) return false;
-
-            var data = new PointerEventData(EventSystem.current) { position = screen };
-            _uiHits.Clear();
-            EventSystem.current.RaycastAll(data, _uiHits);
-            return _uiHits.Count > 0;
+            _session.RequestDrop(seedId);
         }
 
         void OnDropApplied(DakonDrop drop)
@@ -700,7 +531,6 @@ namespace Museum.Games.Dakon
             // the session — server truth online, the board itself locally — rather than trying to
             // work out which of our outstanding drops survived.
             _pending.Clear();
-            _selectedSeedId = null;
             DealHand();
         }
 
@@ -713,7 +543,6 @@ namespace Museum.Games.Dakon
         void OnBoardReady()
         {
             _pending.Clear();
-            _selectedSeedId = null;
             ClearSeeds();
             RenderHoles();
             DealHand();
@@ -726,7 +555,6 @@ namespace Museum.Games.Dakon
         {
             // A fresh draw: whatever was outstanding belonged to the hand that just ended.
             _pending.Clear();
-            _selectedSeedId = null;
 
             DealHand();
             RefreshHud();
@@ -1043,7 +871,6 @@ namespace Museum.Games.Dakon
 
         void ShowGameOver()
         {
-            _selectedSeedId = null;
             if (highlightMarker != null) highlightMarker.gameObject.SetActive(false);
             if (gameOverPanel != null) gameOverPanel.SetActive(true);
             if (gameOverLabel == null) return;

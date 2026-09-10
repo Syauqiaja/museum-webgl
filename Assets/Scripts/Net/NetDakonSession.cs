@@ -26,11 +26,10 @@ namespace Museum.Net
     /// message produces <see cref="DropRejected"/>. Nothing is drawn optimistically, so the board
     /// on screen is always one the server agrees with.
     ///
-    /// Requests are pipelined — the player can place a whole hand without waiting for a round
-    /// trip each time. The one thing predicted, and nothing is drawn from it, is which holes are
-    /// already taken: a hole with a drop in flight (<see cref="_inFlight"/>) reads as sown so
-    /// the view refuses a second seed into it before the server has to. A wrong guess is not a
-    /// divergence, only a refusal.
+    /// One thing *is* predicted, though nothing is drawn from it: the hole a drop is aimed at.
+    /// Requests are pipelined — the player can click a whole hand without waiting for a round trip
+    /// each time — so the target hole is counted forward from the last drop the server accepted
+    /// (see <see cref="DakonHolePrediction"/>). A wrong guess is not a divergence, only a refusal.
     /// </summary>
     public sealed class NetDakonSession : IDakonSession
     {
@@ -44,16 +43,16 @@ namespace Museum.Net
         private readonly List<string> _seatNames = new List<string>();
 
         /// <summary>
-        /// Drops we have sent and not yet seen come back: seed id → the hole it was aimed at.
-        /// Their holes count as sown for <see cref="IsSown"/> until the server answers, so the
-        /// player cannot queue two seeds into one hole inside a burst.
+        /// The aim of every outgoing drop, and the only prediction this session makes. Lives in
+        /// its own pure class so the race it exists to close can be asserted without a room —
+        /// see <see cref="DakonHolePrediction"/>.
         /// </summary>
-        private readonly Dictionary<string, int> _inFlight = new Dictionary<string, int>();
+        private readonly DakonHolePrediction _prediction = new DakonHolePrediction();
 
         private readonly List<Seed> _hand = new List<Seed>();
         private readonly List<SeedCategory> _holes = new List<SeedCategory>();
         private readonly Dictionary<string, int> _totals = new Dictionary<string, int>();
-        private uint _sownMask;
+        private int _nextHole;
         private int _poolCount;
         private string _activePlayer = string.Empty;
         private string _phase = "waiting";
@@ -122,24 +121,9 @@ namespace Museum.Net
         public bool IsMyTurn => Phase == Phase.InProgress && _activePlayer == _mySessionId;
 
         public IReadOnlyList<Seed> Hand => _hand;
+        public int NextHoleIndex => _nextHole;
         public int HoleCount => _holes.Count;
-
-        // Seats own half the ring each; the server's holesPerSide is not synced, and a
-        // twenty-hole board is the only one either repo ships.
-        public int HolesPerSide => _holes.Count / 2;
-
         public SeedCategory HoleTypeAt(int index) => _holes[index];
-
-        public bool IsSown(int index)
-        {
-            if (index < 0 || index >= 32) return false;
-            if ((_sownMask & (1u << index)) != 0) return true;
-
-            foreach (int hole in _inFlight.Values)
-                if (hole == index) return true;
-
-            return false;
-        }
         public int PoolCount => _poolCount;
 
         public int Total(int seat)
@@ -177,7 +161,7 @@ namespace Museum.Net
             }
         }
 
-        public void RequestDrop(string seedId, int holeIndex)
+        public void RequestDrop(string seedId)
         {
             if (!IsMyTurn)
             {
@@ -185,28 +169,14 @@ namespace Museum.Net
                 return;
             }
 
-            if (_holes.Count == 0 || holeIndex < 0 || holeIndex >= _holes.Count)
+            if (_holes.Count == 0)
             {
-                // No board yet, or a hole that is not on it. Nothing to send.
+                // No board yet, so no hole to aim at. Nothing to predict from.
                 DropRejected?.Invoke(DakonError.InvalidHole);
                 return;
             }
 
-            // The same two checks the server makes, made here first so the answer is instant
-            // and a burst cannot pile refusals behind one bad click. The server still decides.
-            if (DakonBoard.SideOf(holeIndex, HolesPerSide) != MySeat)
-            {
-                DropRejected?.Invoke(DakonError.InvalidHole);
-                return;
-            }
-
-            if (IsSown(holeIndex))
-            {
-                DropRejected?.Invoke(DakonError.HoleAlreadySown);
-                return;
-            }
-
-            _inFlight[seedId] = holeIndex;
+            int holeIndex = _prediction.Aim(seedId, _nextHole, _holes.Count);
 
             _room.Send("drop_seed", new { seedId, holeIndex });
         }
@@ -239,16 +209,16 @@ namespace Museum.Net
             ReadHand(state);
             ReadTotals(state);
 
-            _sownMask = state.sownMask;
+            _nextHole = state.nextHoleIndex;
             _poolCount = state.centerPoolCount;
             _activePlayer = state.activePlayer ?? string.Empty;
             _phase = state.phase ?? "waiting";
 
             if (boardArrived || _activePlayer != previousActive)
             {
-                // A turn boundary (or a board arriving under us) clears the server's sown set,
-                // so anything we were still holding against the old one is meaningless now.
-                _inFlight.Clear();
+                // A turn boundary (or a board arriving under us) resets the server's hole counter,
+                // so anything we were still predicting against the old one is meaningless now.
+                _prediction.Reset();
             }
 
             // TEMP DIAG — remove once the empty-hand bug is closed.
@@ -354,8 +324,9 @@ namespace Museum.Net
 
             // By seed id, not by count: this message is broadcast for *every* accepted drop,
             // including the opponent's, and it carries no sessionId to tell them apart. Only a
-            // seed we sent ourselves can be one of ours in flight.
-            _inFlight.Remove(payload.seedId);
+            // seed we sent ourselves can be one of ours in flight — but the hole it landed in
+            // anchors the next aim either way, because both players walk the same ring.
+            _prediction.Applied(payload.seedId, payload.holeIndex, payload.turnEnded);
 
             DropApplied?.Invoke(new DakonDrop(
                 payload.seedId,
@@ -384,10 +355,10 @@ namespace Museum.Net
 
         private void OnError(ErrorPayload payload)
         {
-            // A refusal means our picture of the hand and the sown holes was wrong somewhere.
-            // Rather than work out which outstanding drops survived, drop them all and let the
-            // view re-read everything from the next patch, which is server truth.
-            _inFlight.Clear();
+            // A refusal invalidates every prediction queued behind it — the server stopped at the
+            // one it rejected, so the drops after it were aimed one hole too far. Drop them all
+            // and let the view re-read the hand from the next patch, which is server truth.
+            _prediction.Reset();
 
             switch (payload?.code)
             {
@@ -396,9 +367,6 @@ namespace Museum.Net
                     break;
                 case "seed_not_in_hand":
                     DropRejected?.Invoke(DakonError.SeedNotInHand);
-                    break;
-                case "hole_already_sown":
-                    DropRejected?.Invoke(DakonError.HoleAlreadySown);
                     break;
                 default:
                     DropRejected?.Invoke(DakonError.InvalidHole);

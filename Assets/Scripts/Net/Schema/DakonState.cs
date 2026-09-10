@@ -25,8 +25,8 @@ public DakonState() { }
 		[Type(5, "string")]
 		public string activePlayer = default(string);
 
-		[Type(6, "uint32")]
-		public uint sownMask = default(uint);
+		[Type(6, "uint8")]
+		public byte nextHoleIndex = default(byte);
 
 		[Type(7, "array", typeof(ArraySchema<DakonSeed>))]
 		public ArraySchema<DakonSeed> hand = null;

@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Colyseus;
-using Museum.Core;
 using Museum.Games.Egrang;
 using Museum.Net.State;
 using UnityEngine;
@@ -59,15 +58,6 @@ namespace Museum.Net
         public void SendStick(EgrangStickShape shape) => _room.Send("choose_stick", new { shape = (int)shape });
 
         public void RequestCountdown() => _room.Send("countdown_sync", new { });
-
-        public void Leave()
-        {
-            // Through the manager, not room.Leave directly: it also clears the held reconnection
-            // token, and a stale one would send the next visit to this scene reconnecting into a
-            // race that finished without us.
-            if (ColyseusNetManager.Instance != null) _ = ColyseusNetManager.Instance.Leave(_room);
-            else _ = _room.Leave(true);
-        }
 
         public int FinishUnits => _finishUnits;
 

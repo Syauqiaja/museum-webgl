@@ -107,7 +107,9 @@ back from a game is not asked twice.
 ## The touch overlay
 
 Every touch-only control lives under a GameObject carrying `Museum.Core.TouchOnly`, which
-deactivates itself in `Awake` unless `SessionData.Instance.IsTouch` is true. Nothing in a
+deactivates itself in `Awake` unless `SessionData.Instance.IsTouch` is true.
+`Museum.Core.DesktopOnly` is its mirror, for HUD that only means something to a keyboard —
+see "The KONTROL card" below. Nothing in a
 scene needs to know what a `TouchOnly` object contains or query the scheme itself — the
 component does it once, per overlay root, and the desktop scheme (and `Unknown`, since it
 reads as desktop) simply never sees any of it.
@@ -116,12 +118,17 @@ The overlay's parts:
 
 - **Floating joystick** (`TouchJoystick`) and **look area** (`TouchLookArea`) — movement and
   camera drag, feeding `Museum.Player.TouchInputSource`, which is the touch-scheme
-  counterpart to the keyboard/mouse `FPSInputReader`.
+  counterpart to the keyboard/mouse `FPSInputReader`. The stick **rests visible** at the
+  bottom-left of its area, dimmed to `restAlpha` (0.4) through a `CanvasGroup` on the ring;
+  it still floats to wherever the finger lands and returns home on release. It used to be
+  hidden until touched, which made it a control a first-time visitor never learned was
+  there — the museum has no attendant to say "drag the left side of the screen", so the
+  control has to say it by being on screen.
 - **Lompat** — the jump button.
 - **Interaksi** — routed by `TouchInteractRouter.Interact()` to whatever the player is
-  currently standing in front of (see below).
+  currently standing in front of (see below). **Shown only while a doorway is registered.**
 - **‹ ›** — page-turn buttons for lesson plaques, routed by `TouchInteractRouter.PageNext()`
-  / `PagePrev()`.
+  / `PagePrev()`. **Shown only while a plaque is registered.**
 - **Egrang's tap zone** — a full-screen button that calls `SkillCheckBar.Press()`, the same
   public method the desktop build's Space-bound `Step` action calls. It lives on its own
   canvas at `sortingOrder = -10` so the run HUD (timing bar, progress strip, roster) always
@@ -147,8 +154,41 @@ going unwired by hand is a failure this project has already lived through once (
 `scene-setup.md`'s Museum doorway table) — self-registration means adding a fifth doorway
 later needs no new wiring step at all.
 
-The doorway's own prompt label reads differently per scheme: `Tekan Enter` on desktop,
-`Ketuk Interaksi` on touch.
+### What the doorway prompt says
+
+The HUD carries **one** prompt panel, named `Enter`, that every doorway raises and lowers —
+not one per door. It is two parts: a keycap chip and a scheme-neutral line reading
+`Untuk memulai permainan ini`. `SceneTriggerPrompt.Awake` sets the chip, and only the chip:
+**`ENTER` on desktop, `INTERAKSI` on touch** — the same word the overlay button carries, so
+the popup names something the visitor can actually reach.
+
+Until 2026-09-10 it said `ENTER` to everyone, because `promptLabel` was `None` on all four
+doorways and the runtime line therefore never ran. That is the shape of failure to expect
+here: the panel still opens and still reads plausibly, so nothing looks broken on desktop,
+where the text happens to be right. `SceneWiringRepair.WireDoorways` now wires `promptLabel`
+alongside `promptUI` so a repair run cannot leave it null again.
+
+### The KONTROL card
+
+The Museum HUD's `Tutorial` panel is a keyboard legend — WASD, the mouse, Q and E. None of
+those exist under the touch scheme, so the panel carries `Museum.Core.DesktopOnly` and is
+hidden there; the joystick, look area and Interaksi button are already on screen saying the
+same thing by being visible. `MuseumUIBuilder.StyleControls` attaches the component, so a
+rebuild keeps it.
+
+### Controls that appear only when they do something
+
+`Museum.Core.ShownWhenAvailable` gates the Interaksi and ‹ › buttons on the router actually
+holding something for them to act on — a doorway for Interaksi, a plaque for the arrows.
+A button that does nothing when tapped is worse than an absent one: the visitor who taps it
+and gets no response has been told the control is broken.
+
+It hides through a `CanvasGroup` (alpha 0, non-interactive, raycast-transparent) rather than
+`SetActive(false)`, and the difference is load-bearing — a deactivated GameObject stops
+receiving `Update`, so it could never notice the doorway it is waiting for and would never
+come back. Going raycast-transparent also stops a hidden button eating taps meant for the
+look area behind it. **Lompat is deliberately not gated:** jumping is always available, so its
+button is always meaningful.
 
 ## `FPSController`'s input surface
 

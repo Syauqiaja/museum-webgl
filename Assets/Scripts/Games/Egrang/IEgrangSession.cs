@@ -68,12 +68,5 @@ namespace Museum.Games.Egrang
 
         /// <summary>Report the chosen stilt.</summary>
         void SendStick(EgrangStickShape shape);
-
-        /// <summary>
-        /// Leave the race for good. Consented, so the server withdraws this racer at once and the
-        /// other lanes keep running, rather than waiting on a socket that is still open under a
-        /// scene that has already gone.
-        /// </summary>
-        void Leave();
     }
 }

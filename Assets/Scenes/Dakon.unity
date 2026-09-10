@@ -10992,9 +10992,6 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   highlightMarker: {fileID: 114}
-  holeTapLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
   handContainer: {fileID: 261}
   cardPrefab: {fileID: 114099118695303065, guid: 4386496d3b26bc84ca4259f92d804bcd, type: 3}
   handRoot: {fileID: 16}
@@ -11375,7 +11372,6 @@ MonoBehaviour:
   button: {fileID: 0}
   canvasGroup: {fileID: 0}
   dimmedAlpha: 0.45
-  selectedScale: 1.12
 --- !u!29 &360
 OcclusionCullingSettings:
   m_ObjectHideFlags: 0
