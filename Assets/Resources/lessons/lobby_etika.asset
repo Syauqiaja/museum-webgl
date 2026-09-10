@@ -1,0 +1,41 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d504aca1d624112a3a119f35b476e5, type: 3}
+  m_Name: lobby_etika
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.GameLessonData
+  gameKey: lobby_etika
+  displayName: Aturan & Etika
+  sections:
+  - heading: HOMPIMPA & SUIT
+    body: "Setiap dolanan dibuka dengan cara yang adil untuk menentukan siapa yang
+      dadi atau siapa yang mulai. Hompimpa \u2014 \"hompimpa alaium gambreng\" \u2014
+      dilakukan beramai-ramai dengan telapak tangan menghadap ke atas atau ke bawah;
+      yang berbeda sendiri keluar dari undian. Bila tinggal dua orang, mereka bersuit:
+      jempol (gajah), telunjuk (orang), kelingking (semut).\n\nGajah mengalahkan
+      orang, orang mengalahkan semut, semut mengalahkan gajah \u2014 yang besar tidak
+      selalu menang."
+  - heading: PEMAIN & GILIRAN
+    body: "Dakon dimainkan berdua, saling berhadapan. Engklek dan Bekelan dimainkan
+      bergiliran, dua sampai lima orang. Gobak Sodor, Bentengan, dan Jamuran memerlukan
+      dua regu atau satu lingkaran besar. Egrang dilombakan berdampingan, siapa cepat
+      sampai.\n\nGiliran berpindah bila pemain gagal \u2014 gacuk keluar garis, biji
+      habis di lumbung lawan, bola bekel memantul dua kali. Yang menunggu giliran
+      bertugas mengawasi: dialah wasitnya."
+  - heading: MULAI DI MUSEUM INI
+    body: 'Tiga permainan di lantai atas dapat dimainkan bersama teman melalui jaringan:
+      Dakon (dua pemain), Engklek, dan Egrang (sampai tiga pemain). Masuklah ke pintu
+      permainan, buat ruangan, lalu bagikan kodenya; permainan baru dapat dimulai
+      setelah paling sedikit dua pemain duduk.
+
+
+      Seperti di halaman kampung:
+      tidak ada dolanan yang dimainkan sendirian.'

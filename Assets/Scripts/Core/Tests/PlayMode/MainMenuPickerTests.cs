@@ -92,5 +92,36 @@ namespace Museum.Core.Tests
             MainMenu menu = GivenMenu();
             Assert.DoesNotThrow(menu.ChooseTouch);
         }
+
+        [Test]
+        public void A_session_that_already_chose_skips_the_picker()
+        {
+            // Back from a game: the bootstrap object still holds the answer, so asking again
+            // reads as "the game logged me out".
+            SessionData session = GivenSession();
+            session.Scheme = ControlScheme.Desktop;
+
+            GivenMenu();
+
+            Assert.IsFalse(_picker.activeSelf);
+            Assert.IsTrue(_title.activeSelf);
+        }
+
+        [Test]
+        public void The_name_field_is_prefilled_from_the_session()
+        {
+            SessionData session = GivenSession();
+            session.PlayerName = "Sari";
+
+            _menuObject = new GameObject("MainMenu");
+            _picker = new GameObject("Platform Panel");
+            _title = new GameObject("Title");
+            var field = _title.AddComponent<TMPro.TMP_InputField>();
+
+            var menu = _menuObject.AddComponent<MainMenu>();
+            menu.Configure(_picker, new[] { _title }, null, null, field);
+
+            Assert.AreEqual("Sari", field.text);
+        }
     }
 }

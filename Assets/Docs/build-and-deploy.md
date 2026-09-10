@@ -100,6 +100,49 @@ WebGL2; if a future Unity makes WebGPU an auto candidate, pin it explicitly.
 
 ## Deploy
 
+### Current host — `museumethnofun.com` (since 2026-09-10)
+
+The client now lives on a Hostinger VPS, `root@212.85.25.177`, behind the **Traefik** that
+Hostinger's Docker stack ships (`/docker/traefik-3z6t/`, host network, ports 80/443, Let's
+Encrypt via HTTP-01). There is no host nginx and no `/var/www`; the site is one container:
+
+```
+/docker/museum/
+├── docker-compose.yml   nginx:alpine, Traefik labels for Host(`museumethnofun.com`)
+├── nginx.conf           the .br location blocks (Content-Encoding: br, gzip off)
+└── site/                = Builds/WebGL, served read-only at /usr/share/nginx/html
+    ├── index.html  style.css
+    └── Build/  WebGL.data.br  WebGL.wasm.br  WebGL.framework.js.br  WebGL.loader.js
+```
+
+Deploy is an SFTP upload of `Builds/WebGL/` into `/docker/museum/site/`, **each file to a
+`.uploading` name and then `mv`'d over the old one**, so the live file is never half-written
+and nothing is deleted first; then `chmod -R a+rX /docker/museum/site` and a SHA-256 of each
+remote file against the local one. Password auth, so `rsync`/`scp` from a script need
+`sshpass` or a `paramiko` helper; the container does not need restarting — nginx reads the
+bind mount.
+
+The certificate covers `museumethnofun.com` **and** `www.museumethnofun.com`, and a
+`redirectregex` middleware on the router sends `www` to the apex with a 308, so the game
+has exactly one origin. The `www` A record arrived after the first deploy: while it was
+missing, a router rule naming both hosts made the ACME order fail for the *pair* (the log
+says `EOF` from the API, which is a failed authorisation, not a network fault) — never add a
+host to the rule before its DNS resolves, or the apex loses its certificate too.
+
+Cache headers are `max-age=0, must-revalidate` on the `Build/` files, **not** `immutable`
+as the old host used: the payload filenames never change between builds, so an immutable
+year-long cache would pin a visitor to the first build they ever loaded. The bytes are
+identical between builds only when nothing changed, and nginx's ETag makes revalidation a
+304.
+
+The **game server is still the old VPS** — `wss://api.museum.fajrsyauqi.com` at
+`101.32.239.188` — and the build's `prodEndpoint` points there. Moving it is a server-repo
+job; when it happens, `ServerConfig.prodEndpoint` changes and this client is rebuilt.
+
+### Previous host — `museum.fajrsyauqi.com` (nginx on `101.32.239.188`)
+
+Kept for the day the server moves too; every trap below was earned there.
+
 ```bash
 chmod -R a+rX Builds/WebGL      # EVERY build, not once — Unity rewrites .br as 600
 rsync -avz --partial --exclude='.DS_Store' Builds/WebGL/ museumvps:/var/www/museum/
@@ -162,7 +205,7 @@ effect on the next load without a hard refresh.
 ### Verify
 
 ```bash
-curl -sI https://museum.fajrsyauqi.com/Build/WebGL.framework.js.br | grep -i content-encoding   # → br
+curl -sI https://museumethnofun.com/Build/WebGL.framework.js.br | grep -i content-encoding   # → br
 curl -s  https://api.museum.fajrsyauqi.com/hi
 ```
 
@@ -174,18 +217,20 @@ Confirm the upload byte-for-byte rather than trusting rsync's summary. Fetch wit
 ```bash
 for f in WebGL.data.br WebGL.wasm.br WebGL.framework.js.br; do
   L=$(shasum -a256 "Builds/WebGL/Build/$f" | awk '{print $1}')
-  R=$(curl -s -H 'Accept-Encoding: br' "https://museum.fajrsyauqi.com/Build/$f" -o - \
+  R=$(curl -s -H 'Accept-Encoding: br' "https://museumethnofun.com/Build/$f" -o - \
       | shasum -a256 | awk '{print $1}')
   [ "$L" = "$R" ] && echo "$f MATCH" || echo "$f MISMATCH"
 done
 ```
 
-Then open `https://museum.fajrsyauqi.com` in two tabs and play a room through.
+Then open `https://museumethnofun.com` in two tabs and play a room through.
 
 ## Payload
 
-Production is **29.5 MB** as of 2026-09-10 — `WebGL.data.br` 22.4 MB, `WebGL.wasm.br` 6.9 MB,
-`WebGL.framework.js.br` 0.08 MB, `WebGL.loader.js` 0.03 MB. It was **144.6 MB** the day before.
+Production is **41.6 MB** as of 2026-09-10 evening — `WebGL.data.br` 34.3 MB, `WebGL.wasm.br`
+7.2 MB, `WebGL.framework.js.br` 0.08 MB, `WebGL.loader.js` 0.03 MB. It was 29.5 MB that
+morning (the museum-decor pass — 28 props, the lobby gallery, the signage canvases — is the
+difference) and **144.6 MB** the day before.
 See [asset-budget.md](asset-budget.md) for what was cut and the rules that keep it there.
 
 The single largest historical cause was **uncompressed textures**: the default platform
@@ -198,17 +243,22 @@ painted at 2048 across 200 m terrains with 11-12 layers assigned.
 Before a production build the footage must be reachable:
 
 - mp4, H.264 + AAC, faststart-muxed (`ffmpeg -movflags +faststart`).
-- The host must send CORS headers covering `https://museum.fajrsyauqi.com`,
+- The host must send CORS headers covering `https://museumethnofun.com`,
   `Accept-Ranges: bytes` (206 responses — without it the browser downloads the whole file
   before the first frame), and `Content-Type: video/mp4`.
 - One `https://` URL per key pasted into `Assets/Resources/VideoCatalog.asset`.
 
-**Currently blocked:** all 16 URLs point at `ik.imagekit.io/altara/…` and return
-`403 Video transformations limit exceeded`. Moving hosts (VPS `/var/www/`, R2, Bunny) is 16
-URL edits and no code change.
+All 16 URLs point at `ik.imagekit.io/altara/…` with `tr=orig-true`, which serves the stored
+file and stays clear of the `403 Video transformations limit exceeded` that any
+transformation hits on the free plan. Verified 2026-09-10 from origin
+`https://museumethnofun.com`: every URL answers a `Range` GET with **206**,
+`Access-Control-Allow-Origin: *`, `Content-Type: video/mp4`; the preflight `OPTIONS` is 200
+with `*` for methods and headers. ImageKit has no per-origin allow-list to configure — it
+is wildcard — so a domain change never needs a change on the video side. Moving hosts
+(VPS, R2, Bunny) would be 16 URL edits and no code change.
 
 ## Kiosk
 
-Same URL, opened full-screen: `chrome --kiosk https://museum.fajrsyauqi.com`. The venue
+Same URL, opened full-screen: `chrome --kiosk https://museumethnofun.com`. The venue
 needs internet — there is no offline build, and the Museum scene is the only part that would
 work without a server.

@@ -35,6 +35,10 @@ with a 3D background.
   button `Disarankan`; the tap is what actually sets the scheme on `SessionData`, which is
   memory-only and never written to PlayerPrefs, because the kiosk's next visitor may be
   holding a different kind of device. See [input-and-platform.md](input-and-platform.md).
+  **Asked once per page load, not once per visit to the scene:** when `SessionData.Scheme`
+  is already set (the visitor came back from a game), `MainMenu.Awake` skips the picker and
+  shows the menu with the name field pre-filled. Before 2026-09-10 both were re-asked, which
+  visitors reported as "after playing I have to log in again".
 - **Second screen: the name field.** Nickname entry and nothing else (`MainMenu.cs`). The name is sanitized by
   `PlayerNameRules` (trim, collapse inner whitespace, 2–16 chars) and stored on
   `SessionData`, which survives scene loads; every room later sends it as `displayName`.
@@ -53,8 +57,9 @@ with a 3D background.
   (`roomName`, `maxPlayers`, its `sceneName` as the destination, and a `displayName` for the
   lobby title) and loads the Lobby.
 - Dakon doorway: `dakon` / 2 seats / "Dakon" → `Dakon`. Egrang doorway: `egrang` / 3 seats /
-  "Egrang" → `Egrang`. The Egrang doorway currently sits beside the Dakon one as a placeholder and
-  still needs moving to its real spot in the museum.
+  "Egrang" → `Egrang`. Each doorway is its exhibit's own video trigger volume on LT1
+  (`Vid Dakon/Dakon Doorway`, `Vid Egrang/Cube`); the old placeholder `Egrang Doorway` beside
+  Dakon is gone.
 - **Lesson plaques are ambient, not a screen in this flow.** A `LessonPanel` is always
   rendered on its info-panel mesh; walking into its reading volume only makes `←`/`→` (or
   `Q`/`E`) page it. Nothing opens, nothing closes, no scene loads, and the player never
@@ -71,13 +76,18 @@ One generic scene serves every game; `LobbyRequest` is the only thing that diffe
   `displayName` and `maxPlayers`, then **Create Room**, or a room-code field + **Join Room**. The field is
   pre-filled with `SessionData.LastRoomCode` so a failed join keeps the code on screen.
   Input runs through `RoomCode.Sanitize` (uppercase; alphabet excludes 0/1/I/O/L).
+  **Kembali ke Museum** (`BackToMuseum`) returns to the museum the visitor walked in from.
+  `BackToMainMenu` still exists — it is a frozen handler name — but no generated scene wires
+  it any more: MainMenu would re-run the picker and name field, which reads as a logout.
 - **Room panel** — the room code (big, with a **copy** button), one slot row per seat, a
-  host-only **Start**, and **Leave** (`LeaveRoom` drops the seat and returns to the entry
-  panel; `BackToMainMenu` leaves the Lobby entirely). The slot list is built to the request's `maxPlayers`,
+  host-only **Start**, a hint line under the seats, and **Leave** (`LeaveRoom` drops the
+  seat and returns to the entry panel). The slot list is built to the request's `maxPlayers`,
   so Dakon shows 2 rows and Egrang 3. **Start** is visible only to the host and enabled
   only while the room is Waiting with **2 or more** players seated
-  (`LobbyRoomSnapshot.CanStart`). When the phase flips to `InProgress` the controller loads
-  the request's game scene.
+  (`LobbyRoomSnapshot.CanStart`). The hint (`LobbyController.StartHintFor`) reads
+  `Minimal 2 pemain untuk mulai — tunggu N pemain lagi` until then, and the number is
+  `LobbyRoomSnapshot.MinPlayersToStart`, not copy. When the phase flips to `InProgress` the
+  controller loads the request's game scene.
 
 Rendering is snapshot-driven: every service event hands the controller a whole
 `LobbyRoomSnapshot` and the whole panel is re-rendered from it. Nothing mutates a slot.

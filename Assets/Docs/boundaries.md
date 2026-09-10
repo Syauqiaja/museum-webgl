@@ -39,7 +39,7 @@ direct decision from the user, recorded here.
   decodes into the wrong fields with no error.
 - **UnityEvent handler names are API.** Generated scenes wire buttons by method name
   (`CreateRoom`, `JoinRoom`, `StartGame`, `LeaveRoom`, `CopyCode`, `ConfirmName`,
-  `BackToMainMenu`). Renaming one silently breaks a scene.
+  `BackToMuseum`, `BackToMainMenu`). Renaming one silently breaks a scene.
 
 ## Decisions recorded
 

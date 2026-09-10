@@ -39,6 +39,8 @@ namespace Museum.Games.Egrang.Tests.PlayMode
             public string DisplayNameOf(string sessionId) =>
                 sessionId != null && Names.TryGetValue(sessionId, out string name) ? name : string.Empty;
             public void RequestCountdown() => CountdownRequests++;
+            public int Leaves;
+            public void Leave() => Leaves++;
 
             public void RaiseCountdown(float seconds) => CountdownChanged?.Invoke(seconds);
             public void RaiseSeats() => SeatsChanged?.Invoke();

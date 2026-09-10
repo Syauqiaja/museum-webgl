@@ -1,0 +1,46 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d504aca1d624112a3a119f35b476e5, type: 3}
+  m_Name: lobby_tembang
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.GameLessonData
+  gameKey: lobby_tembang
+  displayName: Tembang Dolanan
+  sections:
+  - heading: LAGU DOLANAN
+    body: "Banyak dolanan Jawa tidak lengkap tanpa lagunya. Tembang dolanan adalah
+      lagu anak berbahasa Jawa dengan laras slendro atau pelog \u2014 tangga nada
+      gamelan \u2014 yang dinyanyikan sambil bermain. Iramanya mengatur gerak: kapan
+      berjalan melingkar, kapan berhenti, kapan berganti peran.\n\nLiriknya sering
+      terdengar seperti permainan kata, tetapi menyimpan nasihat: tentang mencari
+      rezeki, tentang kematian, tentang kerendahan hati.\n\nTekan Enter di panggung
+      ini untuk mendengar satu bait."
+  - heading: JAMURAN
+    body: "\"Jamuran, jamuran, yo g\xE9g\xE9 thok / Jamur apa, jamur apa, yo g\xE9g\xE9
+      thok / Jamur gajih mbejijih sak ara-ara / Semprat-semprit, jamur apa?\"\n\nAnak-anak
+      bergandengan melingkar di sekeliling satu anak yang dadi (jaga), berjalan sambil
+      menyanyi. Di akhir lagu si penjaga menyebut nama jamur \u2014 jamur kendhil,
+      jamur gagak, jamur parut \u2014 dan semua harus berpose atau bergerak sesuai
+      jamur itu. Yang gagal menjadi penjaga berikutnya."
+  - heading: CUBLAK-CUBLAK SUWENG
+    body: "\"Cublak-cublak suweng, suweng\xE9 ting gel\xE8nt\xE8r / Mambu ketundhung
+      gud\xE8l / Pak Empo l\xE9ra-l\xE9r\xE9 / Sapa ngguyu ndhelikak\xE9 / Sir-sir
+      pong dhel\xE9 kopong.\"\n\nSatu anak tengkurap sebagai Pak Empo; yang lain
+      meletakkan tangan di punggungnya dan mengedarkan suweng (anting) dari tangan
+      ke tangan mengikuti lagu. Saat lagu berhenti, Pak Empo menebak di tangan siapa
+      suweng disembunyikan \u2014 permainan menyimak bunyi dan membaca raut muka."
+  - heading: SLUKU-SLUKU BATHOK
+    body: "\"Sluku-sluku bathok, bathok\xE9 \xE9la-\xE9lo / Si Rama menyang Sala,
+      ol\xE9h-ol\xE9h\xE9 payung motha / Mak jenthit lolo lobah, wong mati ora obah
+      / Y\xE8n obah med\xE8ni bocah, y\xE8n urip goleka dhuwit.\"\n\nDinyanyikan
+      sambil duduk berhadapan, kaki diluruskan, badan diayun ke kanan-kiri, dan pada
+      \"mak jenthit\" semua mematung. Lagu pengantar tidur yang sekaligus mengingatkan:
+      selagi hidup, bekerjalah."

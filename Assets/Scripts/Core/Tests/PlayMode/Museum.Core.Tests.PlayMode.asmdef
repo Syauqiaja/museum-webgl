@@ -4,7 +4,8 @@
     "references": [
         "Museum.Core",
         "ColyseusSDK",
-        "UnityEngine.TestRunner"
+        "UnityEngine.TestRunner",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

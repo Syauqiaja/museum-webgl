@@ -59,6 +59,18 @@ answers directly and is much faster than reasoning about prefab graphs.
 - `streamingMipmaps` off and `isReadable` off. Neither buys anything on this target and
   `isReadable` doubles the memory of every texture it is set on.
 
+### Generated decor (2026-09-10)
+
+The museum-decor pass ([museum-decor.md](museum-decor.md)) added **28 FBX props** under
+`Assets/Models/Generated/` (≈1 MB on disk, low-poly, read/write off, no rig — enforced by
+`GeneratedModelPostprocessor`), **17 flat URP Lit materials** under `Assets/Material/Decor/`
+(no textures — `MuseumDecorMaterials` is a colour palette on purpose) and one texture,
+`Assets/Texture2D/SegeraHadir.png` (the "Segera hadir" placeholder card, 1024 cap, crunched).
+The lobby stations synthesise their sounds at runtime (`ProceduralAudio`), so no audio clips
+ship for them. Eight more `GameLessonData` assets sit in `Resources/lessons/` (`lobby_*`) —
+text only. Expect the payload to move by well under a megabyte; re-read the build report after
+the next production build and update the table above.
+
 ### Terrain
 
 Terrain "data" is mostly **textures wearing a `TerrainData` costume**. A `TerrainData`'s size

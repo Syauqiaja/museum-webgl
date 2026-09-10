@@ -1,0 +1,42 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d504aca1d624112a3a119f35b476e5, type: 3}
+  m_Name: lobby_ragam
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.GameLessonData
+  gameKey: lobby_ragam
+  displayName: Ragam Dolanan
+  sections:
+  - heading: JENIS PERMAINAN
+    body: "Dolanan Jawa dapat dikelompokkan menurut yang paling banyak dipakai: kaki,
+      tangan, suara, atau pikiran.\n\nPermainan lapangan menguji lari dan kelincahan
+      \u2014 Gobak Sodor, Bentengan, Lompat Tali, Egrang, Blarak Sempal. Permainan
+      duduk menguji ketelitian jari \u2014 Bekelan, Gatheng, Cirak, Bitingan, Benthik.
+      Permainan papan menguji strategi \u2014 Dakon, Dam-daman, Dampar. Dan permainan
+      bernyanyi menyatukan semuanya \u2014 Jamuran, Cublak-cublak Suweng, Sluku-sluku
+      Bathok, Ancak-ancak Alis."
+  - heading: ALAT & BAHAN
+    body: 'Alat dolanan datang dari halaman. Biji sawo, kecik, dan kerang untuk Dakon;
+      batu kali bulat untuk Gatheng; pecahan genting untuk Engklek; bambu untuk Egrang
+      dan Bitingan; kayu ranting untuk Benthik; pelepah kelapa kering untuk Blarak
+      Sempal; karet gelang yang dianyam untuk Lompat Tali.
+
+
+      Meja di depan
+      papan ini memajang beberapa di antaranya. Karena alatnya ada di mana-mana,
+      permainan bisa dimulai kapan saja.'
+  - heading: KAPAN DIMAINKAN
+    body: "Sore hari sepulang sekolah dan sehabis mengaji adalah waktu dolanan; halaman
+      rumah dan tanah lapang desa menjadi arenanya. Malam bulan purnama \u2014 padhang
+      mbulan \u2014 adalah waktu istimewa untuk permainan beramai-ramai seperti Jamuran
+      dan Cublak-cublak Suweng.\n\nMusim kemarau sehabis panen membuka lapangan yang
+      luas untuk Gobak Sodor dan Bentengan, sementara musim hujan mengembalikan anak-anak
+      ke emper rumah dengan Dakon dan Bekelan."

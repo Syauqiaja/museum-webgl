@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d504aca1d624112a3a119f35b476e5, type: 3}
+  m_Name: lobby_gong
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.GameLessonData
+  gameKey: lobby_gong
+  displayName: Gong Ageng
+  sections:
+  - heading: GONG & GAMELAN
+    body: "Gong ageng adalah gong terbesar dalam seperangkat gamelan Jawa. Suaranya
+      yang paling rendah dan paling panjang menandai akhir satu putaran lagu, yang
+      disebut gongan. Dalam gamelan, gong tidak mengisi melodi; ia memberi bingkai
+      waktu \u2014 semua instrumen lain berjalan di antara dua pukulan gong.\n\nGong
+      dibuat dari perunggu, campuran tembaga dan timah, yang ditempa dalam keadaan
+      panas lalu ditala dengan mengikis bagian tengahnya (pencu) sedikit demi sedikit."
+  - heading: TANDA MULAI
+    body: "Di halaman kampung, gong atau kentongan adalah pemanggil: tanda mulai
+      kerja bakti, pertunjukan, dan permainan malam bulan purnama. Bunyi yang terdengar
+      sampai ujung dusun mengumpulkan anak-anak ke tanah lapang.\n\nDalam beberapa
+      dolanan, misalnya Jamuran dan Cublak-cublak Suweng, irama itu digantikan oleh
+      tembang yang dinyanyikan bersama \u2014 gong ada di dalam suara anak-anak itu
+      sendiri."
+  - heading: COBA TABUH
+    body: "Berdirilah di depan gong dan tekan Enter (atau ketuk Interaksi). Tabuh
+      berlapis kain akan mengayun dan gong berbunyi.\n\nDengarkan: nada dasar yang
+      dalam, lalu getaran yang perlahan bergelombang. Itu adalah dua nada yang sangat
+      berdekatan saling bertemu \u2014 para pembuat gong menyebutnya ombak, dan gong
+      yang baik ombaknya lambat dan tenang."

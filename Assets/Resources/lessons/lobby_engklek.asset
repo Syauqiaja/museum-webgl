@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d504aca1d624112a3a119f35b476e5, type: 3}
+  m_Name: lobby_engklek
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.GameLessonData
+  gameKey: lobby_engklek
+  displayName: Petak Engklek
+  sections:
+  - heading: CARA BERMAIN
+    body: "Petak digambar di tanah dengan kapur atau pecahan genting. Setiap pemain
+      punya gacuk \u2014 kepingan genting atau batu pipih \u2014 yang dilempar ke
+      petak pertama. Pemain lalu melompat dengan satu kaki melewati petak yang berisi
+      gacuk, mendarat dengan dua kaki hanya di petak berpasangan, berputar di puncak,
+      dan kembali sambil memungut gacuknya.\n\nJika gacuk keluar garis, kaki menyentuh
+      garis, atau pemain hilang keseimbangan, giliran berpindah."
+  - heading: MAKNA GUNUNG
+    body: "Petak paling atas berbentuk setengah lingkaran dan disebut gunung. Pemain
+      yang berhasil menyelesaikan seluruh putaran boleh melempar gacuk dengan membelakangi
+      petak; di mana gacuk jatuh, di situ ia mendapat sawah \u2014 petak miliknya
+      yang tidak boleh diinjak lawan.\n\nBentuknya sering dibaca sebagai perjalanan
+      manusia: dari tanah, naik bertahap, menuju gunung, lalu pulang membawa hasil.
+      Di berbagai daerah permainan ini dikenal juga sebagai Sunda Manda atau Taplak."
+  - heading: COBA SENDIRI
+    body: "Petak di lantai ini bisa diinjak. Mulailah dari petak 1 dan berjalanlah
+      ke atas berurutan; setiap petak yang benar akan menyala dan berbunyi, dan gunung
+      di puncak menyambut Anda dengan nada penutup.\n\nSalah urutan? Tidak apa-apa
+      \u2014 petak menunggu sampai Anda kembali ke yang benar. Injak petak 1 lagi
+      untuk mengulang dari awal."

@@ -13,7 +13,7 @@ alongside Dakon and Egrang. Nothing of it exists today:
 | Protocol | Placeholder section in the server's `protocol.md`, all fields TODO |
 | Unity scene | Does not exist |
 | Unity scripts | Do not exist |
-| Museum doorway | Does not exist |
+| Museum doorway | Does not exist — the exhibit's trigger carries a `ComingSoonNotice` ("Permainan Engklek segera hadir"), see [scene-setup.md](../scene-setup.md) |
 
 The only trace in this repo is the exhibit footage: `engklek_G0JYK3Hz.mp4` plays on one of
 the museum's screens as reference material, which is independent of whether the game is
@@ -36,8 +36,10 @@ playable.
 3. The client regenerates `Assets/Scripts/Net/Schema/EngklakState.cs`, adds one line to
    `RoomSession.Factories`, and follows the same shape as the other two: pure-C# rules
    model → session interface → view, with an offline mode.
-4. A museum doorway is placed with `new LobbyRequest("engklak", <seats>, SceneReference.Engklak, "Engklak")`,
-   the scene is added to Build Settings, and `SceneReference` gains its constant.
+4. The `ComingSoonNotice` on `Vid LT1/Vid Engklek/Cube` is swapped for a `SceneTriggerPrompt`
+   with `new LobbyRequest("engklak", <seats>, SceneReference.Engklak, "Engklak")`
+   (`SceneWiringRepair.Doorways` + drop `MakeEngklekComingSoon`), the scene is added to
+   Build Settings, and `SceneReference` gains its constant.
 
 See [games/dakon.md](dakon.md) and [games/egrang.md](egrang.md) for the two worked examples
 — a turn-based one and a real-time one.

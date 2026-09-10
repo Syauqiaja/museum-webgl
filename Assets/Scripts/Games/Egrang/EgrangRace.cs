@@ -183,6 +183,34 @@ namespace Museum.Games.Egrang
         public void SetOfflineCountdown(float seconds) => offlineCountdownSeconds = Mathf.Max(0f, seconds);
 
         /// <summary>
+        /// Leaves the race mid-run for the museum. The results panel has its own exit for a
+        /// finished race; this one is for the player who wants out before the line, and until it
+        /// existed the only way off the track was the browser's back button.
+        ///
+        /// The name is frozen: the HUD's exit button stores it as a persistent listener in
+        /// Egrang.unity, and CLAUDE.md lists it among the handler names a generated scene wires
+        /// by string.
+        ///
+        /// Online the leave is consented, so the server withdraws this lane at once and the other
+        /// two keep racing (see the server's <c>EgrangRoom.onLeave</c>); a socket merely dropped
+        /// by the scene unloading would hold the seat open through the reconnection window
+        /// instead. The session also clears the held room, so the next visit does not try to
+        /// reconnect into a race that ended without us.
+        /// </summary>
+        public void BackToMuseum()
+        {
+            _session?.Leave();
+            Unsubscribe();
+
+            if (SessionData.Instance != null) SessionData.Instance.ClearRoomSession();
+
+            // Playing the Egrang scene on its own has no loader — same fallback as the results
+            // panel's exit, for the same reason.
+            if (SceneLoader.Instance != null) SceneLoader.Instance.LoadScene(SceneReference.Museum);
+            else UnityEngine.SceneManagement.SceneManager.LoadScene(SceneReference.Museum);
+        }
+
+        /// <summary>
         /// Attaches the race to a session, or to nothing. A null session is the offline scene: lane 1
         /// is yours and the other two stand still.
         /// </summary>

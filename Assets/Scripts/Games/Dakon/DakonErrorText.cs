@@ -14,8 +14,9 @@ namespace Museum.Games.Dakon
     public static class DakonErrorText
     {
         public const string NotYourTurn = "Bukan giliran kamu";
-        public const string InvalidHole = "Lubang itu bukan tujuan berikutnya";
+        public const string InvalidHole = "Masukkan biji ke lubang di sisimu sendiri";
         public const string SeedNotInHand = "Biji itu tidak ada di tanganmu";
+        public const string HoleAlreadySown = "Lubang itu sudah terisi giliran ini";
         public const string Unknown = "Langkah itu ditolak";
 
         public static string MessageFor(DakonError error)
@@ -25,6 +26,7 @@ namespace Museum.Games.Dakon
                 case DakonError.NotYourTurn: return NotYourTurn;
                 case DakonError.InvalidHole: return InvalidHole;
                 case DakonError.SeedNotInHand: return SeedNotInHand;
+                case DakonError.HoleAlreadySown: return HoleAlreadySown;
                 default: return Unknown;
             }
         }

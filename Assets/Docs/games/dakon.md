@@ -1,6 +1,11 @@
 # Dakon — Rules and Client Mapping
 
-**Dakon Edukasi: Digital Edition (Monokotil vs. Dikotil)** — the **v6 ruleset**.
+**Dakon Edukasi: Digital Edition (Monokotil vs. Dikotil)** — the **v7 ruleset**.
+
+> **v7 (2026-09-11)** replaced v6's forced sowing order. The player now chooses the hole as
+> well as the seed, restricted to their own side, one seed per hole per turn; the hand shrank
+> from 15 to 10 so a turn is exactly "fill your ten holes". The `nextHoleIndex` state field
+> became `sownMask`, and there is a new error, `hole_already_sown`. Both repos changed together.
 
 Two implementations, one ruleset: `Assets/Scripts/Games/Dakon/DakonBoard.cs` (client,
 offline hotseat) and `src/games/dakon/DakonBoard.ts` (server, authoritative). The server's
@@ -17,12 +22,13 @@ contract: the server's `docs/protocol.md#dakon`.
 
 Two players. A centre pool holds seeds of two botanical categories — **Monokotil** and
 **Dikotil**. Every hole on the board is also typed as one of those two. On your turn you are
-dealt a hand of seeds and must sow them one by one into a forced sequence of holes; the only
-choice you make is *which seed goes into the next hole*. A seed whose category matches the
-hole scores for you; a mismatch scores for your opponent. Most seeds banked at the end wins.
+dealt ten seeds and place them into your own ten holes, one seed per hole, in whatever order
+you like. A seed whose category matches the hole scores for you; a mismatch scores for your
+opponent. Most seeds banked at the end wins.
 
 It is an educational game: the interesting decision is recognising which species is a
-monocot and which is a dicot, under the pressure of a forced hole order.
+monocot and which is a dicot, and — since a hand is drawn at random and rarely splits 5/5 the
+way the holes do — deciding which unavoidable mismatches to give away.
 
 ## Setup
 
@@ -32,8 +38,8 @@ monocot and which is a dicot, under the pressure of a forced hole order.
 | Holes | **20**, ten per side. Ring indices 0–9 = seat 0's side, 10–19 = seat 1's | `HolesPerSide = 10` |
 | Hole types | A **fixed layout of 20**, 5 dicot + 5 monocot per side. The same board every match, pinned to the icons painted on the board texture | `DakonConfig.HoleTypes` |
 | Storehouses | 2, one per player, each split monocot/dicot for display | `DakonBoard.Store` |
-| Hand size | **15 seeds** drawn per turn, or everything left if fewer | `GrabSize = 15` |
-| Match length | 60 ÷ 15 = **4 hands — 2 turns each** | — |
+| Hand size | **10 seeds** drawn per turn — one per own hole — or everything left if fewer | `GrabSize = 10` (`= HolesPerSide`) |
+| Match length | 60 ÷ 10 = **6 hands — 3 turns each** | — |
 
 Holes are typed **by category, never by species**. A monocot hole accepts any monocot
 species. Species are cosmetic: they decide the card art and the 3D seed prefab, nothing else.
@@ -80,14 +86,14 @@ painted icons are correct.
 
 ## A turn
 
-1. **Draw (automatic).** At the start of a turn the server draws `min(15, pool)` random
+1. **Draw (automatic).** At the start of a turn the server draws `min(10, pool)` random
    seeds into the active player's hand.
-2. **Sow.** One seed per hole, into **consecutive** holes, starting at the player's own first
-   hole — seat 0 → hole 0, seat 1 → hole 10 — and advancing by one, **wrapping around the
-   whole ring**. A full 15-seed hand therefore covers the player's own ten holes and spills
-   onto the first five of the opponent's side. That is intended.
-3. **The hole is not a choice; the seed is.** The player picks which held seed goes into the
-   forced next hole (`nextHoleIndex`).
+2. **Sow.** The player picks a held seed **and** one of **their own** holes — seat 0 → holes
+   0–9, seat 1 → holes 10–19 — in any order. A hole takes **one seed per turn**; the set of
+   holes already filled this turn is `sownMask` (bit *i* = hole *i*), cleared when the turn
+   ends. Nothing ever lands on the opponent's side.
+3. **Both halves are the choice.** A full hand is one side's worth of holes, so a turn always
+   ends with every own hole filled; the decision is which seed goes where.
 4. Sowing is sequential: drop → the server validates and sweeps → the next drop.
 5. When the hand empties, the turn passes and the next player draws. When the hand empties
    *and* the pool is empty, the match is over.
@@ -113,8 +119,9 @@ total wins. **A tie is possible and valid** (`winner: null` → "Seri!").
 
 | Case | Behaviour |
 |---|---|
-| Short final draw | Fewer than 15 left → the hand is whatever remains, and the game ends once it is sown |
-| Wrong hole | `holeIndex != nextHoleIndex` → rejected, nothing changes |
+| Short final draw | Fewer than 10 left → the hand is whatever remains, and the game ends once it is sown (with 60 seeds and hands of 10 this never happens; the rule is kept for a retuned pool) |
+| Opponent's hole, or off the board | `invalid_hole` → rejected, nothing changes |
+| Hole already filled this turn | `hole_already_sown` → rejected, nothing changes; the hole is not marked by a refused drop |
 | Seed not held | `seedId` not in the hand → rejected |
 | Off-turn drop | Rejected with `not_your_turn` |
 | Disconnect | Hand and sow position are server state and survive a reconnect inside the 30 s window |
@@ -150,7 +157,7 @@ local game only if nothing bound.
 | `centerPoolCount` | `Pool: n` |
 | `holes[20]` (`"monocot"` / `"dicot"`) | Per-hole type label / colour, ring order 0–19 |
 | `activePlayer` (sessionId) | Turn label; input live only when it is this client's |
-| `nextHoleIndex` | The highlight marker — the destination indicator, not a second click |
+| `sownMask` (uint32, bit *i* = hole *i*) | Which own holes are closed for the rest of the turn; a tap on one is refused client-side before it is sent |
 | `hand[]` (`id`, `category`, `typeId`) | The card row; `typeId` resolves to a `SeedType` asset for art and 3D prefab |
 | `storehouses[sessionId]` (`monocot`, `dicot`, `total`) | Both score labels |
 | `phase` | `waiting` / `in_progress` / `finished` — drives the results panel |
@@ -162,16 +169,26 @@ screen would show someone else's cards and invite a click on them.
 ### Input → messages
 
 ```csharp
-room.Send("drop_seed", new { seedId, holeIndex });  // holeIndex must equal nextHoleIndex
+room.Send("drop_seed", new { seedId, holeIndex });  // holeIndex: one of my own, not yet sown this turn
 ```
 
-**Drops are pipelined.** The player can click a whole hand without waiting a round trip
-each time: the target hole is fully forward-known (`+1` per drop, reset only when the hand
-empties), so `NetDakonSession` sends `nextHoleIndex + <drops in flight>`. Only the clicked
-card locks — dimmed, not destroyed, so a fast click still looks like it landed. A refusal
-clears the whole in-flight queue and the hand is re-dealt from the next patch, because the
-server stopped at the drop it rejected and everything queued behind it was aimed one hole
-too far.
+**Input is two-step.** Tapping a card selects it (it scales up in the row; tapping it again
+puts it back). Tapping a hole while a card is selected sends the drop. The holes are hit by a
+`Pointer.current` ray against `DakonHoleTarget` trigger spheres that `DakonView` builds over
+the anchors at runtime — the anchors themselves are 0.05-scaled placement transforms and
+carry no collider. Taps that land on UI (the card row overlaps the near edge of the board)
+belong to the UI; a tap that misses every hole leaves the card selected. While a card is
+selected the highlight marker follows the hole under the pointer — a preview, not a rule.
+
+The view refuses the two obvious cases itself so the answer is instant: a hole on the
+opponent's side (`InvalidHole`) and a hole already sown this turn (`HoleAlreadySown`).
+`NetDakonSession` makes the same two checks and counts a hole with a drop **in flight** as
+sown, so a burst cannot queue two seeds into one hole. The server still decides.
+
+**Drops are pipelined.** The player can place a whole hand without waiting a round trip each
+time. Only the sent card locks — dimmed, not destroyed, so a fast tap still looks like it
+landed. A refusal clears the whole in-flight set and the hand is re-dealt from the next
+patch, which is server truth.
 
 ### Animation
 
@@ -247,8 +264,9 @@ falls back to `Pemain N` (the server accepts an empty `displayName`). Your own t
 ### Errors
 
 Shared: `invalid_move`, `not_your_turn`, `room_full`, `room_not_found`. Dakon-specific:
-`invalid_hole` (not equal to `nextHoleIndex`), `seed_not_in_hand`. All arrive as an `error`
-message, surface as a toast, and re-sync from the next patch.
+`invalid_hole` (not on the active seat's side, or off the board), `hole_already_sown`,
+`seed_not_in_hand`. All arrive as an `error` message, surface as a toast, and re-sync from
+the next patch.
 
 The toast reads its wording from `DakonErrorText.MessageFor`, in Indonesian like the rest of
 the screen, and clears itself after `toastSeconds`. Both halves matter: the enum name is not a
@@ -296,7 +314,8 @@ field and the server's id list must agree in **lowercase, underscored** form.
 
 ## Tests
 
-`Assets/Scripts/Games/Dakon/Tests/` — `DakonBoardTests` (setup counts, per-side type split,
-forced hole order and wrap, sweep scoring, turn/hand boundaries, short final draw, endgame
-and tie) and `DakonPileTests` (pile layout stays inside its radius and stacks upward).
-Deterministic: the board takes an explicit RNG seed.
+`Assets/Scripts/Games/Dakon/Tests/` — `DakonBoardTests` (setup counts, hand = one side,
+per-side type split, free hole order, own-side and one-seed-per-hole refusals, `SownMask`,
+sweep scoring, turn/hand boundaries, three turns each, endgame and tie) and `DakonPileTests`
+(pile layout stays inside its radius and stacks upward). Deterministic: the board takes an
+explicit RNG seed.

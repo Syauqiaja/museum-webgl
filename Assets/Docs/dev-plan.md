@@ -31,7 +31,7 @@ Persistent bootstrap (`SessionData`, `ColyseusNetManager`, `SceneLoader`), `Serv
 
 ## P2 — Dakon offline / hotseat ✅
 
-Pure-C# `DakonBoard` implementing the v6 ruleset, `DakonView` rendering it, EditMode tests
+Pure-C# `DakonBoard` implementing the ruleset (v6 at the time; v7 since 2026-09-11), `DakonView` rendering it, EditMode tests
 covering setup, sweep, turn boundaries, endgame and ties.
 **Exit met:** a full hotseat game to a win or tie with correct scoring —
 *subject to the scene being rewired*.

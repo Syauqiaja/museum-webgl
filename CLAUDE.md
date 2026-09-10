@@ -31,7 +31,8 @@ type or a rule client-side; if it is not there, flag it so both repos change tog
   than errors. Regenerate, never edit.
 - **UnityEvent handler names are API** — generated scenes wire buttons by method name
   (`CreateRoom`, `JoinRoom`, `StartGame`, `LeaveRoom`, `CopyCode`, `ConfirmName`,
-  `BackToMainMenu`, `ChooseTouch`, `ChooseDesktop`). Renaming one silently breaks a scene.
+  `BackToMuseum`, `BackToMainMenu`, `ChooseTouch`, `ChooseDesktop`). Renaming one silently
+  breaks a scene.
 - **No absolute URLs in scenes.** Endpoints come from `ServerConfig`, media from
   `VideoCatalog`; scene objects carry keys.
 - **No third-party networking vendor, no WebRTC/UDP.** WebSockets via the Colyseus Unity SDK

@@ -5,7 +5,8 @@
         "ColyseusSDK",
         "Museum.Core",
         "Museum.Games.Dakon",
-        "Museum.Games.Egrang"
+        "Museum.Games.Egrang",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

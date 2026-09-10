@@ -151,7 +151,18 @@ namespace Museum.Core
             string key = VideoKey;
             if (key.Length == 0)
             {
-                Debug.LogError($"[StreamedVideoScreen] {name}: no video key assigned.", this);
+                // An empty key with a placeholder is a screen whose footage has not been
+                // delivered yet (Jamuran, Sluku-sluku Bathok) — the "Segera hadir" card is the
+                // intended picture, not a fault. Without a placeholder it is still a bug.
+                if (placeholder != null)
+                {
+                    Debug.Log($"[StreamedVideoScreen] {name}: no video yet, showing the placeholder card.", this);
+                }
+                else
+                {
+                    Debug.LogError($"[StreamedVideoScreen] {name}: no video key assigned.", this);
+                }
+
                 State = ScreenState.Failed;
                 ShowPlaceholder();
                 return;

@@ -78,7 +78,7 @@ statics.
 
 | asmdef | Namespace | Contains | References |
 |---|---|---|---|
-| `Museum.Core` | `Museum.Core` | Bootstrap trio, `ServerConfig`, `SceneReference`, `LobbyRequest`, `PlayerNameRules`, `SceneTriggerPrompt`, video trio, `FollowCamera`, hover/raycast | ColyseusSDK, TMP, uGUI, InputSystem |
+| `Museum.Core` | `Museum.Core` | Bootstrap trio, `ServerConfig`, `SceneReference`, `LobbyRequest`, `PlayerNameRules`, `SceneTriggerPrompt`, video trio, `FollowCamera`, hover/raycast, the lobby-gallery stations (`IInteractable`, `GalleryStation` + `GongStation`/`GasingStation`/`SongStation`, `HopscotchCourse`/`HopscotchTile`, `ProceduralAudio`) | ColyseusSDK, TMP, uGUI, InputSystem |
 | `Museum.Games.Dakon` | `Museum.Games.Dakon` | Pure model + view + session seam | TMP, uGUI (no Colyseus) |
 | `Museum.Games.Egrang` | `Museum.Games.Egrang` | Race, racers, skill-check bar, stilts, views | TMP, uGUI, InputSystem (no Colyseus) |
 | `Museum.Net` | `Museum.Net` | Generated schema mirror, `NetDakonSession`, `NetEgrangSession`, the two net bootstraps | ColyseusSDK, Core, Dakon, Egrang |
@@ -183,7 +183,8 @@ H.264/AAC. Without Range the browser downloads the whole file before the first f
 Assets/
   Scenes/          MainMenu, Museum, Lobby, Dakon, Egrang
   Scripts/
-    Core/          Museum.Core — bootstrap, config, doorways, video, camera, hover
+    Core/          Museum.Core — bootstrap, config, doorways, video, camera, hover, gallery stations
+      Editor/      UI generators, lesson/signage copy, lighting, the Museum/Decor/* builders
     Lobby/         Museum.Lobby — service seam, model, controller, slot view
     Games/Dakon/   model (pure C#) + view + sessions
     Games/Egrang/  race, racers, skill-check bar, stilts, HUD views
@@ -192,7 +193,9 @@ Assets/
     Editor/        WebGL build, video migration
     Tweens/        FadeTween, PopupTween
   Data/Egrang/     three EgrangStickProfile assets
-  Resources/       ServerConfig, VideoCatalog, seeds/, TMP
+  Models/Generated/  28 Blender-built decor props (FBX), materials remapped at import
+  Material/Decor/  the generated-decor palette (MuseumDecorMaterials)
+  Resources/       ServerConfig, VideoCatalog, seeds/, lessons/, TMP
   Docs/            this documentation set
 docs/              root-level: dakon-scene-setup.md, superpowers/{specs,plans}
 ```

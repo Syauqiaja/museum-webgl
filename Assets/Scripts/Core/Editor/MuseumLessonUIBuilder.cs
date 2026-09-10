@@ -26,14 +26,14 @@ namespace Museum.Core.EditorTools
     public static class MuseumLessonUIBuilder
     {
         private const string ScenePath = "Assets/Scenes/Museum.unity";
-        private const string LessonFolder = "Assets/Resources/lessons";
+        internal const string LessonFolder = "Assets/Resources/lessons";
 
         /// <summary>Scene-root parent for everything this builder generates.</summary>
         private const string ContainerName = "Lessons (Generated)";
 
         // The panel is authored in the project's 800×600 design units (ui-style.md §1) and
         // then scaled down to the size it wants to be on the wall.
-        private static readonly Vector2 PanelSize = new Vector2(820f, 520f);
+        internal static readonly Vector2 PanelSize = new Vector2(820f, 520f);
         private const float PanelPad = 32f;
 
         /// <summary>Panel height as a fraction of the video frame's, so it reads as its equal.</summary>
@@ -423,7 +423,36 @@ namespace Museum.Core.EditorTools
         // --- panel ---------------------------------------------------------------------
 
         private static LessonPanel BuildPanel(Transform parent, LessonSource source, GameLessonData lesson,
-                                              string panelName, PanelPose pose)
+                                              string panelName, PanelPose pose) =>
+            BuildPanel(parent, lesson, panelName, pose, "MATERI BELAJAR");
+
+        /// <summary>
+        /// The same plaque, hung anywhere. Used by the lobby gallery so its stations share this
+        /// styling instead of a second, drifting copy of it.
+        /// </summary>
+        internal static LessonPanel BuildPanelAt(Transform parent, GameLessonData lesson, string panelName,
+                                                 Vector3 position, Quaternion rotation, float scale,
+                                                 string eyebrow, string source)
+        {
+            var pose = new PanelPose { Position = position, Rotation = rotation, Scale = scale, Source = source };
+            return BuildPanel(parent, lesson, panelName, pose, eyebrow);
+        }
+
+        /// <summary>
+        /// Wires a <see cref="LessonReader"/> on a trigger volume to a panel. The volume must
+        /// already carry a trigger collider; the gallery builder creates its own.
+        /// </summary>
+        internal static LessonReader AttachReaderTo(LessonPanel panel, GameObject volume)
+        {
+            var reader = Undo.AddComponent<LessonReader>(volume);
+            var serialized = new SerializedObject(reader);
+            Set(serialized, "panel", panel);
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            return reader;
+        }
+
+        private static LessonPanel BuildPanel(Transform parent, GameLessonData lesson, string panelName,
+                                              PanelPose pose, string eyebrowText)
         {
             var go = new GameObject(panelName, typeof(RectTransform), typeof(Canvas), typeof(CanvasScaler));
             Undo.RegisterCreatedObjectUndo(go, UndoLabel);
@@ -443,7 +472,7 @@ namespace Museum.Core.EditorTools
             go.transform.position = pose.Position;
             go.transform.rotation = pose.Rotation;
             go.transform.localScale = Vector3.one * pose.Scale;
-            Debug.Log($"MuseumLessonUIBuilder: {source.DisplayName} panel placed ({pose.Source}) — " +
+            Debug.Log($"MuseumLessonUIBuilder: {lesson.displayName} panel placed ({pose.Source}) — " +
                       $"{PanelSize.x * pose.Scale:F2} × {PanelSize.y * pose.Scale:F2} m at {pose.Position}.");
 
             BuildBackground(rect);
@@ -453,7 +482,7 @@ namespace Museum.Core.EditorTools
                                       new Vector2(0f, 1f));
             title.alignment = TextAlignmentOptions.MidlineLeft;
 
-            TMP_Text eyebrow = AddLabel(rect, "Eyebrow", "MATERI BELAJAR", MediumFont, EyebrowSize, Tan,
+            TMP_Text eyebrow = AddLabel(rect, "Eyebrow", eyebrowText, MediumFont, EyebrowSize, Tan,
                                         new Vector2(-PanelPad - 140f, -PanelPad - 22f),
                                         new Vector2(280f, 22f), new Vector2(1f, 1f));
             eyebrow.alignment = TextAlignmentOptions.MidlineRight;

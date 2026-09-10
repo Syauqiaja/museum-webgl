@@ -99,8 +99,10 @@ between MainMenu and Results.
 It is deliberately **not** written to PlayerPrefs, unlike the name field. This is a museum
 kiosk: the next visitor to stand in front of a paused build may be holding a phone after the
 last one used the keyboard, and a remembered scheme from browser storage would hand them the
-wrong overlay before they ever see the picker. Every session starts at `Unknown` and asks
-again.
+wrong overlay before they ever see the picker. Every page load starts at `Unknown` and asks
+again — but only the page load. Within one session the answer lives on the bootstrap object,
+and `MainMenu.Awake` skips the picker whenever `Scheme` is already set, so a visitor coming
+back from a game is not asked twice.
 
 ## The touch overlay
 
@@ -132,11 +134,14 @@ desktop input path at runtime.
 
 ### `TouchInteractRouter` — self-registration, not per-doorway wiring
 
-`TouchInteractRouter` (`Assets/Scripts/Core/TouchInteractRouter.cs`) exposes two static
-slots, `CurrentPrompt` (a `SceneTriggerPrompt`) and `CurrentReader` (a `LessonReader`).
-Doorways and lesson plaques call `Register`/`Unregister` on themselves as the player enters
-and leaves their trigger volume; the Interaksi and ‹ › buttons just act on whichever is
-currently registered. Nobody wires an Interaksi button to a specific doorway, and no doorway
+`TouchInteractRouter` (`Assets/Scripts/Core/TouchInteractRouter.cs`) exposes three static
+slots, `CurrentPrompt` (a `SceneTriggerPrompt`), `CurrentReader` (a `LessonReader`) and
+`CurrentInteractable` (an `IInteractable` — the ground-floor gallery's gong, gasing and song
+stations, see [museum-decor.md](museum-decor.md)). Doorways, lesson plaques and stations call
+`Register`/`Unregister` on themselves as the player enters and leaves their trigger volume;
+the Interaksi and ‹ › buttons just act on whichever is currently registered. `Interact()`
+prefers a doorway over a station, so a station volume that overlaps a doorway can never eat
+the doorway's press. On desktop the stations read the same **Enter** key as the doorways. Nobody wires an Interaksi button to a specific doorway, and no doorway
 needs to know the overlay exists. That matters here specifically because a museum doorway
 going unwired by hand is a failure this project has already lived through once (see
 `scene-setup.md`'s Museum doorway table) — self-registration means adding a fifth doorway

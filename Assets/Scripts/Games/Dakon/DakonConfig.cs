@@ -1,7 +1,7 @@
 namespace Museum.Games.Dakon
 {
     /// <summary>
-    /// Tunables for a Dakon game. Defaults are the settled v6 ruleset values. Pool splits
+    /// Tunables for a Dakon game. Defaults are the settled v7 ruleset values. Pool splits
     /// evenly between the two categories; if <see cref="PoolSeeds"/> is odd the extra seed
     /// is Monocot.
     ///
@@ -14,11 +14,15 @@ namespace Museum.Games.Dakon
     /// </summary>
     public sealed class DakonConfig
     {
-        /// <summary>Total seeds in the pool. Default 60 (30 Monocot + 30 Dicot) → 4 grabs of 15 = 2 turns/player.</summary>
+        /// <summary>Total seeds in the pool. Default 60 (30 Monocot + 30 Dicot) → 6 grabs of 10 = 3 turns/player.</summary>
         public int PoolSeeds = 60;
 
-        /// <summary>Seeds grabbed per turn (grabs min(GrabSize, poolRemaining)).</summary>
-        public int GrabSize = 15;
+        /// <summary>
+        /// Seeds grabbed per turn (grabs min(GrabSize, poolRemaining)). Equal to
+        /// <see cref="HolesPerSide"/> on purpose: a turn is "one seed into each of your own holes",
+        /// and a hand larger than the side would have nowhere legal to go.
+        /// </summary>
+        public int GrabSize = 10;
 
         /// <summary>Holes per player side. Board ring = HolesPerSide * 2.</summary>
         public int HolesPerSide = 10;

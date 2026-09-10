@@ -136,7 +136,7 @@ reaches a client that was still loading the scene when the broadcast went out.
 
 | Game | Predicted | Not predicted |
 |---|---|---|
-| Dakon | the **target hole** of a queued drop (`nextHoleIndex + drops in flight`) | nothing is drawn until `drop_applied` — the board on screen is always one the server agrees with |
+| Dakon | that a hole with a drop **in flight** is already sown (so a burst cannot aim two seeds at one hole) | nothing is drawn until `drop_applied` — the board on screen is always one the server agrees with |
 | Egrang | the **whole stride**: the bar grades the press and the racer walks immediately | the banked count, the places, the winner — all server numbers |
 
 Dakon's hole prediction exists so the player can click a whole hand without waiting a round

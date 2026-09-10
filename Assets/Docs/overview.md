@@ -52,7 +52,7 @@ starts. Full screen-by-screen detail: [ui-flow.md](ui-flow.md).
 | Players | 2 | 3 (host may start with 2) |
 | Shape | Turn-based, deterministic | Real-time, timing-based |
 | Room | `dakon` | `egrang` |
-| Match length | 4 hands of 15 seeds — 2 turns each | 50 strides (25 m), 15 s picking window |
+| Match length | 6 hands of 10 seeds — 3 turns each | 50 strides (25 m), 15 s picking window |
 | Offline mode | Hotseat on one screen | Solo in lane 1 |
 | Rules | [games/dakon.md](games/dakon.md) | [games/egrang.md](games/egrang.md) |
 

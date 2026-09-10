@@ -236,6 +236,19 @@ Adding a nineteenth game means: a row in `LessonContent.All()` with its four str
 `Vid <Game>` group in the scene holding a screen and a trigger, then
 `Museum/Rebuild UI/Lesson Panels`. No new scripts.
 
+## The lobby plaques reuse the panel
+
+The ground-floor gallery ([museum-decor.md](museum-decor.md)) shows eight more plaques on the
+same `LessonPanel`, through `MuseumLessonUIBuilder.BuildPanelAt` — the same 820 × 520 rect,
+tabs, Q/E paging and 1.88 m reading height, with the eyebrow `SELAMAT DATANG` on the welcome
+plaque and `GALERI LANTAI DASAR` on the other seven instead of `MATERI BELAJAR`. Their copy is **not** from the spreadsheet: it
+is `LobbyLessonContent.cs` (editor-only, same authoring-record discipline as `LessonContent`),
+written to `Assets/Resources/lessons/lobby_<key>.asset` — `lobby_sambutan`, `lobby_gong`,
+`lobby_gasing`, `lobby_engklek`, `lobby_tembang`, `lobby_ragam`, `lobby_filosofi`,
+`lobby_etika`. They are built and placed by `Museum/Decor/Build Lobby Gallery`, not by
+`Rebuild UI/Lesson Panels`, and their placement is a constant in the builder rather than
+adopted from the scene. The `LessonReader` for each rides the station's own floor trigger.
+
 ## Fonts
 
 The Roboto SDF assets are **dynamic with empty character tables**, rasterising from the

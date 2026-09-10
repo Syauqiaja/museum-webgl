@@ -34,6 +34,7 @@ namespace Museum.Lobby.EditorTools
         const string ScenePath = "Assets/Scenes/Lobby.unity";
         const string SlotPrefabPath = "Assets/Prefabs/Lobby Slot.prefab";
         const string SceneLoaderPrefabPath = "Assets/Prefabs/Scene Loader.prefab";
+        const string LoadingScreenPrefabPath = "Assets/GameObject/LoadingScreen.prefab";
 
         // Panel geometry, in the 800×600 design units ui-style.md is written in.
         static readonly Vector2 NamePanelSize = new Vector2(440f, 230f);
@@ -81,7 +82,8 @@ namespace Museum.Lobby.EditorTools
             GameObject entryPanel = BuildEntryPanel(canvasObject.transform, controller,
                                                     out TMP_InputField codeInput, out TMP_Text titleText);
             GameObject roomPanel = BuildRoomPanel(canvasObject.transform, controller, out TMP_Text codeText,
-                                                  out Transform slotContainer, out Button startButton);
+                                                  out Transform slotContainer, out Button startButton,
+                                                  out TMP_Text startHint);
             GameObject toast = BuildToast(canvasObject.transform, out TMP_Text toastText);
 
             // The panels ship switched off so that whichever one Start() shows plays its PopupTween
@@ -104,6 +106,7 @@ namespace Museum.Lobby.EditorTools
             so.FindProperty("slotContainer").objectReferenceValue = slotContainer;
             so.FindProperty("slotPrefab").objectReferenceValue = slotPrefab;
             so.FindProperty("startButton").objectReferenceValue = startButton;
+            so.FindProperty("startHintText").objectReferenceValue = startHint;
             so.FindProperty("toastRoot").objectReferenceValue = toast;
             so.FindProperty("toastText").objectReferenceValue = toastText;
             so.ApplyModifiedPropertiesWithoutUndo();
@@ -157,17 +160,26 @@ namespace Museum.Lobby.EditorTools
             var sceneLoaderPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(SceneLoaderPrefabPath);
             var source = sceneLoaderPrefab != null ? sceneLoaderPrefab.GetComponent<SceneLoader>() : null;
 
-            if (source == null)
+            Object loadingScreen = source != null
+                ? new SerializedObject(source).FindProperty("loadingScreenPrefab").objectReferenceValue
+                : null;
+
+            if (loadingScreen == null)
             {
-                Debug.LogWarning($"No SceneLoader on '{SceneLoaderPrefabPath}'; the lobby's SceneLoader " +
-                                 "has no loading screen prefab. Assign it by hand.", go);
+                // The shared Scene Loader prefab did not survive the 2026-08-19 loss; the loading
+                // screen itself did, and it is what MainMenu and Museum point at directly.
+                loadingScreen = AssetDatabase.LoadAssetAtPath<GameObject>(LoadingScreenPrefabPath);
+            }
+
+            if (loadingScreen == null)
+            {
+                Debug.LogWarning($"Neither '{SceneLoaderPrefabPath}' nor '{LoadingScreenPrefabPath}' yields a " +
+                                 "loading screen; the lobby's SceneLoader has none. Assign it by hand.", go);
                 return;
             }
 
-            var from = new SerializedObject(source);
             var to = new SerializedObject(go.GetComponent<SceneLoader>());
-            to.FindProperty("loadingScreenPrefab").objectReferenceValue =
-                from.FindProperty("loadingScreenPrefab").objectReferenceValue;
+            to.FindProperty("loadingScreenPrefab").objectReferenceValue = loadingScreen;
             to.ApplyModifiedPropertiesWithoutUndo();
         }
 
@@ -253,16 +265,19 @@ namespace Museum.Lobby.EditorTools
             UnityEventTools.AddVoidPersistentListener(join.GetComponent<Button>().onClick,
                                                       controller.JoinRoom);
 
-            GameObject back = CreateButton("Back", panel.transform, "Kembali", 180f, 38f, 14f);
+            // Back goes to the museum the visitor walked in from, not MainMenu: MainMenu would ask
+            // for the platform and name again, which visitors read as being logged out.
+            GameObject back = CreateButton("Back", panel.transform, "Kembali ke Museum", 200f, 38f, 14f);
             PlaceButton(back, new Vector2(0.5f, 0f), new Vector2(0f, 36f));
             UnityEventTools.AddVoidPersistentListener(back.GetComponent<Button>().onClick,
-                                                      controller.BackToMainMenu);
+                                                      controller.BackToMuseum);
 
             return panel;
         }
 
         static GameObject BuildRoomPanel(Transform parent, LobbyController controller, out TMP_Text codeText,
-                                         out Transform slotContainer, out Button startButton)
+                                         out Transform slotContainer, out Button startButton,
+                                         out TMP_Text startHint)
         {
             GameObject panel = CreatePanel("Room Panel", parent, RoomPanelSize);
 
@@ -291,6 +306,13 @@ namespace Museum.Lobby.EditorTools
             layout.childForceExpandWidth = false;
             layout.childForceExpandHeight = false;
             slotContainer = slots.transform;
+
+            // Why Mulai is grey. LobbyController rewrites it from LobbyRoomSnapshot.MinPlayersToStart
+            // on every update; this is only the shape it ships with.
+            startHint = AddLabel(panel.transform, "Start Hint (TMP)",
+                                 $"Minimal {LobbyRoomSnapshot.MinPlayersToStart} pemain untuk mulai",
+                                 MediumFont, 13f, Tan, new Vector2(0f, 104f), new Vector2(600f, 22f),
+                                 new Vector2(0.5f, 0f));
 
             GameObject start = CreateButton("Start", panel.transform, "Mulai", 200f, 44f, 16f);
             PlaceButton(start, new Vector2(0.5f, 0f), new Vector2(-110f, 44f));

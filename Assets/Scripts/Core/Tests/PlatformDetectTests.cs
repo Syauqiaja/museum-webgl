@@ -19,6 +19,10 @@ namespace Museum.Core.Tests
         public void LooksLikeTouchDevice_is_false_on_a_desktop_editor_with_no_touchscreen()
         {
             // The Editor on macOS has neither Application.isMobilePlatform nor a Touchscreen device.
+            // A Windows laptop with a touch panel legitimately has one, and there the fallback
+            // *should* say touch — so the test is inconclusive rather than wrong on such a machine.
+            Assume.That(UnityEngine.InputSystem.Touchscreen.current, Is.Null,
+                "this Editor host has a touchscreen; the desktop-fallback assertion does not apply");
             Assert.IsFalse(PlatformDetect.LooksLikeTouchDevice());
         }
 

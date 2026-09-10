@@ -29,6 +29,9 @@ namespace Museum.Games.Dakon
         [Tooltip("Alpha of a card that cannot be played right now.")]
         [SerializeField] private float dimmedAlpha = 0.45f;
 
+        [Tooltip("Scale of a selected card relative to the row. Scale, not position: the hand is a HorizontalLayoutGroup, which owns positions and would put a lifted card straight back.")]
+        [SerializeField] private float selectedScale = 1.12f;
+
         public string SeedId { get; private set; }
 
         Action<string> _onChosen;
@@ -73,6 +76,16 @@ namespace Museum.Games.Dakon
         {
             if (button != null) button.interactable = value;
             if (canvasGroup != null) canvasGroup.alpha = value ? 1f : dimmedAlpha;
+        }
+
+        /// <summary>
+        /// Grows the card while it waits for a hole. A scale rather than a tint: the tint
+        /// already means "cannot be played", and a selected card is the one card that is about
+        /// to be.
+        /// </summary>
+        public void SetSelected(bool value)
+        {
+            transform.localScale = value ? Vector3.one * selectedScale : Vector3.one;
         }
     }
 }

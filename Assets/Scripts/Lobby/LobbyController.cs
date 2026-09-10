@@ -49,6 +49,8 @@ namespace Museum.Lobby
         [SerializeField] private Transform slotContainer;
         [SerializeField] private LobbySlotView slotPrefab;
         [SerializeField] private Button startButton;
+        [Tooltip("Why Mulai is greyed out: \"Minimal 2 pemain untuk mulai\" until enough players are seated.")]
+        [SerializeField] private TMP_Text startHintText;
 
         [Header("Toast")]
         [SerializeField] private GameObject toastRoot;
@@ -272,6 +274,19 @@ namespace Museum.Lobby
             ShowToast("Kode disalin");
         }
 
+        /// <summary>
+        /// Entry panel "Kembali". The visitor came from a museum doorway, so back is the museum —
+        /// not MainMenu, which would put the platform picker and name field in front of them again
+        /// and read as "I got logged out". Kept as a separate method: <see cref="BackToMainMenu"/>
+        /// is API by name (CLAUDE.md) and old scenes may still point at it.
+        /// </summary>
+        public void BackToMuseum()
+        {
+            _seated = false;
+            _ = _service.Leave();
+            SceneLoader.Instance.LoadScene(SceneReference.Museum);
+        }
+
         public void BackToMainMenu()
         {
             _seated = false;
@@ -312,6 +327,11 @@ namespace Museum.Lobby
             {
                 startButton.gameObject.SetActive(room.AmHost);
                 startButton.interactable = room.CanStart && !_busy;
+            }
+
+            if (startHintText != null)
+            {
+                startHintText.text = StartHintFor(room);
             }
 
             if (room.Phase == LobbyPhase.InProgress && !_loadingGame)
@@ -372,6 +392,25 @@ namespace Museum.Lobby
 
         private string PlayerName() =>
             SessionData.Instance != null ? SessionData.Instance.PlayerName : string.Empty;
+
+        /// <summary>
+        /// The line under the seats. It says why Mulai is grey rather than leaving the host to
+        /// guess, and tells a guest what they are waiting for. The number is the rule's, not copy.
+        /// </summary>
+        public static string StartHintFor(LobbyRoomSnapshot room)
+        {
+            int minimum = LobbyRoomSnapshot.MinPlayersToStart;
+
+            if (room.OccupiedCount < minimum)
+            {
+                int missing = minimum - room.OccupiedCount;
+                return $"Minimal {minimum} pemain untuk mulai — tunggu {missing} pemain lagi";
+            }
+
+            return room.AmHost
+                ? "Semua siap? Tekan Mulai."
+                : "Menunggu pembuat ruangan menekan Mulai";
+        }
 
         private void BuildSlotViews(int maxPlayers)
         {

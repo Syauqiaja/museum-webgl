@@ -68,5 +68,28 @@ namespace Museum.Lobby.Tests
             Assert.That(Room(2).AmHost, Is.True);
             Assert.That(Room(2, mySessionId: "s1").AmHost, Is.False);
         }
+
+        // The hint under the seats is the same rule read out loud, so its number must be the
+        // rule's — a hard-coded "2" would silently lie the day MinPlayersToStart changed.
+
+        [Test]
+        public void StartHint_NamesTheMinimumWhileShort()
+        {
+            string hint = LobbyController.StartHintFor(Room(1));
+            Assert.That(hint, Does.Contain($"Minimal {LobbyRoomSnapshot.MinPlayersToStart} pemain"));
+            Assert.That(hint, Does.Contain("1 pemain lagi"));
+        }
+
+        [Test]
+        public void StartHint_TellsTheHostToPressStartOnceEnoughAreSeated()
+        {
+            Assert.That(LobbyController.StartHintFor(Room(2)), Does.Contain("Mulai"));
+        }
+
+        [Test]
+        public void StartHint_TellsAGuestToWaitForTheHost()
+        {
+            Assert.That(LobbyController.StartHintFor(Room(2, mySessionId: "s1")), Does.Contain("Menunggu"));
+        }
     }
 }

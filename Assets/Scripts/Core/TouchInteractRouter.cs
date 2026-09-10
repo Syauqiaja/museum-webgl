@@ -16,9 +16,20 @@ namespace Museum.Core
         /// <summary>The plaque the player is standing at, or null.</summary>
         public static LessonReader CurrentReader { get; private set; }
 
+        /// <summary>The lobby station (gong, gasing, stage) the player is standing at, or null.</summary>
+        public static IInteractable CurrentInteractable { get; private set; }
+
         public static void Register(SceneTriggerPrompt prompt) => CurrentPrompt = prompt;
 
         public static void Register(LessonReader reader) => CurrentReader = reader;
+
+        public static void Register(IInteractable interactable) => CurrentInteractable = interactable;
+
+        /// <summary>Clears the registration only if this is still the one registered.</summary>
+        public static void Unregister(IInteractable interactable)
+        {
+            if (ReferenceEquals(CurrentInteractable, interactable)) CurrentInteractable = null;
+        }
 
         /// <summary>Clears the registration only if this is still the one registered.</summary>
         public static void Unregister(SceneTriggerPrompt prompt)
@@ -37,12 +48,14 @@ namespace Museum.Core
             // Statics outlive a scene load; a stale prompt would be a destroyed object.
             CurrentPrompt = null;
             CurrentReader = null;
+            CurrentInteractable = null;
         }
 
-        /// <summary>UnityEvent target for the Interaksi button.</summary>
+        /// <summary>UnityEvent target for the Interaksi button. A doorway wins over a station.</summary>
         public void Interact()
         {
             if (CurrentPrompt != null) CurrentPrompt.Enter();
+            else CurrentInteractable?.Interact();
         }
 
         /// <summary>UnityEvent target for the › button.</summary>

@@ -23,14 +23,24 @@ namespace Museum.Games.Dakon.Tests
             return default;
         }
 
-        // Play the active player's whole current turn by dropping the first hand seed each
-        // step. Returns the DropResult of the final drop of the turn.
+        // First hole on the active player's side that has not taken a seed this turn.
+        static int FreeHole(DakonBoard b)
+        {
+            int lo = b.ActivePlayer * b.HolesPerSide;
+            for (int i = lo; i < lo + b.HolesPerSide; i++)
+                if (!b.IsSown(i)) return i;
+            Assert.Fail("no free hole on the active side");
+            return -1;
+        }
+
+        // Play the active player's whole current turn by dropping the first hand seed into
+        // the first free hole each step. Returns the DropResult of the final drop of the turn.
         static DropResult PlayOneTurn(DakonBoard b)
         {
             DropResult r = default;
             while (true)
             {
-                r = b.DropSeed(b.ActivePlayer, b.Hand[0].Id, b.NextHoleIndex);
+                r = b.DropSeed(b.ActivePlayer, b.Hand[0].Id, FreeHole(b));
                 Assert.IsTrue(r.Ok, "auto-play drop should be legal");
                 if (r.TurnEnded || r.GameOver) return r;
             }
@@ -44,9 +54,20 @@ namespace Museum.Games.Dakon.Tests
             var b = NewGame(1);
             Assert.AreEqual(Phase.InProgress, b.Phase);
             Assert.AreEqual(0, b.ActivePlayer);
-            Assert.AreEqual(0, b.NextHoleIndex);
-            Assert.AreEqual(15, b.Hand.Count);
-            Assert.AreEqual(DakonConfig.Default.PoolSeeds - 15, b.PoolCount);
+            Assert.AreEqual(0u, b.SownMask);
+            Assert.AreEqual(DakonConfig.Default.GrabSize, b.Hand.Count);
+            Assert.AreEqual(DakonConfig.Default.PoolSeeds - DakonConfig.Default.GrabSize, b.PoolCount);
+        }
+
+        /// <summary>
+        /// A hand is exactly one side's worth of holes: that is what turns "place ten seeds" into
+        /// "fill your ten holes", and the only reason the one-seed-per-hole rule can never leave
+        /// a player holding seeds with nowhere to put them.
+        /// </summary>
+        [Test]
+        public void A_hand_is_one_side_of_holes()
+        {
+            Assert.AreEqual(DakonConfig.Default.HolesPerSide, DakonConfig.Default.GrabSize);
         }
 
         // ---- Scoring ----
@@ -56,7 +77,7 @@ namespace Museum.Games.Dakon.Tests
         {
             var b = NewGame(1);
             int active = b.ActivePlayer;
-            int next = b.NextHoleIndex;
+            int next = FreeHole(b);
             var holeType = b.HoleTypeAt(next);
             var seed = PickSeed(b.Hand, holeType, wantMatch: true);
             int before = b.Store(active, holeType);
@@ -77,7 +98,7 @@ namespace Museum.Games.Dakon.Tests
             var b = NewGame(1);
             int active = b.ActivePlayer;
             int opp = 1 - active;
-            int next = b.NextHoleIndex;
+            int next = FreeHole(b);
             var holeType = b.HoleTypeAt(next);
             var seed = PickSeed(b.Hand, holeType, wantMatch: false);
             int before = b.Store(opp, seed.Category);
@@ -96,7 +117,7 @@ namespace Museum.Games.Dakon.Tests
         {
             var b = NewGame(1);
             int active = b.ActivePlayer;
-            int next = b.NextHoleIndex;
+            int next = FreeHole(b);
             var holeType = b.HoleTypeAt(next);
             // Precondition: a matching seed IS available...
             PickSeed(b.Hand, holeType, wantMatch: true);
@@ -119,7 +140,7 @@ namespace Museum.Games.Dakon.Tests
             int pool = b.PoolCount;
             int handCount = b.Hand.Count;
 
-            var r = b.DropSeed(1 - active, b.Hand[0].Id, b.NextHoleIndex);
+            var r = b.DropSeed(1 - active, b.Hand[0].Id, FreeHole(b));
 
             Assert.IsFalse(r.Ok);
             Assert.AreEqual(DakonError.NotYourTurn, r.Error);
@@ -128,14 +149,14 @@ namespace Museum.Games.Dakon.Tests
         }
 
         [Test]
-        public void Wrong_hole_index_is_rejected_with_InvalidHole()
+        public void Opponents_hole_is_rejected_with_InvalidHole()
         {
             var b = NewGame(1);
             int active = b.ActivePlayer;
-            int wrong = (b.NextHoleIndex + 1) % 20;
+            int theirs = (1 - active) * b.HolesPerSide;
             int handCount = b.Hand.Count;
 
-            var r = b.DropSeed(active, b.Hand[0].Id, wrong);
+            var r = b.DropSeed(active, b.Hand[0].Id, theirs);
 
             Assert.IsFalse(r.Ok);
             Assert.AreEqual(DakonError.InvalidHole, r.Error);
@@ -143,34 +164,115 @@ namespace Museum.Games.Dakon.Tests
         }
 
         [Test]
+        public void Out_of_range_hole_is_rejected_with_InvalidHole()
+        {
+            var b = NewGame(1);
+            Assert.AreEqual(DakonError.InvalidHole, b.DropSeed(b.ActivePlayer, b.Hand[0].Id, -1).Error);
+            Assert.AreEqual(DakonError.InvalidHole, b.DropSeed(b.ActivePlayer, b.Hand[0].Id, b.HoleCount).Error);
+        }
+
+        [Test]
         public void Unknown_seed_is_rejected_with_SeedNotInHand()
         {
             var b = NewGame(1);
-            var r = b.DropSeed(b.ActivePlayer, "not-a-real-seed", b.NextHoleIndex);
+            var r = b.DropSeed(b.ActivePlayer, "not-a-real-seed", FreeHole(b));
             Assert.IsFalse(r.Ok);
             Assert.AreEqual(DakonError.SeedNotInHand, r.Error);
         }
 
-        // ---- Ring / turns ----
+        // ---- One seed per hole ----
 
         [Test]
-        public void Player1_turn_wraps_the_ring_from_index_10()
+        public void Any_own_hole_may_be_chosen_in_any_order()
+        {
+            var b = NewGame(1);
+            int active = b.ActivePlayer;
+            int handCount = b.Hand.Count;
+
+            // Last hole on the side first, then the first: the order used to be forced.
+            int last = active * b.HolesPerSide + b.HolesPerSide - 1;
+            int first = active * b.HolesPerSide;
+
+            Assert.IsTrue(b.DropSeed(active, b.Hand[0].Id, last).Ok);
+            Assert.IsTrue(b.DropSeed(active, b.Hand[0].Id, first).Ok);
+            Assert.AreEqual(handCount - 2, b.Hand.Count);
+            Assert.IsTrue(b.IsSown(last));
+            Assert.IsTrue(b.IsSown(first));
+        }
+
+        [Test]
+        public void A_second_seed_into_the_same_hole_is_rejected_with_HoleAlreadySown()
+        {
+            var b = NewGame(1);
+            int active = b.ActivePlayer;
+            int hole = FreeHole(b);
+
+            Assert.IsTrue(b.DropSeed(active, b.Hand[0].Id, hole).Ok);
+            int handCount = b.Hand.Count;
+
+            var r = b.DropSeed(active, b.Hand[0].Id, hole);
+
+            Assert.IsFalse(r.Ok);
+            Assert.AreEqual(DakonError.HoleAlreadySown, r.Error);
+            Assert.AreEqual(handCount, b.Hand.Count);
+        }
+
+        [Test]
+        public void Sown_mask_tracks_the_holes_filled_this_turn()
+        {
+            var b = NewGame(1);
+            int active = b.ActivePlayer;
+            int a = active * b.HolesPerSide + 2;
+            int c = active * b.HolesPerSide + 7;
+
+            b.DropSeed(active, b.Hand[0].Id, a);
+            b.DropSeed(active, b.Hand[0].Id, c);
+
+            Assert.AreEqual((1u << a) | (1u << c), b.SownMask);
+        }
+
+        /// <summary>
+        /// A rejected drop must not mark the hole: otherwise a mistyped seed id would quietly
+        /// eat a hole and leave the player one short of finishing the turn.
+        /// </summary>
+        [Test]
+        public void A_refused_drop_does_not_sow_the_hole()
+        {
+            var b = NewGame(1);
+            int hole = FreeHole(b);
+
+            b.DropSeed(b.ActivePlayer, "not-a-real-seed", hole);
+
+            Assert.IsFalse(b.IsSown(hole));
+        }
+
+        // ---- Turns ----
+
+        [Test]
+        public void A_turn_ends_when_every_own_hole_has_a_seed()
+        {
+            var b = NewGame(1);
+            int side = b.ActivePlayer;
+
+            var r = PlayOneTurn(b);
+
+            Assert.IsTrue(r.TurnEnded);
+            Assert.AreEqual(1 - side, b.ActivePlayer);
+            for (int i = 0; i < b.HoleCount; i++)
+                Assert.IsFalse(b.IsSown(i), $"hole {i} still sown after the turn ended");
+            Assert.AreEqual(0u, b.SownMask);
+        }
+
+        [Test]
+        public void Player1_sows_only_the_second_side()
         {
             var b = NewGame(1);
             PlayOneTurn(b); // finish P0
             Assert.AreEqual(1, b.ActivePlayer);
-            Assert.AreEqual(10, b.NextHoleIndex);
 
-            var visited = new List<int>();
-            while (true)
-            {
-                visited.Add(b.NextHoleIndex);
-                var r = b.DropSeed(b.ActivePlayer, b.Hand[0].Id, b.NextHoleIndex);
-                if (r.TurnEnded || r.GameOver) break;
-            }
-
-            var expected = new List<int> { 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 0, 1, 2, 3, 4 };
-            CollectionAssert.AreEqual(expected, visited);
+            Assert.AreEqual(DakonError.InvalidHole, b.DropSeed(1, b.Hand[0].Id, 0).Error);
+            Assert.IsTrue(b.DropSeed(1, b.Hand[0].Id, 10).Ok);
+            Assert.IsTrue(b.DropSeed(1, b.Hand[0].Id, 19).Ok);
         }
 
         [Test]
@@ -179,8 +281,21 @@ namespace Museum.Games.Dakon.Tests
             var b = NewGame(1);
             PlayOneTurn(b);
             Assert.AreEqual(1, b.ActivePlayer);
-            Assert.AreEqual(15, b.Hand.Count);
-            Assert.AreEqual(DakonConfig.Default.PoolSeeds - 30, b.PoolCount);
+            Assert.AreEqual(DakonConfig.Default.GrabSize, b.Hand.Count);
+            Assert.AreEqual(DakonConfig.Default.PoolSeeds - 2 * DakonConfig.Default.GrabSize, b.PoolCount);
+        }
+
+        [Test]
+        public void Each_player_gets_three_turns()
+        {
+            var b = NewGame(1);
+            int turns = 0;
+            while (b.Phase == Phase.InProgress)
+            {
+                PlayOneTurn(b);
+                turns++;
+            }
+            Assert.AreEqual(6, turns);
         }
 
         // ---- Endgame ----

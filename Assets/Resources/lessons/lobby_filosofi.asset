@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d504aca1d624112a3a119f35b476e5, type: 3}
+  m_Name: lobby_filosofi
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.GameLessonData
+  gameKey: lobby_filosofi
+  displayName: Filosofi Dolanan
+  sections:
+  - heading: NILAI LUHUR
+    body: 'Orang tua Jawa dahulu tidak menggurui; mereka membiarkan anak belajar
+      lewat bermain. Dolanan mengajarkan tanpa terasa: sabar menunggu giliran, jujur
+      mengaku kalah, berani menjadi yang dadi, dan tetap berteman setelah bertanding.
+
+
+      Tiga
+      hal tumbuh sekaligus: olah raga (badan), olah rasa (perasaan), dan olah pikir
+      (akal). Itulah sebabnya pendidikan tradisional menempatkan dolanan sejajar
+      dengan pelajaran.'
+  - heading: GOTONG ROYONG
+    body: 'Hampir tidak ada dolanan yang dimainkan sendirian. Jamuran butuh lingkaran,
+      Gobak Sodor butuh dua regu, Bentengan butuh benteng yang dijaga bersama. Sebelum
+      bermain, anak-anak sendiri yang menggambar petak, mencari batu, dan menyepakati
+      aturan.
+
+
+      Di situ gotong royong dipelajari dalam bentuknya yang paling
+      sederhana: permainan tidak dimulai sebelum semua siap, dan tidak menyenangkan
+      jika ada yang ditinggalkan.'
+  - heading: SPORTIVITAS
+    body: "Kalah dalam dolanan berarti menjadi penjaga \u2014 bukan tersingkir. Yang
+      kalah tetap bermain, bahkan memegang peran paling penting: menjadi Pak Empo,
+      menjadi jamur, menjaga garis Gobak Sodor. Permainan berputar, giliran datang
+      lagi.\n\nAturan dijaga oleh sesama pemain, bukan wasit. Curang berarti tidak
+      diajak bermain esok hari; kejujuran adalah tiket masuk yang paling murah dan
+      paling mahal."
+  - heading: BELAJAR SAMBIL BERMAIN
+    body: 'Setiap ruang pamer di lantai atas membaca satu permainan dengan kacamata
+      sains dan sport science: keseimbangan dan pusat massa pada Egrang, koordinasi
+      mata-tangan pada Bekelan, ekologi pertanian pada Dakon dan Ancak-ancak Alis,
+      kerja jantung-paru pada Lompat Tali.
+
+
+      Dolanan ternyata sudah lebih dulu
+      tahu apa yang kemudian dijelaskan buku pelajaran. Museum ini hanya mempertemukan
+      keduanya.'

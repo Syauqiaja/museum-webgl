@@ -165,6 +165,16 @@ namespace Museum.Core.EditorTools
 
             WireNameWrite(field, session);
             EditorUtility.SetDirty(field);
+
+            // MainMenu pre-fills the field on the way back from a game; it needs the reference.
+            MainMenu menu = FindMenu(scene);
+            if (menu != null)
+            {
+                var serialized = new SerializedObject(menu);
+                serialized.FindProperty("nameInput").objectReferenceValue = field;
+                serialized.ApplyModifiedPropertiesWithoutUndo();
+                EditorUtility.SetDirty(menu);
+            }
         }
 
         /// <summary>

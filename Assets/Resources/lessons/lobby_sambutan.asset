@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d504aca1d624112a3a119f35b476e5, type: 3}
+  m_Name: lobby_sambutan
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.GameLessonData
+  gameKey: lobby_sambutan
+  displayName: Dolanan Anak Jawa
+  sections:
+  - heading: SAMBUTAN
+    body: "Selamat datang di Museum Permainan Tradisional. Lantai ini adalah pengantar:
+      tentang apa itu dolanan anak, dari mana ia lahir, lagu yang mengiringinya,
+      dan nilai yang diam-diam diajarkannya.\n\nDelapan belas permainan menunggu
+      di lantai atas \u2014 masing-masing dengan tayangan, papan pelajaran, dan tiga
+      di antaranya dapat dimainkan bersama teman secara daring: Dakon, Engklek, dan
+      Egrang."
+  - heading: APA ITU DOLANAN
+    body: "Dalam bahasa Jawa, dolan berarti bermain atau bepergian untuk bersenang-senang;
+      dolanan adalah kegiatannya sekaligus alatnya. Dolanan anak tumbuh di halaman
+      rumah, di pelataran, di tanah lapang sehabis panen, dan di bawah terang bulan.\n\nHampir
+      semuanya tidak membutuhkan alat yang dibeli. Biji sawo, pecahan genting, batu
+      kali, bambu, pelepah kelapa, dan tali dari karet gelang sudah cukup. Yang dibutuhkan
+      hanyalah teman \u2014 dan itulah inti dolanan: permainan ini hampir tidak pernah
+      dimainkan sendirian."
+  - heading: CARA MENJELAJAH
+    body: 'Berjalanlah dengan WASD dan lihat sekeliling dengan tetikus (atau stik
+      virtual di layar sentuh). Di dekat papan seperti ini, tombol Q dan E membalik
+      halaman.
+
+
+      Beberapa benda di lantai ini bisa disentuh: tabuhlah gong,
+      putar gasing raksasa, injak petak engklek berurutan, dan dengarkan tembang
+      dolanan di panggung. Dekati bendanya dan tekan Enter (atau ketuk Interaksi).
+
+
+      Tangga
+      di sebelah barat membawa Anda ke ruang pamer di lantai atas.'
+  - heading: 18 PERMAINAN
+    body: 'Ruang pamer di atas menampilkan Dakon, Engklek, Cublak-cublak Suweng,
+      Egrang, Gobak Sodor, Bentengan, Benthik, Gatheng, Bekelan, Lompat Tali, Dam-daman,
+      Cirak, Dampar, Sluku-sluku Bathok, Jamuran, Bitingan, Ancak-ancak Alis, dan
+      Blarak Sempal.
+
+
+      Setiap ruang dihias sesuai permainannya, memutar tayangan
+      cara bermain, dan memuat papan pelajaran tentang sains, sport science, asal-usul,
+      serta seni dan budaya di baliknya.'

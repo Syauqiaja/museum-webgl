@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d504aca1d624112a3a119f35b476e5, type: 3}
+  m_Name: lobby_gasing
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.GameLessonData
+  gameKey: lobby_gasing
+  displayName: Gasing
+  sections:
+  - heading: PUTARAN GASING
+    body: "Gasing \u2014 di Jawa disebut juga gangsingan \u2014 adalah salah satu
+      mainan tertua di Nusantara. Badannya dibubut dari kayu keras seperti asam atau
+      sawo, kadang berpaku besi di ujungnya. Tali dililitkan rapat dari ujung ke
+      badan, lalu dilempar dengan sentakan sehingga gasing mendarat berputar.\n\nPatung
+      di tengah lantai ini adalah gasing raksasa: tekan Enter di dekatnya untuk memutarnya,
+      dan tekan lagi untuk mempercepat."
+  - heading: SAINS DI BALIKNYA
+    body: "Gasing berdiri tegak selama ia berputar cepat karena momentum sudut: semakin
+      cepat putarannya, semakin sulit sumbunya diubah. Gesekan dengan tanah dan udara
+      perlahan menghabiskan putaran itu; gasing mulai bergoyang (presesi), lalu rebah.\n\nPembuat
+      gasing mengatur bentuknya agar massa terkumpul di pinggir \u2014 badan yang
+      lebar dan berat berputar lebih lama dari yang ramping."
+  - heading: GASING DI NUSANTARA
+    body: "Hampir setiap daerah memiliki gasingnya sendiri: gasing Melayu di Riau
+      dan Kepulauan Riau yang besar dan berlaga dalam pertandingan, gasing Bali,
+      gasing Bugis, hingga gangsingan kecil dari Jawa yang diadu ketahanannya.\n\nPertandingan
+      gasing biasanya mengadu dua hal: siapa yang berputar paling lama, atau siapa
+      yang bisa menyenggol gasing lawan sampai berhenti \u2014 ketangkasan tangan
+      bertemu ketelitian membuat."

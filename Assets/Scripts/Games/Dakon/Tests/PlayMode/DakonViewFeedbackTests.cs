@@ -45,10 +45,13 @@ namespace Museum.Games.Dakon.Tests.PlayMode
             if (_root != null) Object.Destroy(_root);
         }
 
-        /// <summary>A seed in hand whose category matches (or does not) the hole the next drop is forced into.</summary>
+        /// <summary>The first hole on the local seat's side — free, since nothing has been dropped yet.</summary>
+        int OwnHole => _session.MySeat * _session.HolesPerSide;
+
+        /// <summary>A seed in hand whose category matches (or does not) <see cref="OwnHole"/>.</summary>
         string SeedFor(bool match)
         {
-            SeedCategory holeType = _session.HoleTypeAt(_session.NextHoleIndex);
+            SeedCategory holeType = _session.HoleTypeAt(OwnHole);
             foreach (var seed in _session.Hand)
                 if ((seed.Category == holeType) == match)
                     return seed.Id;
@@ -60,7 +63,7 @@ namespace Museum.Games.Dakon.Tests.PlayMode
         [UnityTest]
         public IEnumerator AMatchingDropTintsTheScreenGreen()
         {
-            _session.RequestDrop(SeedFor(match: true));
+            _session.RequestDrop(SeedFor(match: true), OwnHole);
 
             yield return null;
             yield return null;
@@ -72,7 +75,7 @@ namespace Museum.Games.Dakon.Tests.PlayMode
         [UnityTest]
         public IEnumerator AMismatchedDropTintsTheScreenRed()
         {
-            _session.RequestDrop(SeedFor(match: false));
+            _session.RequestDrop(SeedFor(match: false), OwnHole);
 
             yield return null;
             yield return null;
