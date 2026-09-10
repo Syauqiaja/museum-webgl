@@ -33,7 +33,8 @@ namespace Museum.Games.Egrang
         [SerializeField] private EgrangCountdownView countdownView;
         [Tooltip("HUD list of who is racing and how far along they are. Optional.")]
         [SerializeField] private EgrangRosterView rosterView;
-        [Tooltip("Name plates above the racers, in lane order. Empty entries are skipped.")]
+        [Tooltip("Name plates above the racers, in lane order. Fallback only: a plate parented under a " +
+                 "lane's racer is used for that lane whatever this array says. Empty entries are skipped.")]
         [SerializeField] private EgrangNameplate[] nameplates = new EgrangNameplate[0];
 
         [Header("Start")]
@@ -393,6 +394,12 @@ namespace Museum.Games.Egrang
         {
             var roster = new List<EgrangStanding>();
 
+            // Online, a lane nobody sat down in is not drawn at all: a two-player race shows two
+            // walkers, not two and a stranger who never moves. Only once seats have arrived, so a
+            // patch that lands before the state does cannot blank every lane, the local one included.
+            // Offline there is no seating, so the other two lanes stay as scenery.
+            bool hideEmptyLanes = _session != null && _seating.Count > 0;
+
             for (int lane = 0; lane < LaneCount; lane++)
             {
                 // Offline there is one racer and no seating at all, so lane 1 is the player and the
@@ -401,10 +408,10 @@ namespace Museum.Games.Egrang
                 bool isLocal = IsLocalLane(lane);
                 string label = occupied ? NameOfLane(lane) : string.Empty;
 
-                if (nameplates != null && lane < nameplates.Length && nameplates[lane] != null)
-                {
-                    nameplates[lane].SetName(label);
-                }
+                ShowLane(lane, !hideEmptyLanes || occupied || isLocal);
+
+                EgrangNameplate plate = NameplateAt(lane);
+                if (plate != null) plate.SetName(label);
 
                 if (rosterView != null) rosterView.SetName(lane, label, isLocal);
 
@@ -412,6 +419,37 @@ namespace Museum.Games.Egrang
             }
 
             if (countdownView != null) countdownView.SetRoster(roster);
+        }
+
+        /// <summary>
+        /// The plate over a lane's walker. The one parented under that lane's racer wins over the
+        /// inspector array: the array is indexed by lane, and the recovered scene shipped it as
+        /// lanes 3, 1, 2 — every name floated over someone else's walker, so the host read as the
+        /// right-hand racer and "the opponent" was whichever lane nobody drove. A plate that belongs
+        /// to the racer structurally cannot be put in the wrong slot. The array is the fallback, for
+        /// racers built in code with no plate under them.
+        /// </summary>
+        EgrangNameplate NameplateAt(int lane)
+        {
+            EgrangRacer racer = RacerAt(lane);
+            EgrangNameplate own = racer != null ? racer.GetComponentInChildren<EgrangNameplate>(true) : null;
+            if (own != null) return own;
+
+            return nameplates != null && lane >= 0 && lane < nameplates.Length ? nameplates[lane] : null;
+        }
+
+        /// <summary>
+        /// Shows or hides a lane's walker — the mover's object, which carries the model, the stilts
+        /// and the plate. The lane root and its track markers stay put, so nothing that measures the
+        /// lane loses its geometry.
+        /// </summary>
+        void ShowLane(int lane, bool visible)
+        {
+            EgrangRacer racer = RacerAt(lane);
+            if (racer == null) return;
+
+            GameObject body = racer.Body.gameObject;
+            if (body.activeSelf != visible) body.SetActive(visible);
         }
 
         void DrawRosterProgress()

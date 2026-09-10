@@ -263,7 +263,16 @@ Structural rules that are easy to get wrong:
 - Each `EgrangStick` needs `markerFilter` set to `_L_` or `_R_` — the shipped FBXs hold both
   stilts, and without the filter both components bind the same side.
 - `EgrangRace.racers` must be in **seat order**: `Player 1 Point`, `Player 2 Point`,
-  `Player 3 Point`.
+  `Player 3 Point`. `Museum/Egrang/Wire Scene References` now fills `racers` and
+  `nameplates` in that order. It is the tool that numbers the lanes, so it owns the arrays
+  indexed by them. `nameplates` had shipped as lanes 3, 1, 2, because the names builder sorted
+  by `lane` before those numbers were set; the order was rewired on 2026-09-10. At runtime a
+  plate under a lane's racer wins over the array anyway.
+- **`EgrangRacer.cs.meta` must keep `guid: 691cf244747874953809000733f2f4b7`**, the GUID the
+  scene's three lane racers reference. Until 2026-09-10 the committed `.meta` said
+  `d46f714f…` while the Editor's cached AssetDatabase still held `691cf…`. It worked in the
+  running Editor, but a fresh clone or Library rebuild would have turned all three racers
+  into Missing Script, leaving no lane that moves.
 - **`SkillCheckBar.onStepResult` must have an empty persistent-call list.** `EgrangRace`
   subscribes to it in `Awake` and routes the press to *this client's* lane. A persistent call
   wired in the inspector — the shape the single-player scene used, `→ Player 1 Point`'s
@@ -278,7 +287,13 @@ Structural rules that are easy to get wrong:
   it now resolves through `EgrangRace.bar` instead. **Pre-existing, not caused by the touch
   work — do not fix it here.**
 - A pre-existing `Step Button` in the scene still has its `onClick` wired straight to the
-  orphaned `&985` bar's `Press()`, present since before the touch work. Left as found.
+  orphaned `&985` bar's `Press()`, present since before the touch work. Left as found. It sits
+  under the inactive `Canvas` and never shows.
+- The live **`JALAN`** button (`Egrang UI/Run Root/Skill Check Bar/Step Button`, `onClick` →
+  the live bar's `Press()`) needs **`raycastTarget` on its `Image`**. That Image is its only
+  raycast target, and the label's raycast is deliberately off. The Image was found off on
+  2026-09-10, so the button drew but never took a click and only Space walked. It was fixed in
+  the scene, and `Style Run HUD` now forces it on.
 
 ## After rewiring anything
 

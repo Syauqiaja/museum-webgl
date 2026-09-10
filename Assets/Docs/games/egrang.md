@@ -118,6 +118,18 @@ every screen**: lane 0 is `Player 1 Point` on every client, not "the local playe
 `FollowCamera` and the progress HUD at that racer. Nothing about drawing another racer's
 lane differs from drawing your own — only the camera and the input are local.
 
+**Empty lanes are hidden online.** Once seats have arrived, a lane nobody sat down in has its
+walker (`EgrangRacer.Body`, the `Egrang Player` object: model, stilts and plate) switched
+off, so a two-player race shows two walkers. Lane roots and track markers stay. A racer who
+leaves mid-race stays visible (seating never unassigns), matching the frozen-position rule
+above. Offline, lanes 2–3 remain as scenery.
+
+**Nameplates belong to their racer.** `EgrangRace` takes each lane's plate from under that
+lane's racer, and `EgrangRace.nameplates` is only a fallback for racers built in code. The
+recovered scene shipped that array as lanes 3, 1, 2, which put every name over someone else's
+walker (fixed 2026-09-10). The host read as the right-hand racer, "the opponent" was
+whichever lane nobody drove, and the top-left roster disagreed with the labelled avatars.
+
 ### Driven by messages, not schema callbacks
 
 Unlike Dakon, the running race is not rendered off state-field callbacks:

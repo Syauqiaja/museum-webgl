@@ -161,6 +161,26 @@ namespace Museum.Games.Egrang.EditorTools
             Set(race, "progressView", FindComponent<EgrangProgressView>(scene));
             Set(race, "stickSelector", FindComponent<EgrangStickSelector>(scene));
 
+            // The two arrays the race indexes by lane, filled from the same lane roots the lanes were
+            // just numbered from. The names builder sorts by `EgrangRacer.lane`, but it ran before
+            // those numbers were set after the rebuild and shipped the plates as lanes 3, 1, 2 — every
+            // name over someone else's walker (found 2026-09-10). The tool that owns the numbers owns
+            // what is ordered by them.
+            var racers = new Object[LaneRoots.Length];
+            var plates = new Object[LaneRoots.Length];
+
+            for (int lane = 0; lane < LaneRoots.Length; lane++)
+            {
+                Transform root = FindRoot(scene, LaneRoots[lane]);
+                Transform plate = root != null ? root.Find("Egrang Player/Name Plate") : null;
+
+                racers[lane] = root != null ? root.GetComponent<EgrangRacer>() : null;
+                plates[lane] = plate != null ? plate.GetComponent<EgrangNameplate>() : null;
+            }
+
+            SetArray(race, "racers", racers);
+            SetArray(race, "nameplates", plates);
+
             foreach (GameObject root in scene.GetRootGameObjects())
             {
                 foreach (MonoBehaviour behaviour in root.GetComponentsInChildren<MonoBehaviour>(true))
@@ -248,6 +268,41 @@ namespace Museum.Games.Egrang.EditorTools
             }
 
             property.objectReferenceValue = value;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(target);
+        }
+
+        /// <summary>
+        /// Writes a lane-indexed array whole, or not at all: a half-filled one would put a later
+        /// lane's reference in an earlier lane's slot, which is the fault this exists to prevent.
+        /// </summary>
+        private static void SetArray(Object target, string field, Object[] values)
+        {
+            for (int i = 0; i < values.Length; i++)
+            {
+                if (values[i] == null)
+                {
+                    Debug.LogWarning($"EgrangWiringRepair: no target for {target.GetType().Name}.{field}[{i}]; " +
+                                     "left the array as it was.");
+                    return;
+                }
+            }
+
+            var serialized = new SerializedObject(target);
+            SerializedProperty property = serialized.FindProperty(field);
+
+            if (property == null || !property.isArray)
+            {
+                Debug.LogWarning($"EgrangWiringRepair: {target.GetType().Name} has no array '{field}'.");
+                return;
+            }
+
+            property.arraySize = values.Length;
+            for (int i = 0; i < values.Length; i++)
+            {
+                property.GetArrayElementAtIndex(i).objectReferenceValue = values[i];
+            }
+
             serialized.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(target);
         }

@@ -15118,9 +15118,9 @@ MonoBehaviour:
   countdownView: {fileID: 1222835095}
   rosterView: {fileID: 1829618027}
   nameplates:
-  - {fileID: 636827112}
   - {fileID: 522143598}
   - {fileID: 273073514}
+  - {fileID: 636827112}
   offlineCountdownSeconds: 15
 --- !u!114 &1028
 MonoBehaviour:
@@ -21248,7 +21248,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
