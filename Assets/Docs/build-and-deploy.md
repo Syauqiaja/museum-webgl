@@ -100,6 +100,18 @@ WebGL2; if a future Unity makes WebGPU an auto candidate, pin it explicitly.
 
 ## Deploy
 
+> **Domain move in progress (2026-09-11).** `ServerConfig.prodEndpoint` is now
+> `wss://api.museumethnofun.com`, and the client moves to `museumethnofun.com` on a
+> **dedicated VPS, 212.85.25.177** — see the server repo's `docs/deployment.md`. On that
+> date the apex served the client, but `api.museumethnofun.com` had **no route and no
+> certificate**: Traefik holds 443 there and answered every path with its default
+> `404 page not found` under `CN=TRAEFIK DEFAULT CERT`, and the apex's Let's Encrypt cert
+> covers only the apex and `www`. Until `https://api.museumethnofun.com/hi` answers, a build
+> on the new endpoint has a working Museum and dead Dakon/Egrang. There is no `~/.ssh/config`
+> entry for the new VPS yet; builds for it are uploaded by hand. **Never ship a
+> new-endpoint build to `museumvps`** — that still serves `museum.fajrsyauqi.com` on the old
+> endpoint. The commands and verification below still name the old hosts.
+
 ```bash
 chmod -R a+rX Builds/WebGL      # EVERY build, not once — Unity rewrites .br as 600
 rsync -avz --partial --exclude='.DS_Store' Builds/WebGL/ museumvps:/var/www/museum/

@@ -107596,7 +107596,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   catalog: {fileID: 11400000, guid: 62bec0f91469f3b4a8cd25d047a4212a, type: 2}
-  videoKey: 
+  videoKey: BENTENGAN.mp4
   screen: {fileID: 4730}
   placeholder: {fileID: 2800000, guid: 3484dcb5b76047944ba704333f1b98cc, type: 3}
   maxAutoRetries: 2
