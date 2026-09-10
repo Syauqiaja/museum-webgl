@@ -12,8 +12,8 @@ Visual rules (canvas setup, palette, typography, frames, buttons, motion) live i
 
 ```
 Boot ─► MainMenu ─► Museum hub ─► game doorway ─► Lobby ─► game scene ─► Results ─┬─► Play Again
-        (nickname)  (single-player, (SceneTrigger-  (create /   (per game)         └─► Return to Museum
-                     no room)        Prompt)         join /
+        (nickname)  (shared hall,   (SceneTrigger-  (create /   (per game)         └─► Return to Museum
+                     presence room)  Prompt)         join /
                                                      host start)
 
         ?room=CODE deep-link ─► auto-JoinById ─► Lobby room panel   ← NOT YET IMPLEMENTED
@@ -44,14 +44,17 @@ with a 3D background.
   `SessionData`, which survives scene loads; every room later sends it as `displayName`.
   It is also written to PlayerPrefs, so the field comes back pre-filled after a tab
   refresh and the name panel in the lobby stays the fallback it was meant to be.
-- **Enter Museum** → load Museum scene (no room). The button stays **disabled until the
+- **Enter Museum** → load Museum scene (presence room only, no game seat). The button stays **disabled until the
   typed name is valid**, so nobody can reach a room unnamed.
 - **Deep-link — not yet implemented.** The intent stands: on WebGL boot, read `?room=CODE`
   from the page URL (via `Application.absoluteURL` / jslib) and skip straight to auto-join
   in the Lobby. It waits on the real transport (see the Lobby note below).
 
 ### Museum hub
-- Single-player walkable scene, no room.
+- Shared walkable scene. Other visitors appear as one of four costumed characters (Jawa,
+  Bali, Bugis, Minang — the same one on every screen) idling, walking or running through
+  the halls with their nickname overhead (`MuseumPresence` → server room `museum`); with no server it is walked alone,
+  with no error shown. See [networking.md](networking.md#2-client-construction).
 - Each game has a doorway (`SceneTriggerPrompt`): walk in, press Enter. With `useLobby` on
   the doorway does **not** load the game — it fills in `LobbyRequest.Pending`
   (`roomName`, `maxPlayers`, its `sceneName` as the destination, and a `displayName` for the

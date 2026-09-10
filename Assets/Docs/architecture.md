@@ -14,7 +14,7 @@ three hang on.
         │
         ▼
   MainMenu ──► Museum ──doorway──► Lobby ──phase flips──► Dakon | Egrang
-                (no room)          (real room)            (reconnects into that same room)
+            (presence room)        (real room)            (reconnects into that same room)
 ```
 
 ## The bootstrap singletons

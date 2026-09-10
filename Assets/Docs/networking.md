@@ -23,7 +23,61 @@ from `ServerConfig` ([architecture.md](architecture.md#endpoint-configuration)):
 - the endpoint is host + port only — the Unity C# SDK has **no path setting**, so it can
   never be a subpath of the client host
 
-The Museum scene creates no client at all.
+The Museum scene uses the same client for **presence**: `MuseumPresence` (on the player rig)
+`JoinOrCreate`s the server's `museum` room straight on `ColyseusNetManager.Client` — not via
+its create/join helpers, which would record it as the seat `SessionData` holds — sends `move`
+`{ x, y, z, yaw }` at most 10×/s, and spawns a `MuseumVisitorAvatar` per other entry in
+`state.visitors`, with their name overhead. The body is one of the four
+`Assets/Models/ASSET_NUSANTARA/1_Karakter` characters (Jawa L, Bali P, Bugis P, Minang L), as
+prefab variants in `Assets/Prefabs/Visitors/` scaled to 1.7 m. Which one a visitor wears is
+picked from a hash of their session id — random across visitors, identical on every client.
+All four are **Humanoid** (each its own avatar) and share `Anim_MuseumVisitor`, a 1D blend on
+`Speed` over the `2_Animasi` clips: `Idle` 0, `Walk` 0.80 m/s, `Run` 1.50 m/s (the ground speeds
+the clips imply at that scale), with `Run` sped up past that, capped at 3.5×. The clips are
+in-place: `Anim_*.fbx` import as Humanoid *Copy From Other Avatar* (Jawa), Loop Time on, root
+rotation/height/XZ baked into the pose — as `ASSET_NUSANTARA/BACA_DULU.md` prescribes.
+
+**The idle is not `Anim_Idle.fbx`.** That file's legs are the egrang stance: the right leg holds
+`Anim_Egrang`'s planted pose (Upper Leg Front-Back 0.48, Lower Leg Stretch 0.88) and the left leg
+is frozen at its step pose (−0.25 / 0.15), with the body rolled ~7° — the idle action in
+`_Sumber/blender/karakter_animasi.blend` never keyed the legs, so the export took them from the
+egrang action. The blend's `Idle` slot plays `Assets/AnimationClip/Visitor Idle Stand.anim`
+instead: `Anim_Idle`'s arms, spine, head and breathing, with both legs set to the characters'
+rest pose (left/right averaged), `RootQ` levelled, the foot IK-goal curves dropped, and root
+height set so the soles sit on the model's origin. Once the `.blend` is fixed and re-exported,
+point the blend back at `Anim_Idle` and delete the derived clip.
+
+**Walk and Run are derived too.** The Meshy `Anim_Walk`/`Anim_Run` hold the arms out near
+horizontal (Arm Down-Up ≈ +0.26 walking, +0.45 running, where hanging is −1.16) — on every
+character, Jawa included. On Minang, the one character modelled in an A-pose, that tore the
+mesh: its jacket and sleeves are skinned for hanging arms and ballooned as the walk lifted
+them. Skinning and retargeting are sound on all four (bind poses exact; identical muscles land
+every body's bones within a few degrees of Jawa's), so the fix is the clips, not the rigs:
+`Assets/AnimationClip/Visitor Walk.anim` and `Visitor Run.anim` are the FBX clips with only the
+arm curves moved, swing kept: Arm Down-Up lowered from the near-horizontal source (walk mean
+−0.25, run −0.20 — a toon walk, arms held clear of the body) and Arm Front-Back re-centred to
+0.40 (the source swung forward-biased at 0.65, which carried each forward hand across the belly
+of these wide chibi torsos). Arms hung fully down (−1.0) clipped through the body. The idle
+opens them slightly (Arm Down-Up mean −0.88). Their Y root is "Based
+Upon: Feet" (set on the FBX import too), so with the idle every clip keeps the soles on the
+model's origin and `MuseumVisitorAvatar` drops the body exactly 1 m. If the
+`visitorCharacters` array is lost the avatar falls back to a tinted copy of the player
+capsule; `Museum/Rebuild UI/Wire Scene References` re-wires it from the folder.
+
+Remote visitors move by **snapshot interpolation**, not by chasing the newest position: each
+received position is stamped with its arrival time and the avatar is drawn
+`MuseumVisitorAvatar.InterpolationDelay` (0.2 s — two report intervals) in the past, between
+the positions either side of that moment. Chasing the newest position made avatars lurch and
+stop between packets. The report rate (`MuseumPresence.SendHz`, 10) and the delay move
+together; the server's 20 Hz patch only forwards. Avatars **face their direction of travel**,
+not the `yaw` they are sent: that yaw is the visitor's first-person camera, and a body that
+followed it spun whenever they looked around. It orients a first sighting only; after that the
+body turns (0.12 s smoothing) toward where it is moving above 0.3 m/s and keeps that heading
+when it stops. With Multiplayer Play Mode, a virtual player
+started before a script change keeps running the old code until it is restarted — a visitor
+drawn as a capsule there is usually that, not a lost reference. The room is left when the scene unloads; up to 3 rejoins
+are tried if it drops; no server means the museum is walked alone. Contract: server
+`docs/protocol.md#exhibition-museum-scene`.
 
 ## 3. Opening a room
 

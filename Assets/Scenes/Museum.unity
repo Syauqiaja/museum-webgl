@@ -106556,7 +106556,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &4749
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -115154,7 +115154,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -206214,6 +206214,7 @@ MonoBehaviour:
   deadZone: 12
   ring: {fileID: 1116289111}
   knob: {fileID: 1526379915}
+  restAlpha: 0.4
 --- !u!114 &1026683030
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -207194,7 +207195,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 3
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!223 &1034776727
 Canvas:
   m_ObjectHideFlags: 0
@@ -215091,6 +215092,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Museum.Net::Museum.Net.MuseumPresence
   player: {fileID: 1159}
   nameFont: {fileID: 11400000, guid: 83acc9b1829b5774fa0681a3a46391d5, type: 2}
+  visitorCharacters:
+  - {fileID: 8329556264427403004, guid: 871f92cb325ab40beaa889fec83daac4, type: 3}
+  - {fileID: 6231916004121714244, guid: 7e15a6b10bc934cfba3efbb78d0a41b6, type: 3}
+  - {fileID: 6920147037957083873, guid: d93d19a9ebb964cc1950566a1c54c055, type: 3}
+  - {fileID: 5572392549702741190, guid: d446540e392124628845de867f4bcbf0, type: 3}
 --- !u!1 &1123624946
 GameObject:
   m_ObjectHideFlags: 0

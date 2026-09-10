@@ -74,6 +74,16 @@ ship for them. Eight more `GameLessonData` assets sit in `Resources/lessons/` (`
 text only. Expect the payload to move by well under a megabyte; re-read the build report after
 the next production build and update the table above.
 
+### Visitor characters (2026-09-11)
+
+The museum's remote visitors wear the four `Assets/Models/ASSET_NUSANTARA/1_Karakter` models
+(via `Assets/Prefabs/Visitors/`). What ships: four skinned meshes of 18–22k vertices, four
+1024² albedo textures (extracted from the FBXs to `1_Karakter/Textures/<char>/`, crunched at
+quality 50 per the rules above), four materials, and three Humanoid clips. The seven
+`2_Animasi/Anim_*.fbx` files are 9.4 MB each on disk because every one carries a full copy of
+the Jawa mesh — only their clips are referenced, so the meshes never reach a build. Estimate:
+2–3 MB added; confirm against the next build report.
+
 ### Terrain
 
 Terrain "data" is mostly **textures wearing a `TerrainData` costume**. A `TerrainData`'s size

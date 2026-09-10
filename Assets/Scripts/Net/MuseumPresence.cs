@@ -32,8 +32,12 @@ namespace Museum.Net
         /// <summary>The server-side room name. Contract: server `docs/protocol.md#exhibition-museum-scene`.</summary>
         public const string RoomName = "museum";
 
-        /// <summary>Position reports per second. Five is enough for a walking pace at the room's 10 Hz patch rate.</summary>
-        private const float SendHz = 5f;
+        /// <summary>
+        /// Position reports per second. Others draw this avatar
+        /// <see cref="MuseumVisitorAvatar.InterpolationDelay"/> (two reports) behind, so the two
+        /// numbers move together; the room forwards them on a 20 Hz patch.
+        /// </summary>
+        private const float SendHz = 10f;
 
         /// <summary>A move smaller than this (metres / degrees) is not worth a message.</summary>
         private const float MinMove = 0.02f;
@@ -48,6 +52,10 @@ namespace Museum.Net
 
         [Tooltip("Font for the names over visitors. Leave empty for the TMP default.")]
         [SerializeField] private TMP_FontAsset nameFont;
+
+        [Tooltip("The bodies other visitors wear — the ASSET_NUSANTARA characters, Assets/Prefabs/Visitors/*.prefab. " +
+                 "Each visitor gets one, chosen from their session id so every client agrees. Empty falls back to the player's capsule.")]
+        [SerializeField] private GameObject[] visitorCharacters;
 
         private Room<MuseumState> _room;
         private readonly Dictionary<string, MuseumVisitorAvatar> _avatars = new Dictionary<string, MuseumVisitorAvatar>();
@@ -86,8 +94,15 @@ namespace Museum.Net
                 return;
             }
 
-            // The avatars wear the local player's own body, so a visitor is recognisably "another
-            // one of me" — and there is no prefab to lose.
+            // The capsule is only the fallback for a scene whose `visitorCharacters` were lost —
+            // the museum has had its inspector values wiped once, and a missing prefab should
+            // cost the look, not the presence.
+            if (visitorCharacters == null || visitorCharacters.Length == 0)
+            {
+                Debug.LogWarning("[MuseumPresence] no visitorCharacters — visitors will be drawn as capsules. " +
+                                 "Run Museum/Rebuild UI/Wire Scene References.", this);
+            }
+
             var filter = player.GetComponent<MeshFilter>();
             var renderer = player.GetComponent<MeshRenderer>();
             _bodyMesh = filter != null ? filter.sharedMesh : null;
@@ -188,8 +203,8 @@ namespace Museum.Net
 
                 if (!_avatars.TryGetValue(sessionId, out MuseumVisitorAvatar avatar))
                 {
-                    avatar = MuseumVisitorAvatar.Create(_avatarsRoot, sessionId, _bodyMesh, _bodyMaterial,
-                                                        TintFor(sessionId), nameFont);
+                    avatar = MuseumVisitorAvatar.Create(_avatarsRoot, sessionId, CharacterFor(sessionId),
+                                                        _bodyMesh, _bodyMaterial, TintFor(sessionId), nameFont);
                     _avatars[sessionId] = avatar;
                 }
 
@@ -270,11 +285,37 @@ namespace Museum.Net
         /// <summary>A stable, saturated colour per session so two visitors standing together can be told apart.</summary>
         private static Color TintFor(string sessionId)
         {
-            uint hash = 2166136261;
-            foreach (char c in sessionId ?? string.Empty) hash = (hash ^ c) * 16777619;
-
-            float hue = (hash % 360u) / 360f;
+            float hue = (StableHash(sessionId) % 360u) / 360f;
             return Color.HSVToRGB(hue, 0.55f, 0.9f);
+        }
+
+        /// <summary>
+        /// Which character a visitor wears. Random across visitors, but derived from the session
+        /// id rather than rolled locally, so the same visitor wears the same costume on every
+        /// screen. Null when no characters are wired — the avatar then falls back to a capsule.
+        /// </summary>
+        private GameObject CharacterFor(string sessionId)
+        {
+            if (visitorCharacters == null || visitorCharacters.Length == 0) return null;
+
+            // A different multiplier from the tint's, so costume and tint do not move in lockstep.
+            GameObject chosen = visitorCharacters[(StableHash(sessionId) * 2654435761u >> 16) % (uint)visitorCharacters.Length];
+            if (chosen != null) return chosen;
+
+            foreach (GameObject character in visitorCharacters)
+            {
+                if (character != null) return character;
+            }
+
+            return null;
+        }
+
+        /// <summary>FNV-1a over the id: stable across clients and runs, unlike <c>string.GetHashCode</c>.</summary>
+        private static uint StableHash(string value)
+        {
+            uint hash = 2166136261;
+            foreach (char c in value ?? string.Empty) hash = (hash ^ c) * 16777619;
+            return hash;
         }
 
         [Serializable]

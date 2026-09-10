@@ -8,13 +8,14 @@ decoder from the server and the symptom is garbled state, not a compile error.
 Regenerate after any server schema change (run from the server repo):
 
 ```bash
-npx schema-codegen src/rooms/schema/DakonState.ts  --csharp --namespace Museum.Net.Schema --output /tmp/schemagen
-npx schema-codegen src/rooms/schema/EgrangState.ts --csharp --namespace Museum.Net.Schema --output /tmp/schemagen
+npx schema-codegen src/rooms/schema/DakonState.ts  --csharp --namespace Museum.Net.State --output /tmp/schemagen
+npx schema-codegen src/rooms/schema/EgrangState.ts --csharp --namespace Museum.Net.State --output /tmp/schemagen
+npx schema-codegen src/rooms/schema/MuseumState.ts --csharp --namespace Museum.Net.State --output /tmp/schemagen
 cp /tmp/schemagen/*.cs "<this repo>/Assets/Scripts/Net/Schema/"
 ```
 
-(The generator writes each state's dependencies too, so those two commands cover
-`BaseGameState`, `BasePlayer`, `DakonSeed` and `DakonStore`. Generating straight into
+(The generator writes each state's dependencies too, so those commands cover
+`BaseGameState`, `BasePlayer`, `DakonSeed`, `DakonStore`, `EgrangRacer` and `MuseumVisitor`. Generating straight into
 a path containing spaces fails — hence the temp directory.)
 
 Field order matters: Colyseus encodes by field index, so client and server must be
