@@ -130,6 +130,14 @@ it drops anything into `Resources/`.
 codegen settings above live in `ProjectSettings.asset` and are **not** re-asserted per build.
 If a Unity upgrade resets them, the payload silently doubles.
 
+**High stripping requires [`Assets/link.xml`](../link.xml).** The Colyseus SDK creates schema
+state (`Activator.CreateInstance`, `GetField`) and message payloads (its MsgPack deserializer)
+by reflection, which the linker cannot see. Without the file the WebGL build strips the payload
+classes' constructors and unread fields: the lobby still works, but Dakon and Egrang stall on
+their first message — and the Editor, which never strips, cannot reproduce it (2026-09-10).
+The file keeps `ColyseusSDK`, `colyseus.nativewebsocket`, `Museum.Net` and `Museum.Core`
+whole. **A new payload or schema type outside those two assemblies needs its assembly added.**
+
 ## Dead weight still on disk
 
 Not in the build — nothing in the five enabled scenes depends on it — but it is in git and
