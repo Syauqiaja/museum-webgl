@@ -9316,6 +9316,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1752}
   - component: {fileID: 4778}
+  - component: {fileID: 438406629}
+  - component: {fileID: 438406628}
   m_Layer: 0
   m_Name: Scene Loader
   m_TagString: Untagged
@@ -147460,6 +147462,31 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 438188123}
   m_CullTransparentMesh: 1
+--- !u!114 &438406628
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00eab3e093f533d5b469d38493b846de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.ColyseusNetManager
+  config: {fileID: 11400000, guid: 5a93092fece95ff4691696ef1d45ebc8, type: 2}
+--- !u!114 &438406629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 514}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5fd17fa68f1592480cfc42e7c380a06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.SessionData
 --- !u!1 &441095345
 GameObject:
   m_ObjectHideFlags: 0
