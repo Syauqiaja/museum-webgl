@@ -7,8 +7,8 @@ pure C# and are tested there**; scenes are checked by playing them.
 
 | Assembly | Mode | Covers |
 |---|---|---|
-| `Museum.Core.Tests` | EditMode | `VideoUrlRules` — normalise (spaces only, idempotent), key sanitising, https/absolute validation |
-| `Museum.Core.Tests.PlayMode` | PlayMode | `SessionData` — PlayerPrefs round-trip, sanitising on set, seat set/clear, minted `playerId` |
+| `Museum.Core.Tests` | EditMode | `VideoUrlRules` — normalise (spaces only, idempotent), key sanitising, https/absolute validation; `PlayerAvatars` — the id list the server also holds, sanitising, name matching |
+| `Museum.Core.Tests.PlayMode` | PlayMode | `SessionData` — PlayerPrefs round-trip, sanitising on set, seat set/clear, minted `playerId`, `PlayerAvatar` (Jawa default, fallback, survives a session); `MainMenu` avatar row (Jawa selected by default, a pick stores and moves the frame, a returning pick is restored) |
 | `Museum.Games.Dakon.Tests` | EditMode | `DakonBoard` (setup, per-side type split, forced hole order and wrap, sweep scoring, turn and hand boundaries, short final draw, endgame, tie) and `DakonPile` |
 | `Museum.Games.Egrang.Tests` | EditMode | `SkillCheckZones`, `SkillCheckCursor`, `SkillCheckTrackTexture`, `EgrangStickPresets`, `EgrangStickSolver`, `EgrangSeating`, `EgrangTrackProgress`, `EgrangRunSummary` |
 | `Museum.Games.Egrang.Tests.PlayMode` | PlayMode | `EgrangRace`, `EgrangRacer`, `EgrangStepMover` snapping, `SkillCheckBar.Configure` |

@@ -30,7 +30,12 @@ its create/join helpers, which would record it as the seat `SessionData` holds �
 `state.visitors`, with their name overhead. The body is one of the four
 `Assets/Models/ASSET_NUSANTARA/1_Karakter` characters (Jawa L, Bali P, Bugis P, Minang L), as
 prefab variants in `Assets/Prefabs/Visitors/` scaled to 1.7 m. Which one a visitor wears is
-picked from a hash of their session id — random across visitors, identical on every client.
+**their own choice** from MainMenu's avatar row: `SessionData.PlayerAvatar` goes out as the
+`avatar` join option (every room — `ColyseusNetManager.BuildOptions`, the lobby, and presence),
+the server sanitises it onto `MuseumVisitor.avatar` / `BasePlayer.avatar`, and
+`MuseumPresence` matches it to a prefab by name. Jawa is the default everywhere. The ids are
+`PlayerAvatars.Ids` here and `AVATAR_IDS` in the server's `src/rooms/avatars.ts` — held twice,
+kept identical (`PlayerAvatarsTests` pins the client's copy).
 All four are **Humanoid** (each its own avatar) and share `Anim_MuseumVisitor`, a 1D blend on
 `Speed` over the `2_Animasi` clips: `Idle` 0, `Walk` 0.80 m/s, `Run` 1.50 m/s (the ground speeds
 the clips imply at that scale), with `Run` sped up past that, capped at 3.5×. The clips are

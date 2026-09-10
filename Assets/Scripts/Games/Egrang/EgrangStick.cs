@@ -66,6 +66,25 @@ namespace Museum.Games.Egrang
         /// <summary>Current grip distance from the footplate along the shaft.</summary>
         public float HandleDistance { get; private set; }
 
+        /// <summary>The hand bone the grip follows.</summary>
+        public Transform HandBone => handBone;
+
+        /// <summary>The foot bone the footplate is welded to.</summary>
+        public Transform FootBone => footBone;
+
+        /// <summary>
+        /// Points the stilt at another body's hand and foot — <see cref="EgrangRacerBody"/> swaps the
+        /// walker's skeleton when a player chose a different character. The marker layout is the
+        /// stick's own, so the binding does not change; only the bones it reads do.
+        /// </summary>
+        public void Rebind(Transform hand, Transform foot)
+        {
+            if (hand == null || foot == null) return;
+
+            handBone = hand;
+            footBone = foot;
+        }
+
         /// <summary>World contact point the footplate is welded to: the foot bone plus <c>footOffset</c>.</summary>
         public Vector3 FootTarget => footBone.TransformPoint(footOffset);
 
@@ -172,7 +191,8 @@ namespace Museum.Games.Egrang
 
         void LateUpdate()
         {
-            if (!_bound) return;
+            // A body swap destroys the skeleton the bones belonged to for a frame before Rebind lands.
+            if (!_bound || handBone == null || footBone == null) return;
 
             var input = new EgrangStickSolveInput(
                 FootTarget, FootTargetRotation, HandTarget,

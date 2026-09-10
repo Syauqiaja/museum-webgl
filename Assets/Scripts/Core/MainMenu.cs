@@ -22,8 +22,12 @@ namespace Museum.Core
     /// hierarchy survived the 2026-08-19 asset loss intact and MainMenuUIBuilder adopts it rather
     /// than replacing it (ui-style.md §9). Re-parenting those objects would undo that.
     ///
-    /// <c>ChooseTouch</c>, <c>ChooseDesktop</c> and <c>GoToMuseum</c> are wired into the scene by
-    /// name and are API (CLAUDE.md). Do not rename them.
+    /// <c>ChooseTouch</c>, <c>ChooseDesktop</c>, <c>GoToMuseum</c> and <c>SelectAvatar</c> are wired
+    /// into the scene by name and are API (CLAUDE.md). Do not rename them.
+    ///
+    /// The avatar row picks the character the visitor wears everywhere — in the museum and on the
+    /// Egrang lanes. It is stored on <see cref="SessionData.PlayerAvatar"/> the moment it is
+    /// tapped, like the name, and shows Jawa selected until the visitor picks.
     /// </remarks>
     public class MainMenu : MonoBehaviour
     {
@@ -42,6 +46,9 @@ namespace Museum.Core
         [Tooltip("The nickname field. Pre-filled from SessionData so a returning visitor is not asked twice.")]
         [SerializeField] private TMP_InputField nameInput;
 
+        [Tooltip("The gold 'Selected Frame' of each avatar portrait, in PlayerAvatars.Ids order (Jawa, Bali, Bugis, Minang).")]
+        [SerializeField] private GameObject[] avatarFrames = new GameObject[0];
+
         private void Awake()
         {
             Open();
@@ -49,15 +56,32 @@ namespace Museum.Core
 
         /// <summary>Wires the screen from script. The builder writes the same references.</summary>
         public void Configure(GameObject picker, GameObject[] menu, GameObject touchTag, GameObject desktopTag,
-                              TMP_InputField nameField = null)
+                              TMP_InputField nameField = null, GameObject[] avatarSelectedFrames = null)
         {
             platformPanel = picker;
             menuObjects = menu ?? new GameObject[0];
             touchHint = touchTag;
             desktopHint = desktopTag;
             nameInput = nameField;
+            avatarFrames = avatarSelectedFrames ?? new GameObject[0];
             Open();
         }
+
+        /// <summary>
+        /// UnityEvent target — API, wired by name with the portrait's index. Do not rename.
+        /// <paramref name="index"/> is a position in <see cref="PlayerAvatars.Ids"/>; out of range
+        /// is ignored rather than guessed at.
+        /// </summary>
+        public void SelectAvatar(int index)
+        {
+            if (index < 0 || index >= PlayerAvatars.Ids.Count) return;
+
+            if (SessionData.Instance != null) SessionData.Instance.PlayerAvatar = PlayerAvatars.Ids[index];
+            ShowSelectedAvatar(PlayerAvatars.Ids[index]);
+        }
+
+        /// <summary>The avatar the screen shows as chosen: the session's, or Jawa without one.</summary>
+        public string SelectedAvatar => SessionData.Instance != null ? SessionData.Instance.PlayerAvatar : PlayerAvatars.Default;
 
         /// <summary>UnityEvent target — API, wired by name. Do not rename.</summary>
         public void ChooseTouch() => Choose(ControlScheme.Sentuh);
@@ -78,6 +102,7 @@ namespace Museum.Core
         private void Open()
         {
             PrefillName();
+            ShowSelectedAvatar(SelectedAvatar);
 
             SessionData session = SessionData.Instance;
             if (session != null && session.Scheme != ControlScheme.Unknown)
@@ -96,6 +121,18 @@ namespace Museum.Core
             // SetTextWithoutNotify: the field's onValueChanged already writes into
             // SessionData.PlayerName, and echoing the same name back is a wasted PlayerPrefs save.
             nameInput.SetTextWithoutNotify(SessionData.Instance.PlayerName);
+        }
+
+        /// <summary>Exactly one gold frame on: the one whose index is <paramref name="avatarId"/>'s.</summary>
+        private void ShowSelectedAvatar(string avatarId)
+        {
+            string selected = PlayerAvatars.Sanitize(avatarId);
+
+            for (int i = 0; i < avatarFrames.Length; i++)
+            {
+                if (avatarFrames[i] == null) continue;
+                avatarFrames[i].SetActive(i < PlayerAvatars.Ids.Count && PlayerAvatars.Ids[i] == selected);
+            }
         }
 
         private void ShowPicker()

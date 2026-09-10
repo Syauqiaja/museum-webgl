@@ -38,6 +38,9 @@ namespace Museum.Games.Egrang.Tests.PlayMode
                     : EgrangStickShape.Persegi;
             public string DisplayNameOf(string sessionId) =>
                 sessionId != null && Names.TryGetValue(sessionId, out string name) ? name : string.Empty;
+            public Dictionary<string, string> Avatars = new Dictionary<string, string>();
+            public string AvatarOf(string sessionId) =>
+                sessionId != null && Avatars.TryGetValue(sessionId, out string avatar) ? avatar : "jawa";
             public void RequestCountdown() => CountdownRequests++;
 
             public void RaiseCountdown(float seconds) => CountdownChanged?.Invoke(seconds);
@@ -138,6 +141,23 @@ namespace Museum.Games.Egrang.Tests.PlayMode
 
             Assert.That(_race.LocalRacer, Is.SameAs(_racers[2]));
             Assert.That(_camera.Target, Is.SameAs(_racers[2].Body));
+        }
+
+        [Test]
+        public void EachSeatedLaneWearsItsPlayersAvatarAndAnEmptyLaneWearsJawa()
+        {
+            var session = new FakeSession { LocalSessionId = "me" };
+            session.SeatList.Add(("me", 0));
+            session.SeatList.Add(("them", 2));
+            session.Avatars["me"] = "bali";
+            session.Avatars["them"] = "minang";
+
+            _race.Bind(session);
+            session.RaiseSeats();
+
+            Assert.That(_race.AvatarOfLane(0), Is.EqualTo("bali"));
+            Assert.That(_race.AvatarOfLane(1), Is.EqualTo("jawa"), "nobody sat in lane 2");
+            Assert.That(_race.AvatarOfLane(2), Is.EqualTo("minang"));
         }
 
         [Test]

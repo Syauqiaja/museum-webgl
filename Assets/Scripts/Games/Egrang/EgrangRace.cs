@@ -414,6 +414,33 @@ namespace Museum.Games.Egrang
                 if (plate != null) plate.SetName(label);
 
                 if (rosterView != null) rosterView.SetName(lane, label, isLocal);
+        /// <summary>
+        /// The character a lane's walker wears: its player's choice as the room synced it, or —
+        /// offline, where lane 1 is this visitor — the one picked on the welcome screen. An empty
+        /// lane, and the offline scenery lanes, wear Jawa.
+        /// </summary>
+        public string AvatarOfLane(int lane)
+        {
+            if (_session == null)
+            {
+                return lane == 0 && SessionData.Instance != null ? SessionData.Instance.PlayerAvatar : PlayerAvatars.Default;
+            }
+
+            string sessionId = _seating.SessionAt(lane);
+            return string.IsNullOrEmpty(sessionId) ? PlayerAvatars.Default : _session.AvatarOf(sessionId);
+        }
+
+        /// <summary>Puts the lane's walker in <see cref="AvatarOfLane"/>'s body — a no-op when it already wears it.</summary>
+        void DressLane(int lane)
+        {
+            EgrangRacer racer = RacerAt(lane);
+            if (racer == null || racer.Body == null) return;
+
+            // Racers built in code (the tests) have no body to dress.
+            EgrangRacerBody body = racer.Body.GetComponent<EgrangRacerBody>();
+            if (body != null) body.Wear(AvatarOfLane(lane));
+        }
+
 
                 if (occupied) roster.Add(new EgrangStanding(lane + 1, 0, label, isLocal));
             }
@@ -438,6 +465,7 @@ namespace Museum.Games.Egrang
             return nameplates != null && lane >= 0 && lane < nameplates.Length ? nameplates[lane] : null;
         }
 
+                DressLane(lane);
         /// <summary>
         /// Shows or hides a lane's walker — the mover's object, which carries the model, the stilts
         /// and the plate. The lane root and its track markers stay put, so nothing that measures the

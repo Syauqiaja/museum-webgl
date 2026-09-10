@@ -82,7 +82,10 @@ The museum's remote visitors wear the four `Assets/Models/ASSET_NUSANTARA/1_Kara
 quality 50 per the rules above), four materials, and three Humanoid clips. The seven
 `2_Animasi/Anim_*.fbx` files are 9.4 MB each on disk because every one carries a full copy of
 the Jawa mesh — only their clips are referenced, so the meshes never reach a build. Estimate:
-2–3 MB added; confirm against the next build report.
+2–3 MB added; confirm against the next build report. The Egrang lanes wear the same four
+models (`EgrangRacerBody`), so they add no second copy. The welcome screen's four portraits
+(`Assets/Sprites/Char Avatars/*.png`, 403² sources) are capped at **256** and crunched at 50 —
+they are drawn at 72 units.
 
 ### Terrain
 

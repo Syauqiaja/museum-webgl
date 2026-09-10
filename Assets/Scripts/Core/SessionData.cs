@@ -17,6 +17,8 @@ namespace Museum.Core
     /// <list type="bullet">
     /// <item><see cref="PlayerName"/> — written to PlayerPrefs, so it survives a tab refresh
     /// and the visitor is not asked twice.</item>
+    /// <item><see cref="PlayerAvatar"/> — written to PlayerPrefs for the same reason; it sits
+    /// on the same screen as the name.</item>
     /// <item><see cref="SessionId"/> / <see cref="ReconnectionToken"/> — memory only. Both are
     /// issued per connection: a stored copy would name a seat that no longer exists, and the
     /// client would try to reclaim it instead of joining cleanly.</item>
@@ -35,6 +37,9 @@ namespace Museum.Core
 
         /// <summary>PlayerPrefs key for the stable profile id.</summary>
         private const string PlayerIdKey = "museum.session.playerId";
+
+        /// <summary>PlayerPrefs key for the chosen character.</summary>
+        private const string PlayerAvatarKey = "museum.session.playerAvatar";
 
         public static SessionData Instance { get; private set; }
 
@@ -67,6 +72,27 @@ namespace Museum.Core
 
         /// <summary>True once a usable nickname has been entered; drives the lobby's fallback prompt.</summary>
         public bool HasPlayerName => _playerName.Length >= PlayerNameRules.MinLength;
+
+        private string _playerAvatar = PlayerAvatars.Default;
+
+        /// <summary>
+        /// The character chosen on MainMenu — one of <see cref="PlayerAvatars.Ids"/>, always stored
+        /// sanitised, <see cref="PlayerAvatars.Default"/> (Jawa) until the visitor picks. Sent as
+        /// the <c>avatar</c> join option on every room, so the museum and Egrang both draw it.
+        /// </summary>
+        public string PlayerAvatar
+        {
+            get => _playerAvatar;
+            set
+            {
+                string sanitized = PlayerAvatars.Sanitize(value);
+                if (sanitized == _playerAvatar) return;
+
+                _playerAvatar = sanitized;
+                PlayerPrefs.SetString(PlayerAvatarKey, _playerAvatar);
+                PlayerPrefs.Save();   // eagerly, as PlayerName does
+            }
+        }
 
         /// <summary>
         /// Stable profile id for this browser/kiosk, minted once and kept in PlayerPrefs. Sent
@@ -157,6 +183,7 @@ namespace Museum.Core
             DontDestroyOnLoad(gameObject);
 
             _playerName = PlayerNameRules.Sanitize(PlayerPrefs.GetString(PlayerNameKey, string.Empty));
+            _playerAvatar = PlayerAvatars.Sanitize(PlayerPrefs.GetString(PlayerAvatarKey, PlayerAvatars.Default));
             PlayerId = LoadOrMintPlayerId();
         }
 

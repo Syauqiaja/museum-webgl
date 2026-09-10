@@ -22,6 +22,18 @@ namespace Museum.Games.Egrang.EditorTools
 
         private static readonly string[] LaneRoots = { "Player 1 Point", "Player 2 Point", "Player 3 Point" };
 
+        /// <summary>
+        /// The bodies a walker can wear, one per <c>PlayerAvatars</c> id, matched by name. Jawa's is
+        /// required even though Jawa is the authored body: its avatar reads the authored pose.
+        /// </summary>
+        private static readonly string[] CharacterModels =
+        {
+            "Assets/Models/ASSET_NUSANTARA/1_Karakter/Char_Jawa_L.fbx",
+            "Assets/Models/ASSET_NUSANTARA/1_Karakter/Char_Bali_P.fbx",
+            "Assets/Models/ASSET_NUSANTARA/1_Karakter/Char_Bugis_P.fbx",
+            "Assets/Models/ASSET_NUSANTARA/1_Karakter/Char_Minang_L.fbx",
+        };
+
         [MenuItem("Museum/Egrang/Wire Scene References")]
         public static void Repair()
         {
@@ -92,6 +104,7 @@ namespace Museum.Games.Egrang.EditorTools
 
             WireStick(player, "EgrangAnak_Lingkaran_L", "_L_", "LeftHand", "LeftFoot");
             WireStick(player, "EgrangAnak_Lingkaran_R", "_R_", "RightHand", "RightFoot");
+            WireBody(player);
 
             Transform plate = player.Find("Name Plate");
             var nameplate = plate != null ? plate.GetComponent<EgrangNameplate>() : null;
@@ -126,6 +139,30 @@ namespace Museum.Games.Egrang.EditorTools
             Set(stick, "footstep", stickRoot.Find($"{stickName}_Foot"));
             Set(stick, "handle", stickRoot.Find($"{stickName}_Grip"));
             Set(stick, "tip", stickRoot.Find($"{stickName}_Tip"));
+        }
+
+        /// <summary>
+        /// The walker's <see cref="EgrangRacerBody"/>, added if missing: both stilts it re-points and
+        /// the four character models. Runs after <see cref="WireStick"/> so the stilts already hold
+        /// the authored bones it restores to.
+        /// </summary>
+        private static void WireBody(Transform player)
+        {
+            var body = player.GetComponent<EgrangRacerBody>();
+            if (body == null) body = Undo.AddComponent<EgrangRacerBody>(player.gameObject);
+
+            Transform left = player.Find("EgrangAnak_Lingkaran_L");
+            Transform right = player.Find("EgrangAnak_Lingkaran_R");
+
+            SetArray(body, "sticks", new Object[]
+            {
+                left != null ? left.GetComponent<EgrangStick>() : null,
+                right != null ? right.GetComponent<EgrangStick>() : null,
+            });
+
+            var models = new Object[CharacterModels.Length];
+            for (int i = 0; i < CharacterModels.Length; i++) models[i] = AssetDatabase.LoadAssetAtPath<GameObject>(CharacterModels[i]);
+            SetArray(body, "characters", models);
         }
 
         /// <summary>

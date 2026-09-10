@@ -129,6 +129,7 @@ namespace Museum.Net
                 var options = new Dictionary<string, object>
                 {
                     ["displayName"] = ColyseusNetManager.Instance.PlayerName,
+                    ["avatar"] = ColyseusNetManager.Instance.PlayerAvatar,
                 };
 
                 Room<MuseumState> room = await ColyseusNetManager.Instance.Client.JoinOrCreate<MuseumState>(RoomName, options);
@@ -203,7 +204,7 @@ namespace Museum.Net
 
                 if (!_avatars.TryGetValue(sessionId, out MuseumVisitorAvatar avatar))
                 {
-                    avatar = MuseumVisitorAvatar.Create(_avatarsRoot, sessionId, CharacterFor(sessionId),
+                    avatar = MuseumVisitorAvatar.Create(_avatarsRoot, sessionId, CharacterFor(visitor.avatar),
                                                         _bodyMesh, _bodyMaterial, TintFor(sessionId), nameFont);
                     _avatars[sessionId] = avatar;
                 }
@@ -290,24 +291,29 @@ namespace Museum.Net
         }
 
         /// <summary>
-        /// Which character a visitor wears. Random across visitors, but derived from the session
-        /// id rather than rolled locally, so the same visitor wears the same costume on every
-        /// screen. Null when no characters are wired — the avatar then falls back to a capsule.
+        /// The character a visitor chose on the welcome screen, as the room synced it
+        /// (<c>MuseumVisitor.avatar</c>, already sanitised server-side). The prefab is matched by
+        /// name — <c>"Visitor Jawa L"</c> is <see cref="PlayerAvatars.Jawa"/>. An id with no
+        /// prefab falls back to the default character, then to any wired one; null only when
+        /// none are wired, and the avatar then falls back to a capsule.
         /// </summary>
-        private GameObject CharacterFor(string sessionId)
+        private GameObject CharacterFor(string avatarId)
         {
             if (visitorCharacters == null || visitorCharacters.Length == 0) return null;
 
-            // A different multiplier from the tint's, so costume and tint do not move in lockstep.
-            GameObject chosen = visitorCharacters[(StableHash(sessionId) * 2654435761u >> 16) % (uint)visitorCharacters.Length];
-            if (chosen != null) return chosen;
+            string wanted = PlayerAvatars.Sanitize(avatarId);
+            GameObject fallback = null;
 
             foreach (GameObject character in visitorCharacters)
             {
-                if (character != null) return character;
+                if (character == null) continue;
+
+                string id = PlayerAvatars.IdInName(character.name);
+                if (id == wanted) return character;
+                if (fallback == null || id == PlayerAvatars.Default) fallback = character;
             }
 
-            return null;
+            return fallback;
         }
 
         /// <summary>FNV-1a over the id: stable across clients and runs, unlike <c>string.GetHashCode</c>.</summary>

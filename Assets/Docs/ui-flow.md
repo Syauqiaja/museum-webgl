@@ -44,6 +44,12 @@ with a 3D background.
   `SessionData`, which survives scene loads; every room later sends it as `displayName`.
   It is also written to PlayerPrefs, so the field comes back pre-filled after a tab
   refresh and the name panel in the lobby stays the fallback it was meant to be.
+- **Avatar row — `PILIH KARAKTER`.** Four portraits under the name field (Jawa, Bali, Bugis,
+  Minang — `Assets/Sprites/Char Avatars`), each wired to `MainMenu.SelectAvatar(index)`
+  (handler name, API). The chosen one wears the gold corner frame; **Jawa is selected until the
+  visitor picks.** The tap is stored on `SessionData.PlayerAvatar` at once (PlayerPrefs, like the
+  name) and every room sends it as the `avatar` join option, so the visitor appears as that
+  character to others in the museum and on their Egrang lane.
 - **Enter Museum** → load Museum scene (presence room only, no game seat). The button stays **disabled until the
   typed name is valid**, so nobody can reach a room unnamed.
 - **Deep-link — not yet implemented.** The intent stands: on WebGL boot, read `?room=CODE`

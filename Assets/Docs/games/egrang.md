@@ -211,7 +211,24 @@ the local one, which ran on unscaled time while the tab was frozen.
   out of step with the numbers actually scored against. Bands meet at hard edges.
 - `EgrangStick` (×2 per racer) — a two-pivot follower: the footplate is welded to the foot
   bone, the grip slides along the shaft to reach the hand. Animation is authored on the
-  character, never on the stick.
+  character, never on the stick. `Rebind(hand, foot)` points it at another body's bones.
+- `EgrangRacerBody` (on each `Egrang Player`) — dresses the walker in its player's chosen
+  character (`IEgrangSession.AvatarOf` ← `players[].avatar`; offline, lane 1 wears
+  `SessionData.PlayerAvatar`), called from `EgrangRace.DrawRoster` on every seat change.
+  **Jawa is the authored body** (`Armature` + `char1`, Generic, `Anim_Egrang`), and **that
+  rig keeps playing whatever the walker wears** — the Animator, its controller and its egrang
+  clips are never touched, so every lane runs the real egrang step, half step and fall.
+  Any other character is instantiated as a child `Body (Char_…)` beside the authored
+  skeleton, the authored `char1` renderer is hidden, and every `LateUpdate` (order 50, before
+  the stilts' 100) the authored pose is copied onto it through two `HumanPoseHandler`s (the
+  Jawa model's avatar → the chosen model's), then the body is shifted so its lower sole sits at
+  the authored one's height — where the footplates are. Both stilts are re-pointed at the new
+  hands and feet. Retargeting the clips was tried first and dropped: the Generic clips key
+  every bone's position and scale (another body is stretched to Jawa's proportions), and a
+  Humanoid bake played on a Humanoid Animator lost the height that puts the walker on the
+  stilts — Unity treats a generated clip's own body curve as its "original" root, so the
+  bodies stood ~0.9 m into the ground. Wired by `Museum/Egrang/Wire Scene References`
+  (stilts + the four `Char_*.fbx`; Jawa's is required, its avatar reads the authored pose).
 - `EgrangStickSelector` — owns the choice; the bar knows nothing about selection. The bar
   and player rig live under an **inactive** `runRoot`, which is what stops a press from
   reaching the bar through the panel without the bar needing a "not started" state.

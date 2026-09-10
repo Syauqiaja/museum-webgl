@@ -41,6 +41,13 @@ namespace Museum.Games.Egrang
         /// </summary>
         string DisplayNameOf(string sessionId);
 
+        /// <summary>
+        /// The character a session chose on the welcome screen (<c>players[].avatar</c>, sanitised
+        /// server-side) — one of <c>PlayerAvatars.Ids</c>. Jawa for an unknown session, the same
+        /// default the server gives a player who sent none. The lane's walker wears it.
+        /// </summary>
+        string AvatarOf(string sessionId);
+
         /// <summary>Someone took a step: (sessionId, result, stepUnits banked after it).</summary>
         event Action<string, EgrangStepResult, int> StepTaken;
 

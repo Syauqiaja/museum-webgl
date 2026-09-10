@@ -13,10 +13,13 @@ namespace Museum.Core.Tests
     public class SessionDataTests
     {
         private const string PlayerNameKey = "museum.session.playerName";
+        private const string PlayerAvatarKey = "museum.session.playerAvatar";
 
         private GameObject _go;
         private string _savedPrefValue;
         private bool _hadPrefValue;
+        private string _savedAvatarValue;
+        private bool _hadAvatarValue;
 
         [SetUp]
         public void SetUp()
@@ -24,6 +27,10 @@ namespace Museum.Core.Tests
             _hadPrefValue = PlayerPrefs.HasKey(PlayerNameKey);
             _savedPrefValue = PlayerPrefs.GetString(PlayerNameKey, string.Empty);
             PlayerPrefs.DeleteKey(PlayerNameKey);
+
+            _hadAvatarValue = PlayerPrefs.HasKey(PlayerAvatarKey);
+            _savedAvatarValue = PlayerPrefs.GetString(PlayerAvatarKey, string.Empty);
+            PlayerPrefs.DeleteKey(PlayerAvatarKey);
         }
 
         [TearDown]
@@ -42,6 +49,42 @@ namespace Museum.Core.Tests
             {
                 PlayerPrefs.DeleteKey(PlayerNameKey);
             }
+
+            if (_hadAvatarValue)
+            {
+                PlayerPrefs.SetString(PlayerAvatarKey, _savedAvatarValue);
+            }
+            else
+            {
+                PlayerPrefs.DeleteKey(PlayerAvatarKey);
+            }
+        }
+
+        [Test]
+        public void PlayerAvatar_IsJawaUntilChosen()
+        {
+            Assert.AreEqual(PlayerAvatars.Jawa, NewSession().PlayerAvatar);
+        }
+
+        [Test]
+        public void PlayerAvatar_UnknownIdFallsBackToJawa()
+        {
+            SessionData session = NewSession();
+
+            session.PlayerAvatar = "Bali";
+            Assert.AreEqual(PlayerAvatars.Bali, session.PlayerAvatar, "stored lower-cased");
+
+            session.PlayerAvatar = "naga";
+            Assert.AreEqual(PlayerAvatars.Jawa, session.PlayerAvatar);
+        }
+
+        [Test]
+        public void PlayerAvatar_SurvivesAFreshSession()
+        {
+            NewSession().PlayerAvatar = PlayerAvatars.Minang;
+            Object.DestroyImmediate(_go);
+
+            Assert.AreEqual(PlayerAvatars.Minang, NewSession().PlayerAvatar);
         }
 
         [Test]

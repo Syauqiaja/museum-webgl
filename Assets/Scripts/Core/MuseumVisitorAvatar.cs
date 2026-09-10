@@ -85,6 +85,13 @@ namespace Museum.Core
         /// </summary>
         private const float MaxPlaybackRate = 3.5f;
 
+        /// <summary>
+        /// Every locomotion rate is played at half of what stride-matching asks for. Matching the
+        /// players' 5–8 m/s put <c>Run</c> at 3× and more, which read as frantic on a chibi; a
+        /// calmer cadence costs some foot slide, and that was the preferred trade.
+        /// </summary>
+        private const float PlaybackScale = 0.5f;
+
         /// <summary>How quickly the measured speed follows the real one — steadies the idle/walk switch.</summary>
         private const float SpeedSmoothing = 8f;
 
@@ -303,7 +310,7 @@ namespace Museum.Core
             _speed = Mathf.Lerp(_speed, moved / dt, 1f - Mathf.Exp(-SpeedSmoothing * dt));
 
             _animator.SetFloat(SpeedParam, _speed);
-            _animator.SetFloat(WalkRateParam, Mathf.Clamp(_speed / RunClipSpeed, 1f, MaxPlaybackRate));
+            _animator.SetFloat(WalkRateParam, Mathf.Clamp(_speed / RunClipSpeed, 1f, MaxPlaybackRate) * PlaybackScale);
         }
 
         private void BuildCharacter(GameObject character)
