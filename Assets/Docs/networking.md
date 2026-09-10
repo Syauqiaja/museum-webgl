@@ -80,8 +80,35 @@ followed it spun whenever they looked around. It orients a first sighting only; 
 body turns (0.12 s smoothing) toward where it is moving above 0.3 m/s and keeps that heading
 when it stops. With Multiplayer Play Mode, a virtual player
 started before a script change keeps running the old code until it is restarted — a visitor
-drawn as a capsule there is usually that, not a lost reference. The room is left when the scene unloads; up to 3 rejoins
-are tried if it drops; no server means the museum is walked alone. Contract: server
+drawn as a capsule there is usually that, not a lost reference.
+
+**The room outlives the Museum scene.** It is held by `MuseumPresenceLink` (a
+`DontDestroyOnLoad` object `MuseumPresence` makes on first use); `MuseumPresence` is only the
+scene's view of it. Going through a doorway does **not** leave: `SceneTriggerPrompt.Enter`
+records the pose and the game on `SessionData.RememberMuseumReturn`, `MuseumPresence` stops
+reporting and sends `activity { game: "dakon" | "egrang" }`, and the others keep seeing the
+visitor idling at the doorway, tagged **"Sedang bermain Dakon"** under the name
+(`MuseumVisitorAvatar.SetActivity`, `MuseumActivities.Tag`). Coming back, `FPSController.Awake`
+takes the pose (`TryTakeMuseumReturn`, read once) and puts the rig where it left, facing the
+same way, before any `Start` — so the first `move` is that spot and nobody sees a jump — and
+`MuseumPresence.Start` sends `activity ""`. `MainMenu.GoToMuseum` forgets any pending return
+(the menu starts at the entrance), and the link leaves the room when MainMenu loads, which is
+how a visit ends. A closed tab closes the socket and the server drops the visitor. Up to 3
+rejoins are tried if it drops, wherever the visitor is; a rejoin while away re-sends the last
+pose and the tag. No server means the museum is walked alone.
+
+**Shared exhibits.** What one visitor sets off at the ground-floor gallery, the others see and
+hear: the gong, the gasing, the tembang's melody and each accepted engklek step (the petak
+lights, the chime or fanfare plays). A station reports a local press through
+`MuseumInteractions.ReportLocal`; `MuseumPresence` sends it as `interact { station, index }`, and
+hands every `interacted` back through `MuseumInteractions.PlayRemote` to the station registered
+under that id, which plays it without reporting it again. Per-visitor on purpose: the engklek
+run and its status line, the tembang's lyric banner, the video screens, the lesson plaques'
+pages — sharing those would let one visitor start, stop, restart or turn them under someone
+else. The ids (`gong`, `gasing`, `tembang`, `engklek`) are the server's `MUSEUM_STATIONS`, held
+twice. "Heard if close enough" is the stations' 3D sources: `GalleryStation.TuneSource` uses a
+**linear** rolloff to silence at 25 m (`AudibleDistance`) — logarithmic never reaches zero, so
+a lobby gong would have carried to every floor. Contract: server
 `docs/protocol.md#exhibition-museum-scene`.
 
 ## 3. Opening a room

@@ -51,10 +51,12 @@ namespace Museum.Games.Egrang
         private Transform[] _authoredFeet = new Transform[0];
         private Transform _authoredLeftFoot;
         private Transform _authoredRightFoot;
+        private Transform _authoredHips;
 
         private GameObject _body;
         private Transform _bodyLeftFoot;
         private Transform _bodyRightFoot;
+        private Transform _bodyHips;
         private HumanPoseHandler _source;
         private HumanPoseHandler _target;
         private HumanPose _pose;
@@ -119,6 +121,7 @@ namespace Museum.Games.Egrang
             Transform armature = transform.Find(ArmatureName);
             _authoredLeftFoot = FindDeep(armature, "LeftFoot");
             _authoredRightFoot = FindDeep(armature, "RightFoot");
+            _authoredHips = FindDeep(armature, "Hips");
 
             _authoredHands = new Transform[sticks.Length];
             _authoredFeet = new Transform[sticks.Length];
@@ -148,6 +151,7 @@ namespace Museum.Games.Egrang
             Transform armature = _body.transform.Find(ArmatureName);
             _bodyLeftFoot = FindDeep(armature, "LeftFoot");
             _bodyRightFoot = FindDeep(armature, "RightFoot");
+            _bodyHips = FindDeep(armature, "Hips");
 
             if (_authoredMesh != null) _authoredMesh.enabled = false;
 
@@ -190,22 +194,45 @@ namespace Museum.Games.Egrang
         private void LateUpdate() => CopyPose();
 
         /// <summary>
-        /// The authored skeleton's pose onto the worn body, then the body moved so its lower sole
-        /// sits at the authored one's height — the footplates are welded there.
+        /// The authored skeleton's pose onto the worn body, then the body moved so its hips stand
+        /// over the authored hips and its lower sole sits at the authored one's height — the
+        /// footplates are welded there.
         /// </summary>
+        /// <remarks>
+        /// The two handlers do not share a frame. <c>GetHumanPose</c> reports the body relative to
+        /// the source root's <i>parent</i> — the lane — so the pose carries this walker's own
+        /// place along the track, while <c>SetHumanPose</c> reads it relative to the worn body,
+        /// which already sits on the walker. Copied as-is, the body stood as far behind the walker
+        /// as the walker is from its lane's origin, times the walker's scale: 8.5 m at the start
+        /// line, behind the camera, so only its shadow showed (2026-09-11). The walker's rotation
+        /// is taken back out of the pose here, and its offset by placing the body from the bones
+        /// themselves below — measured in the world, so it holds wherever the walker is.
+        /// </remarks>
         private void CopyPose()
         {
             if (_source == null || _target == null || _body == null) return;
 
             _body.transform.localPosition = Vector3.zero;
             _source.GetHumanPose(ref _pose);
+            _pose.bodyRotation = Quaternion.Inverse(transform.localRotation) * _pose.bodyRotation;
             _target.SetHumanPose(ref _pose);
 
-            if (_authoredLeftFoot == null || _authoredRightFoot == null || _bodyLeftFoot == null || _bodyRightFoot == null) return;
+            Vector3 shift = Vector3.zero;
 
-            float authored = Mathf.Min(_authoredLeftFoot.position.y, _authoredRightFoot.position.y);
-            float worn = Mathf.Min(_bodyLeftFoot.position.y, _bodyRightFoot.position.y);
-            _body.transform.position += Vector3.up * (authored - worn);
+            if (_authoredHips != null && _bodyHips != null)
+            {
+                shift = _authoredHips.position - _bodyHips.position;
+                shift.y = 0f;   // height is the soles' job: the characters' legs are not Jawa's length
+            }
+
+            if (_authoredLeftFoot != null && _authoredRightFoot != null && _bodyLeftFoot != null && _bodyRightFoot != null)
+            {
+                float authored = Mathf.Min(_authoredLeftFoot.position.y, _authoredRightFoot.position.y);
+                float worn = Mathf.Min(_bodyLeftFoot.position.y, _bodyRightFoot.position.y);
+                shift.y = authored - worn;
+            }
+
+            _body.transform.position += shift;
         }
 
         private void OnDestroy()

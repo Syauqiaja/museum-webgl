@@ -33,6 +33,7 @@ public class SceneTriggerPrompt : MonoBehaviour
     [SerializeField] private string displayName;
 
     private bool playerInside;
+    private Transform player;
 
     /// <summary>True while the player stands in this doorway's trigger.</summary>
     public bool PlayerInside => playerInside;
@@ -56,6 +57,7 @@ public class SceneTriggerPrompt : MonoBehaviour
     {
         if (!other.CompareTag(playerTag)) return;
         playerInside = true;
+        player = other.transform;
         if (promptUI != null) promptUI.SetActive(true);
         TouchInteractRouter.Register(this);
     }
@@ -84,6 +86,14 @@ public class SceneTriggerPrompt : MonoBehaviour
     public void Enter()
     {
         if (promptUI != null) promptUI.SetActive(false);
+
+        // Back from the game, the visitor reappears here rather than at the museum's entrance
+        // (FPSController reads it), and the others see them standing here meanwhile, tagged as
+        // playing this doorway's game (MuseumPresence reads the activity).
+        if (player != null && SessionData.Instance != null)
+        {
+            SessionData.Instance.RememberMuseumReturn(player.position, player.eulerAngles.y, roomName);
+        }
 
         if (useLobby)
         {

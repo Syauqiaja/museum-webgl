@@ -61,6 +61,15 @@ with a 3D background.
   Bali, Bugis, Minang — the same one on every screen) idling, walking or running through
   the halls with their nickname overhead (`MuseumPresence` → server room `museum`); with no server it is walked alone,
   with no error shown. See [networking.md](networking.md#2-client-construction).
+- **Going into a game does not leave the museum.** While a visitor is in the Lobby, Dakon or
+  Egrang, the others see them standing idle at the doorway they used, tagged "Sedang bermain
+  Dakon" / "Sedang bermain Egrang" under the name. Coming back — the Lobby's back button, a
+  game's Kembali ke Museum, the results screen — they reappear **exactly where they went
+  through the doorway**, facing the same way, not at the entrance (so the doorway's prompt and
+  video come up again). Entering from MainMenu always starts at the entrance.
+- **The gallery's gong, gasing, tembang and engklek court are shared**: another visitor's
+  strike, spin, song or accepted step plays on your screen too, audible within 25 m. Your
+  engklek run, the tembang's lyric banner, the videos and the lesson plaques stay yours.
 - Each game has a doorway (`SceneTriggerPrompt`): walk in, press Enter. With `useLobby` on
   the doorway does **not** load the game — it fills in `LobbyRequest.Pending`
   (`roomName`, `maxPlayers`, its `sceneName` as the destination, and a `displayName` for the

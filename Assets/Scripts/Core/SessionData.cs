@@ -168,6 +168,54 @@ namespace Museum.Core
             ReconnectionToken = null;
         }
 
+        private bool _hasMuseumReturn;
+        private Vector3 _museumReturnPosition;
+        private float _museumReturnYaw;
+        private string _museumReturnActivity = string.Empty;
+
+        /// <summary>
+        /// True between walking through a museum doorway and the museum loading again: the player
+        /// comes back where they left, not at the museum's entrance. Memory only — a refreshed tab
+        /// is a new visit and starts at the entrance.
+        /// </summary>
+        public bool HasMuseumReturn => _hasMuseumReturn;
+
+        /// <summary>
+        /// The game room the doorway led to ("dakon", "egrang") while a return is pending, empty
+        /// otherwise. The museum's presence marks the visitor away with it.
+        /// </summary>
+        public string MuseumReturnActivity => _hasMuseumReturn ? _museumReturnActivity : string.Empty;
+
+        /// <summary>Called by a doorway as the visitor goes through it.</summary>
+        public void RememberMuseumReturn(Vector3 position, float yaw, string activity)
+        {
+            _hasMuseumReturn = true;
+            _museumReturnPosition = position;
+            _museumReturnYaw = yaw;
+            _museumReturnActivity = activity ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Where to put the player on the way back in, once: the pose is cleared as it is read, so
+        /// only the load straight after the game uses it.
+        /// </summary>
+        public bool TryTakeMuseumReturn(out Vector3 position, out float yaw)
+        {
+            position = _museumReturnPosition;
+            yaw = _museumReturnYaw;
+
+            bool had = _hasMuseumReturn;
+            ForgetMuseumReturn();
+            return had;
+        }
+
+        /// <summary>Drops a pending return — entering from the menu starts at the entrance.</summary>
+        public void ForgetMuseumReturn()
+        {
+            _hasMuseumReturn = false;
+            _museumReturnActivity = string.Empty;
+        }
+
         private void Awake()
         {
             if (Instance != null && Instance != this)

@@ -78,7 +78,7 @@ statics.
 
 | asmdef | Namespace | Contains | References |
 |---|---|---|---|
-| `Museum.Core` | `Museum.Core` | Bootstrap trio, `ServerConfig`, `SceneReference`, `LobbyRequest`, `PlayerNameRules`, `SceneTriggerPrompt`, video trio, `FollowCamera`, hover/raycast, the lobby-gallery stations (`IInteractable`, `GalleryStation` + `GongStation`/`GasingStation`/`SongStation`, `HopscotchCourse`/`HopscotchTile`, `ProceduralAudio`) | ColyseusSDK, TMP, uGUI, InputSystem |
+| `Museum.Core` | `Museum.Core` | Bootstrap trio, `ServerConfig`, `SceneReference`, `LobbyRequest`, `PlayerNameRules`, `SceneTriggerPrompt`, video trio, `FollowCamera`, hover/raycast, the lobby-gallery stations (`IInteractable`, `GalleryStation` + `GongStation`/`GasingStation`/`SongStation`, `HopscotchCourse`/`HopscotchTile`, `ProceduralAudio`), music and UI sound (`GameAudio` + `GameAudioLibrary` at `Resources/GameAudio`, `SceneMusic`, `UiSelectableSound`, `SilentButton`) | ColyseusSDK, TMP, uGUI, InputSystem |
 | `Museum.Games.Dakon` | `Museum.Games.Dakon` | Pure model + view + session seam | TMP, uGUI (no Colyseus) |
 | `Museum.Games.Egrang` | `Museum.Games.Egrang` | Race, racers, skill-check bar, stilts, views | TMP, uGUI, InputSystem (no Colyseus) |
 | `Museum.Net` | `Museum.Net` | Generated schema mirror, `NetDakonSession`, `NetEgrangSession`, the two net bootstraps | ColyseusSDK, Core, Dakon, Egrang |

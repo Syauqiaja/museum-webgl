@@ -129,6 +129,13 @@ ends with `built 8 stations … (0 footprint warning(s))`.
   Enter on desktop. Subclasses: `GongStation` (`mallet`, `swingAxis`, `swingDegrees`,
   `source`), `GasingStation` (`parts[]`, `axisPoint`, `kick`, `maxSpeed`, `drag`),
   `SongStation` (`lyric`, `idleText`, `lines[]`, `secondsPerLine`).
+- **Shared with other visitors** (`MuseumInteractions`, see
+  [networking.md](networking.md)): each station's id is in code (`StationId` — `gong`,
+  `gasing`, `tembang`; the court is `engklek`), so no scene field carries it. Another visitor's
+  press plays the same effect here (`OnRemoteInteract`), except the tembang, which plays the
+  melody and leaves the lyric banner alone, and the court, which lights the petak and plays the
+  chime/fanfare without touching this visitor's run or status line. `TuneSource` is **linear**,
+  2.5 m → silent at 25 m (`GalleryStation.AudibleDistance`).
 - **`HopscotchCourse` / `HopscotchTile`** — the tiles are triggers with a `face` renderer and
   a `litColor`; the course tracks the `rows[]` index reached and drives the `status` label
   (`idleText` → `Petak N` → `doneText`).

@@ -877,6 +877,14 @@ namespace Museum.Games.Dakon
 
             int? w = _session.Winner;
             string outcome = w.HasValue ? $"{_session.DisplayNameOf(w.Value)} menang!" : "Seri!";
+
+            // The jingle is for a win on this device: online, only the winner's; offline both
+            // players share the screen (MySeat there is just whose turn it is), so any win.
+            if (w.HasValue && (w.Value == _session.MySeat || _session is LocalDakonSession))
+            {
+                Museum.Core.GameAudio.PlayWin();
+            }
+
             gameOverLabel.text = $"{outcome}\n{_session.DisplayNameOf(0)} {_session.Total(0)}  –  " +
                                  $"{_session.DisplayNameOf(1)} {_session.Total(1)}";
         }

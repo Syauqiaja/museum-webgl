@@ -33,5 +33,8 @@ public MuseumVisitor() { }
 
 		[Type(5, "string")]
 		public string avatar = default(string);
+
+		[Type(6, "string")]
+		public string activity = default(string);
 	}
 }

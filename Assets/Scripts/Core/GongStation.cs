@@ -18,6 +18,8 @@ namespace Museum.Core
         [SerializeField] private AudioSource source;
         [SerializeField] private float swingDegrees = 22f;
 
+        protected override string StationId => MuseumInteractions.Gong;
+
         private Quaternion _rest;
         private float _struck = -10f;
         private bool _sounded = true;

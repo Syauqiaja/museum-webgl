@@ -223,7 +223,9 @@ the local one, which ran on unscaled time while the tab was frozen.
 - `SkillCheckBar` — cursor sweep, zone evaluation, lockout, and the **baked** track texture:
   its `onStepResult` is subscribed **in code** by `EgrangRace` and must have **no persistent
   UnityEvent target in the scene**. A call wired straight to a mover drives that lane on every
-  client regardless of seating — see `scene-setup.md`.
+  client regardless of seating — see `scene-setup.md`. Every button wired to its `Press` (the
+  JALAN buttons) is marked `SilentButton` in `Awake`, so the stride press makes no UI click —
+  a click per stride, dozens a race, was noise; every other button keeps `GameAudio`'s click.
   the red/yellow/green strip is generated from the zone table, so the picture cannot drift
   out of step with the numbers actually scored against. Bands meet at hard edges.
 - `EgrangStick` (×2 per racer) — a two-pivot follower: the footplate is welded to the foot
@@ -249,8 +251,13 @@ the local one, which ran on unscaled time while the tab was frozen.
   Any other character is instantiated as a child `Body (Char_…)` beside the authored
   skeleton, the authored `char1` renderer is hidden, and every `LateUpdate` (order 50, before
   the stilts' 100) the authored pose is copied onto it through two `HumanPoseHandler`s (the
-  Jawa model's avatar → the chosen model's), then the body is shifted so its lower sole sits at
-  the authored one's height — where the footplates are. Both stilts are re-pointed at the new
+  Jawa model's avatar → the chosen model's), then the body is shifted so its hips stand over
+  the authored hips and its lower sole sits at the authored one's height — where the footplates
+  are. The hips shift is not optional: `GetHumanPose` reports the body relative to the source
+  root's *parent* (the lane), `SetHumanPose` reads it relative to the worn body, so a straight
+  copy put the body as far behind the walker as the walker is from its lane's origin, times its
+  2.34 scale — 8.5 m at the start line, behind the camera, only the shadow showing (fixed
+  2026-09-11, pinned by `EgrangRacerBodyTests`). Both stilts are re-pointed at the new
   hands and feet. Retargeting the clips was tried first and dropped: the Generic clips key
   every bone's position and scale (another body is stretched to Jawa's proportions), and a
   Humanoid bake played on a Humanoid Animator lost the height that puts the walker on the

@@ -16,8 +16,14 @@ namespace Museum.Core
     /// and the floor a visitor reads it from is the floor they interact from. Keys do not
     /// overlap (Enter acts, Q/E page).
     /// </remarks>
+    /// <remarks>
+    /// What one visitor sets off, the others see and hear: a local press is reported through
+    /// <see cref="MuseumInteractions"/> and plays on everyone else's copy as
+    /// <see cref="OnRemoteInteract"/> — by default the same effect, wherever they stand. The 3D
+    /// source's rolloff is what makes it "if close enough".
+    /// </remarks>
     [RequireComponent(typeof(Collider))]
-    public abstract class GalleryStation : MonoBehaviour, IInteractable
+    public abstract class GalleryStation : MonoBehaviour, IInteractable, IRemoteInteractable
     {
         [SerializeField] private string playerTag = "Player";
 
@@ -37,11 +43,30 @@ namespace Museum.Core
         public void Interact()
         {
             if (!_playerInside) return;
-            OnInteract();
+            InteractLocally();
         }
 
-        /// <summary>The station's own effect. Runs only while the player is inside.</summary>
+        /// <summary>Another visitor set this station off; plays it here without reporting it back.</summary>
+        public void PlayRemote(int index) => OnRemoteInteract(index);
+
+        /// <summary>This station's id in the museum room — one of <see cref="MuseumInteractions"/>' constants.</summary>
+        protected abstract string StationId { get; }
+
+        /// <summary>The station's own effect, set off by the local visitor standing in it.</summary>
         protected abstract void OnInteract();
+
+        /// <summary>What another visitor setting it off looks and sounds like here. The same effect unless overridden.</summary>
+        protected virtual void OnRemoteInteract(int index) => OnInteract();
+
+        private void InteractLocally()
+        {
+            OnInteract();
+            MuseumInteractions.ReportLocal(StationId, 0);
+        }
+
+        protected virtual void OnEnable() => MuseumInteractions.Register(StationId, this);
+
+        protected virtual void OnDisable() => MuseumInteractions.Unregister(StationId, this);
 
         protected virtual void Awake()
         {
@@ -68,7 +93,7 @@ namespace Museum.Core
                 }
             }
 
-            if (Keyboard.current != null && Keyboard.current.enterKey.wasPressedThisFrame) OnInteract();
+            if (Keyboard.current != null && Keyboard.current.enterKey.wasPressedThisFrame) InteractLocally();
         }
 
         private void OnTriggerEnter(Collider other)
@@ -93,14 +118,22 @@ namespace Museum.Core
 
         protected virtual void OnPlayerExit() { }
 
-        /// <summary>A 3D source tuned for a room this size: full spatial blend, audible across the atrium, not the building.</summary>
+        /// <summary>Beyond this many metres a station is silent.</summary>
+        public const float AudibleDistance = 25f;
+
+        /// <summary>
+        /// A 3D source tuned for a room this size: full spatial blend, audible across the atrium,
+        /// not the building. Linear, because a logarithmic rolloff never reaches zero — it only
+        /// stops falling at its max distance — and with visitors setting stations off for each
+        /// other, a gong struck in the lobby would reach everyone on every floor.
+        /// </summary>
         public static void TuneSource(AudioSource source)
         {
             source.playOnAwake = false;
             source.spatialBlend = 1f;
-            source.rolloffMode = AudioRolloffMode.Logarithmic;
+            source.rolloffMode = AudioRolloffMode.Linear;
             source.minDistance = 2.5f;
-            source.maxDistance = 30f;
+            source.maxDistance = AudibleDistance;
             source.dopplerLevel = 0f;
         }
     }

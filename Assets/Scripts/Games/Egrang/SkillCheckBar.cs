@@ -129,6 +129,7 @@ namespace Museum.Games.Egrang
             }
 
             BakeTrackGradient();
+            SilenceStepButtons();
 
             if (inputAsset != null)
             {
@@ -180,6 +181,32 @@ namespace Museum.Games.Egrang
         }
 
         void OnStepPerformed(InputAction.CallbackContext context) => Press();
+
+        /// <summary>
+        /// The JALAN buttons are pressed once a stride, dozens of times a race, and a UI click on
+        /// every one is noise — so every button wired to this bar's <see cref="Press"/> is marked
+        /// <see cref="Museum.Core.SilentButton"/>. Found by that wiring rather than by name: the
+        /// scene has held several "Step Button"s, and the generators that make them would drop a
+        /// marker placed by hand.
+        /// </summary>
+        void SilenceStepButtons()
+        {
+            foreach (Button button in FindObjectsByType<Button>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                if (button.gameObject.scene != gameObject.scene || !CallsPress(button.onClick)) continue;
+                if (!button.TryGetComponent(out Museum.Core.SilentButton _)) button.gameObject.AddComponent<Museum.Core.SilentButton>();
+            }
+        }
+
+        bool CallsPress(UnityEventBase onClick)
+        {
+            for (int i = 0; i < onClick.GetPersistentEventCount(); i++)
+            {
+                if (onClick.GetPersistentTarget(i) == this && onClick.GetPersistentMethodName(i) == nameof(Press)) return true;
+            }
+
+            return false;
+        }
 
         /// <summary>
         /// Scores a press at the cursor's current position and starts the lockout. Ignored while

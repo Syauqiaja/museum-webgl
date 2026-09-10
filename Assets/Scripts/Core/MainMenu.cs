@@ -92,6 +92,8 @@ namespace Museum.Core
         /// <summary>UnityEvent target — API, wired by name. Do not rename.</summary>
         public void GoToMuseum()
         {
+            // From the menu the visit starts at the entrance, whatever doorway was last used.
+            if (SessionData.Instance != null) SessionData.Instance.ForgetMuseumReturn();
             SceneLoader.Instance.LoadScene(SceneReference.Museum);
         }
 

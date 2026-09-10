@@ -609,6 +609,9 @@ namespace Museum.Games.Egrang
 
             _resultsShown = true;
 
+            // First over the line — alone offline, or ahead of the others online.
+            if (place == 1) Museum.Core.GameAudio.PlayWin();
+
             float seconds = _startTime >= 0f && _finishTime >= _startTime ? _finishTime - _startTime : -1f;
 
             resultsView.Show(new EgrangRunSummary(

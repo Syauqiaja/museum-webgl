@@ -124,8 +124,16 @@ namespace Museum.Core
         private float _facingTarget;
         private float _facingVelocity;
 
+        /// <summary>
+        /// An away visitor's plate is raised this far so the "Sedang bermain" line under the name
+        /// clears the head instead of sitting on the face.
+        /// </summary>
+        private const float ActivityLift = 0.3f;
+
         private TMP_Text _label;
+        private TMP_Text _activityLabel;
         private Transform _plate;
+        private float _plateHeight;
         private Transform _camera;
 
         /// <summary>Session id of the visitor this avatar stands for.</summary>
@@ -173,6 +181,26 @@ namespace Museum.Core
 
             _label.text = value ?? string.Empty;
             _plate.gameObject.SetActive(_label.text.Length > 0);
+        }
+
+        /// <summary>The tag under the name, from the room's <c>activity</c>; empty for a visitor in the hall.</summary>
+        public string ActivityText => _activityLabel != null ? _activityLabel.text : string.Empty;
+
+        /// <summary>
+        /// Tags a visitor who went through a doorway — "Sedang bermain Dakon" — and clears it when
+        /// they walk back in. Their body stays where they left it, idle, because no positions
+        /// arrive while they are away.
+        /// </summary>
+        public void SetActivity(string activity)
+        {
+            if (_activityLabel == null) return;
+
+            string tag = MuseumActivities.Tag(activity);
+            if (tag == _activityLabel.text) return;
+
+            _activityLabel.text = tag;
+            _activityLabel.gameObject.SetActive(tag.Length > 0);
+            _plate.localPosition = new Vector3(0f, _plateHeight + (tag.Length > 0 ? ActivityLift : 0f), 0f);
         }
 
         /// <summary>
@@ -353,6 +381,7 @@ namespace Museum.Core
             var go = new GameObject("Name", typeof(RectTransform));
             _plate = go.transform;
             _plate.SetParent(transform, false);
+            _plateHeight = height;
             _plate.localPosition = new Vector3(0f, height, 0f);
             // The same 0.1 scale every world-space label in the museum uses (lobby hints, the
             // coming-soon notice), so the font sizes read in the same units.
@@ -372,6 +401,28 @@ namespace Museum.Core
             text.enableWordWrapping = false;
             text.overflowMode = TextOverflowModes.Overflow;
             _label = text;
+
+            // The away tag: a child of the plate, so it follows the name and turns with it. In the
+            // plate's 0.1-scaled units, 4.5 below is just under the name line.
+            var activityGo = new GameObject("Activity", typeof(RectTransform));
+            var activityRect = (RectTransform)activityGo.transform;
+            activityRect.SetParent(_plate, false);
+            activityRect.localPosition = new Vector3(0f, -4.5f, 0f);
+            activityRect.sizeDelta = new Vector2(30f, 3f);
+
+            var activity = activityGo.AddComponent<TextMeshPro>();
+            if (font != null) activity.font = font;
+            activity.fontSize = 5.5f;
+            activity.fontStyle = FontStyles.Italic;
+            activity.alignment = TextAlignmentOptions.Center;
+            activity.color = new Color(0.757f, 0.624f, 0.380f, 1f);   // the museum's gold
+            activity.outlineWidth = 0.2f;
+            activity.outlineColor = new Color32(0, 0, 0, 200);
+            activity.enableWordWrapping = false;
+            activity.overflowMode = TextOverflowModes.Overflow;
+            activity.text = string.Empty;
+            _activityLabel = activity;
+            activityGo.SetActive(false);
 
             SetName(string.Empty);
         }

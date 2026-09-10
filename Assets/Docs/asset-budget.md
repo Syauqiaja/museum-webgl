@@ -74,6 +74,30 @@ ship for them. Eight more `GameLessonData` assets sit in `Resources/lessons/` (`
 text only. Expect the payload to move by well under a megabyte; re-read the build report after
 the next production build and update the table above.
 
+### Music and sound effects (2026-09-11)
+
+Six clips in `Assets/Sounds/`, referenced only by `Resources/GameAudio.asset`
+(`GameAudioLibrary`, played by `GameAudio`) — the first audio files the build ships. The WAVs
+are 16.4 MB on disk; what the build carries is the import below.
+
+| Clip | Length | Import | Imported size |
+|---|---|---|---|
+| `museum music.wav` | 23 s, stereo | Compressed In Memory, Vorbis 50 %, **Preload Audio Data off**, **Load In Background on** | 364 KB |
+| `dakon music.wav` | 32 s, stereo | as above | 495 KB |
+| `egrang music.wav` | 30 s, stereo | as above | 467 KB |
+| `win sfx.wav` | 4 s | Decompress On Load, Vorbis 70 %, mono | 85 KB |
+| `button click sfx.wav`, `button hover sfx.wav` | < 0.1 s | Decompress On Load, Vorbis 70 %, mono | 7 KB + 6 KB |
+
+About **1.4 MB** in all (the importer's figures, 2026-09-11), from 16.4 MB of WAV.
+
+- **Preload off on the music is load-bearing.** Anything a `Resources` asset references is in
+  the build and loads with it; with preload on, all three tracks would be decoded at boot, before
+  MainMenu has drawn, for a track that plays only after the first tap anyway. Off, a track loads
+  the first time `GameAudio` plays it.
+- WebGL re-encodes to AAC whatever the importer's format; the quality slider still sets the
+  bitrate. Do not raise it for the music — it plays under everything, at 45 % volume.
+- Re-read the build report after the next production build and put the measured sizes here.
+
 ### Visitor characters (2026-09-11)
 
 The museum's remote visitors wear the four `Assets/Models/ASSET_NUSANTARA/1_Karakter` models

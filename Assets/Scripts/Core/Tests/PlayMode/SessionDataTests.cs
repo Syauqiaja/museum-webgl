@@ -174,6 +174,46 @@ namespace Museum.Core.Tests
             Assert.IsFalse(revisit.CanReconnect);
         }
 
+        [Test]
+        public void MuseumReturn_IsTakenOnceAndCarriesTheGameUntilThen()
+        {
+            SessionData session = NewSession();
+            Assert.IsFalse(session.HasMuseumReturn);
+
+            session.RememberMuseumReturn(new Vector3(1f, 2f, 3f), 90f, "dakon");
+            Assert.AreEqual("dakon", session.MuseumReturnActivity);
+
+            Assert.IsTrue(session.TryTakeMuseumReturn(out Vector3 position, out float yaw));
+            Assert.AreEqual(new Vector3(1f, 2f, 3f), position);
+            Assert.AreEqual(90f, yaw);
+
+            // Only the load straight after the game uses it.
+            Assert.IsFalse(session.TryTakeMuseumReturn(out _, out _));
+            Assert.AreEqual(string.Empty, session.MuseumReturnActivity);
+        }
+
+        [Test]
+        public void MuseumReturn_ForgottenFromTheMenu()
+        {
+            SessionData session = NewSession();
+            session.RememberMuseumReturn(Vector3.one, 0f, "egrang");
+
+            session.ForgetMuseumReturn();
+
+            Assert.IsFalse(session.HasMuseumReturn);
+            Assert.IsFalse(session.TryTakeMuseumReturn(out _, out _));
+        }
+
+        [Test]
+        public void MuseumReturn_IsNotRestoredOnAFreshSession()
+        {
+            NewSession().RememberMuseumReturn(Vector3.one, 0f, "dakon");
+            Object.DestroyImmediate(_go);
+
+            // A refreshed tab is a new visit: it starts at the entrance.
+            Assert.IsFalse(NewSession().HasMuseumReturn);
+        }
+
         /// <summary>A bootstrap object as a scene creates it — Awake runs on AddComponent.</summary>
         private SessionData NewSession()
         {

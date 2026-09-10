@@ -33,7 +33,10 @@ direct decision from the user, recorded here.
   URLs from `VideoCatalog`; scene objects carry keys.
 - **Don't re-embed large media.** The museum footage streams. A 141 MB WebGL payload is
   unusable on museum wifi.
-- **The Museum scene has no network.** No `ColyseusClient` there, ever.
+- **The Museum's only network is presence.** One room, `museum`, opened on the shared
+  `ColyseusNetManager` client by `MuseumPresenceLink` — never a `ColyseusClient` of its own, and
+  never recorded as the game seat. It carries positions, the away tag and the shared gallery
+  exhibits, all cosmetic; nothing there decides a match ([networking.md](networking.md)).
 - **Generated schema is generated.** `Assets/Scripts/Net/Schema/*.cs` comes from
   `schema-codegen` against the server's schema files. Hand-editing it produces state that
   decodes into the wrong fields with no error.

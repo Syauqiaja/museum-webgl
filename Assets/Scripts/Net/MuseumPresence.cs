@@ -1,7 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
-using Colyseus;
 using Museum.Core;
 using Museum.Net.State;
 using TMPro;
@@ -10,19 +7,18 @@ using UnityEngine;
 namespace Museum.Net
 {
     /// <summary>
-    /// Keeps the museum's visitors in sight of each other. Joins the server's `museum` presence
-    /// room, reports where the local player is a few times a second, and draws a
-    /// <see cref="MuseumVisitorAvatar"/> for everyone else the room lists.
+    /// Keeps the museum's visitors in sight and earshot of each other. Reports where the local
+    /// player is a few times a second, draws a <see cref="MuseumVisitorAvatar"/> for everyone else
+    /// the `museum` room lists, and carries the shared exhibits (<see cref="MuseumInteractions"/>)
+    /// both ways.
     /// </summary>
     /// <remarks>
-    /// This is the one place the Museum scene touches the network, and it is deliberately not a
-    /// match: there is no seat, no host, no reconnection token. The room is opened straight on
-    /// the <see cref="ColyseusNetManager.Client"/> rather than through its create/join helpers,
-    /// because those record the room as "the seat this client holds" on <see cref="SessionData"/>
-    /// — and the seat that matters is the Dakon or Egrang one the lobby is about to open.
-    ///
-    /// The room is left when this component is destroyed, which is what happens when a doorway
-    /// loads the lobby. A player who comes back to the museum joins afresh.
+    /// This is the Museum scene's view of the room; the room itself is held by
+    /// <see cref="MuseumPresenceLink"/>, which outlives the scene. Going through a doorway
+    /// therefore does not leave: the visitor stops reporting, is marked away with the doorway's
+    /// game, and the others keep seeing them standing there. Coming back, the link is still open,
+    /// the tag is cleared and reporting resumes from where the player reappears — the same spot
+    /// (see <c>FPSController</c>), so nobody sees a jump.
     ///
     /// With no <see cref="ColyseusNetManager"/> in the scene (opened directly in the editor) or
     /// no server reachable, the museum is simply single-player — which is how it always was.
@@ -30,7 +26,7 @@ namespace Museum.Net
     public sealed class MuseumPresence : MonoBehaviour
     {
         /// <summary>The server-side room name. Contract: server `docs/protocol.md#exhibition-museum-scene`.</summary>
-        public const string RoomName = "museum";
+        public const string RoomName = MuseumPresenceLink.RoomName;
 
         /// <summary>
         /// Position reports per second. Others draw this avatar
@@ -43,10 +39,6 @@ namespace Museum.Net
         private const float MinMove = 0.02f;
         private const float MinTurn = 1f;
 
-        /// <summary>Seconds between attempts to get back in after the room went away.</summary>
-        private const float RejoinDelay = 5f;
-        private const int MaxRejoins = 3;
-
         [Tooltip("The local player's rig. Its position and yaw are what the others see. Found by the Player tag if empty.")]
         [SerializeField] private Transform player;
 
@@ -57,7 +49,7 @@ namespace Museum.Net
                  "Each visitor gets one, chosen from their session id so every client agrees. Empty falls back to the player's capsule.")]
         [SerializeField] private GameObject[] visitorCharacters;
 
-        private Room<MuseumState> _room;
+        private MuseumPresenceLink _link;
         private readonly Dictionary<string, MuseumVisitorAvatar> _avatars = new Dictionary<string, MuseumVisitorAvatar>();
         private readonly List<string> _gone = new List<string>();
 
@@ -70,11 +62,8 @@ namespace Museum.Net
         private float _lastSentYaw;
         private bool _sentOnce;
 
-        private int _rejoins;
-        private bool _quitting;
-
         /// <summary>True while the presence room is open.</summary>
-        public bool Connected => _room != null && _room.Connection != null && _room.Connection.IsOpen;
+        public bool Connected => _link != null && _link.Connected;
 
         /// <summary>How many other visitors are currently drawn.</summary>
         public int VisibleVisitors => _avatars.Count;
@@ -113,56 +102,47 @@ namespace Museum.Net
 
         private async void Start()
         {
+            if (!enabled) return;
+
+            // FPSController has already taken a pending return in its Awake; one left over (a rig
+            // without it) must not keep this visitor marked away for the rest of the visit.
+            if (SessionData.Instance != null) SessionData.Instance.ForgetMuseumReturn();
+
             if (ColyseusNetManager.Instance == null)
             {
                 Debug.Log("[MuseumPresence] no ColyseusNetManager — walking the museum alone.", this);
                 return;
             }
 
-            await Join();
-        }
+            _link = MuseumPresenceLink.Ensure();
+            _link.StateChanged += Reconcile;
+            _link.Interacted += OnRemoteInteracted;
+            _link.Lost += ClearAvatars;
+            MuseumInteractions.LocalInteracted += OnLocalInteracted;
 
-        private async Task Join()
-        {
-            try
-            {
-                var options = new Dictionary<string, object>
-                {
-                    ["displayName"] = ColyseusNetManager.Instance.PlayerName,
-                    ["avatar"] = ColyseusNetManager.Instance.PlayerAvatar,
-                };
+            // Back from a game: in the hall again, and the first report goes out at once.
+            _link.SetActivity(MuseumActivities.InHall);
+            _sentOnce = false;
+            _nextSendAt = 0f;
 
-                Room<MuseumState> room = await ColyseusNetManager.Instance.Client.JoinOrCreate<MuseumState>(RoomName, options);
+            if (_link.Connected && _link.Room.State != null) Reconcile(_link.Room.State);
 
-                // The scene may have gone while the join was in flight.
-                if (this == null || _quitting)
-                {
-                    _ = room.Leave(true);
-                    return;
-                }
-
-                _room = room;
-                _rejoins = 0;
-                _sentOnce = false;
-                _nextSendAt = 0f;
-
-                room.OnStateChange += OnStateChange;
-                room.OnLeave += OnRoomLeft;
-                room.OnError += (code, message) =>
-                    Debug.LogWarning($"[MuseumPresence] room error {code}: {message}", this);
-
-                if (room.State != null) Reconcile(room.State);
-            }
-            catch (Exception e)
-            {
-                // The museum is playable alone; this only loses the company.
-                Debug.LogWarning($"[MuseumPresence] could not join the presence room: {e.Message}", this);
-            }
+            await _link.Connect();
         }
 
         private void Update()
         {
-            if (!Connected || player == null) return;
+            if (_link == null || player == null) return;
+
+            // Through a doorway: stop reporting and stand here, tagged, until the game is over.
+            string away = SessionData.Instance != null ? SessionData.Instance.MuseumReturnActivity : string.Empty;
+            if (away.Length > 0)
+            {
+                _link.SetActivity(away);
+                return;
+            }
+
+            if (!_link.Connected) return;
             if (Time.unscaledTime < _nextSendAt) return;
 
             Vector3 position = player.position;
@@ -173,7 +153,10 @@ namespace Museum.Net
                          || Mathf.Abs(Mathf.DeltaAngle(yaw, _lastSentYaw)) > MinTurn;
             if (!moved) return;
 
-            _room.Send("move", new MovePayload { x = position.x, y = position.y, z = position.z, yaw = yaw });
+            _link.SendMove(position, yaw);
+
+            // A rejoin that happened before the first report could not send the tag's removal.
+            if (!_sentOnce) _link.SetActivity(MuseumActivities.InHall);
 
             _lastSentPosition = position;
             _lastSentYaw = yaw;
@@ -181,17 +164,22 @@ namespace Museum.Net
             _nextSendAt = Time.unscaledTime + 1f / SendHz;
         }
 
-        private void OnStateChange(MuseumState state, bool isFirstState) => Reconcile(state);
+        private void OnLocalInteracted(string station, int index)
+        {
+            if (_link != null) _link.SendInteract(station, index);
+        }
+
+        private void OnRemoteInteracted(string station, int index) => MuseumInteractions.PlayRemote(station, index);
 
         /// <summary>
         /// Makes the drawn avatars match the room's visitor list: one per session that is not
-        /// ours, positioned where the server last heard they were.
+        /// ours, positioned where the server last heard they were, tagged if they are away.
         /// </summary>
         private void Reconcile(MuseumState state)
         {
-            if (state?.visitors == null || _avatarsRoot == null) return;
+            if (state?.visitors == null || _avatarsRoot == null || _link == null) return;
 
-            string me = _room != null ? _room.SessionId : string.Empty;
+            string me = _link.SessionId;
 
             _gone.Clear();
             _gone.AddRange(_avatars.Keys);
@@ -210,6 +198,7 @@ namespace Museum.Net
                 }
 
                 avatar.SetName(visitor.displayName);
+                avatar.SetActivity(visitor.activity);
                 avatar.SetTarget(new Vector3(visitor.x, visitor.y, visitor.z), visitor.yaw);
             });
 
@@ -236,47 +225,20 @@ namespace Museum.Net
             _avatars.Clear();
         }
 
-        /// <summary>
-        /// The socket closed under us — the server restarted, or the connection dropped. The
-        /// avatars are stale the moment that happens, so they go, and a few rejoins are tried
-        /// before the museum settles for being single-player.
-        /// </summary>
-        private async void OnRoomLeft(int code)
-        {
-            _room = null;
-            if (this == null || _quitting) return;
-
-            ClearAvatars();
-
-            if (_rejoins >= MaxRejoins)
-            {
-                Debug.LogWarning($"[MuseumPresence] presence room closed ({code}); giving up after {MaxRejoins} rejoins.", this);
-                return;
-            }
-
-            _rejoins++;
-            await Task.Delay(TimeSpan.FromSeconds(RejoinDelay));
-            if (this == null || _quitting || ColyseusNetManager.Instance == null) return;
-
-            await Join();
-        }
-
-        private void OnApplicationQuit() => _quitting = true;
-
         private void OnDestroy()
         {
-            _quitting = true;
+            MuseumInteractions.LocalInteracted -= OnLocalInteracted;
 
-            Room<MuseumState> room = _room;
-            _room = null;
-
-            if (room != null)
+            if (_link != null)
             {
-                room.OnStateChange -= OnStateChange;
-                room.OnLeave -= OnRoomLeft;
-                // Straight on the room, not ColyseusNetManager.Leave: that would also clear the
-                // seat SessionData holds, and this was never that seat.
-                _ = room.Leave(true);
+                _link.StateChanged -= Reconcile;
+                _link.Interacted -= OnRemoteInteracted;
+                _link.Lost -= ClearAvatars;
+
+                // The scene is going. Through a doorway, the room stays open and the visitor is
+                // marked away (Update usually did it already); to MainMenu, the link leaves itself.
+                string away = SessionData.Instance != null ? SessionData.Instance.MuseumReturnActivity : string.Empty;
+                if (away.Length > 0) _link.SetActivity(away);
             }
 
             ClearAvatars();
@@ -322,15 +284,6 @@ namespace Museum.Net
             uint hash = 2166136261;
             foreach (char c in value ?? string.Empty) hash = (hash ^ c) * 16777619;
             return hash;
-        }
-
-        [Serializable]
-        private sealed class MovePayload
-        {
-            public float x;
-            public float y;
-            public float z;
-            public float yaw;
         }
     }
 }
