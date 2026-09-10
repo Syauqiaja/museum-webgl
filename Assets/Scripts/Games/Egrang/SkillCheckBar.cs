@@ -86,6 +86,14 @@ namespace Museum.Games.Egrang
         /// <summary>True while a step is playing out and presses are being ignored.</summary>
         public bool IsLocked => _lockoutRemaining > 0f;
 
+        /// <summary>
+        /// While true every press is ignored, whatever it came from — Space, the JALAN button, the
+        /// touch tap zone — and the cursor keeps sweeping. Held by <see cref="EgrangPauseMenu"/>:
+        /// the race is real-time and the server keeps its clock, so a pause cannot stop the race,
+        /// only stop a key typed at the menu from walking the racer behind it.
+        /// </summary>
+        public bool InputBlocked { get; set; }
+
         /// <summary>The stick whose difficulty the bar is currently running, or null while on its inspector-authored defaults.</summary>
         public EgrangStickProfile Profile { get; private set; }
 
@@ -175,11 +183,12 @@ namespace Museum.Games.Egrang
 
         /// <summary>
         /// Scores a press at the cursor's current position and starts the lockout. Ignored while
-        /// locked. Public so the bar can be driven from a UI button or a test without an action asset.
+        /// locked or while <see cref="InputBlocked"/>. Public so the bar can be driven from a UI
+        /// button or a test without an action asset.
         /// </summary>
         public void Press()
         {
-            if (IsLocked) return;
+            if (IsLocked || InputBlocked) return;
 
             _cursor.Freeze();
             EgrangStepResult result = zones.Evaluate(_cursor.Position);

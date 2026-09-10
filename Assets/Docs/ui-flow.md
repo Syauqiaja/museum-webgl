@@ -119,8 +119,15 @@ currently switched on in `Lobby.unity`; turn it off before any build.**
   steps before its own start instant.
 - Then the run HUD — timing bar at the bottom, race progress strip at the top
   (`MULAI ──▮────── FINIS` with metres remaining), and a named roster with per-lane progress
-  in the top left. Bar and strip live under one run root that ships inactive; `EgrangRace`
-  switches it on when the countdown ends.
+  in the top left. Bar, strip and roster all live under one run root that ships inactive;
+  `EgrangRace` switches it on when the countdown ends, so none of the three is on screen while
+  stilts are still being picked (the countdown panel carries its own list of who is racing).
+- **Pause (both games).** A gear in the top-right corner opens the same `Jeda` dialog in
+  Dakon and Egrang: **Lanjutkan** (or a click on the scrim) closes it, **Kembali ke Museum**
+  leaves. Neither game freezes — both are server-authoritative — so it is a menu over a live
+  match. Egrang's also blocks the timing bar while it is up, because Space reaches the bar
+  past the scrim. It is available from the stilt-picking window onward; once the results are
+  up the gear sits under them and the results' own exit is the way out.
 
 ### Results (Finished state)
 - From the `game_over` message. Winner / scores / tie, and **Return to Museum** (the hub

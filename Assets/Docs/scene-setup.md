@@ -284,7 +284,6 @@ Currently wired; if it needs rebuilding, the generators are:
 | `Museum/Egrang/Build Race Progress UI` | The `MULAI ──▮── FINIS` strip |
 | `Museum/Egrang/Build Race Names UI` | Nameplates + roster |
 | `Museum/Egrang/Build Results UI` | The results panel |
-| `Museum/Egrang/Build Exit Button` | The mid-race `KELUAR` button (top-right of `Egrang UI`), wired to `EgrangRace.BackToMuseum` — a frozen handler name |
 | `Museum/Egrang/Style Run HUD` | Restyles the run HUD through `MuseumUIStyle` |
 | `Museum/Egrang/Wire Run Chain` | Re-links selector → bar → run root → race |
 | `Museum/Rebuild UI/Egrang Touch` | The `Egrang Touch` tap-zone canvas (`sortingOrder = -10`, calls `SkillCheckBar.Press()`), under `TouchOnly`. Refuses to run over an unsaved scene. See [input-and-platform.md](input-and-platform.md) |
@@ -292,7 +291,24 @@ Currently wired; if it needs rebuilding, the generators are:
 Structural rules that are easy to get wrong:
 
 - The bar and the player rig live under the selector's **`runRoot`, left inactive**. That is
-  what stops a press reaching the bar through the selection panel.
+  what stops a press reaching the bar through the selection panel. The run HUD lives there
+  too — `Race Progress` (your own MULAI–FINIS strip) and `Roster` (everyone's progress) are
+  children of `Egrang UI/Run Root`, so neither shows over the stilt-selection screen; they
+  appear when the countdown releases the run (moved there 2026-09-11 — they had been drawn
+  straight onto the canvas, over the selection panel). `Run Root` is a full-canvas stretch
+  rect, so reparenting keeps their layout. Both views are safe to write to while inactive:
+  `EgrangRace` names the roster and points the strip at the local lane during the picking
+  window.
+- **The pause menu** — Dakon's, authored directly in the scene (no generator): the `Setting
+  Button` gear top-right of `Egrang UI` and the `Pause Panel` it opens (`Jeda`, `Lanjutkan`,
+  `Kembali ke Museum`). Gear → `Pause Panel.SetActive(true)`; scrim and Lanjutkan →
+  `SetActive(false)`; Kembali ke Museum → `EgrangRace.BackToMuseum`, a frozen handler name.
+  The panel has to block the bar itself: its scrim eats clicks, but Space reaches the bar
+  through the Input System whatever is on screen. `EgrangPauseMenu` on `Pause Panel` sets
+  `SkillCheckBar.InputBlocked` while the panel is active, so its `bar` must be the bar
+  `EgrangRace.bar` points at — not the dead `Bar` below. Draw order: stick selection panel, …,
+  `Setting Button`, `Results Panel`, `Pause Panel` last. The gear sits under the results
+  because a finished race has its own exit.
 - `SkillCheckBar` needs `track` (its width is the sweep), a `cursor` that is a child of the
   track with centred anchor and pivot, an `Image` on the track for the baked gradient, and
   `EgrangInput.inputactions` (map `Egrang`, action `Step`, bound to Space).

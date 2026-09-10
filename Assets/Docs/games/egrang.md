@@ -232,6 +232,14 @@ the local one, which ran on unscaled time while the tab was frozen.
 - `EgrangStickSelector` — owns the choice; the bar knows nothing about selection. The bar
   and player rig live under an **inactive** `runRoot`, which is what stops a press from
   reaching the bar through the panel without the bar needing a "not started" state.
+- `Pause Panel` + `EgrangPauseMenu` — Dakon's pause menu (gear top-right → `Jeda`,
+  `Lanjutkan`, `Kembali ke Museum`), authored directly in the scene. It is a menu,
+  **not a time freeze**: the race is real-time and its clock is the server's, so the other
+  racers keep walking and the countdown keeps running. What it does stop is input — while the
+  panel is active `SkillCheckBar.InputBlocked` drops every press (Space, JALAN, the touch tap
+  zone) without starting a lockout. The exit is `EgrangRace.BackToMuseum`, the same exit as
+  Dakon's: the held seat is cleared, and the room is not left with consent, so mid-race the
+  dropped socket is the withdrawal described under Edge cases.
 
 ### Offline mode
 
@@ -252,4 +260,4 @@ server dropped is repaired silently by the next `step_taken` mismatch.
   `SkillCheckTrackTextureTests`, `EgrangStickPresetTests`, `EgrangStickSolverTests`,
   `EgrangSeatingTests`, `EgrangTrackProgressTests`, `EgrangRunSummaryTests`.
 - PlayMode (`Tests/PlayMode/`): `EgrangRaceTests`, `EgrangRacerTests`,
-  `EgrangStepMoverSnapTests`, `SkillCheckBarConfigureTests`.
+  `EgrangStepMoverSnapTests`, `SkillCheckBarConfigureTests`, `EgrangPauseMenuTests`.
