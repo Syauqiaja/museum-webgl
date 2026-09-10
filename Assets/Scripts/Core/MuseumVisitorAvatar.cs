@@ -148,7 +148,7 @@ namespace Museum.Core
 
             var text = go.AddComponent<TextMeshPro>();
             if (font != null) text.font = font;
-            text.fontSize = 6f;
+            text.fontSize = 8f;
             text.fontStyle = FontStyles.Bold;
             text.alignment = TextAlignmentOptions.Center;
             text.color = new Color(0.957f, 0.918f, 0.835f, 1f);
