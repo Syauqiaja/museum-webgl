@@ -163,6 +163,14 @@ below it one row per racer — name, place or "tidak selesai", that racer's stil
 they got, e.g. `34/50 langkah`. Stilt and distance come from `state.racers`, so a racer who
 never crossed still gets a truthful row.
 
+The panel's bottom button is **`LANJUT`** (`Next Button`), which opens the `After Game Panel`
+— `Assets/Sprites/egrang_after_game.jpeg` (1536×1024, imported as a Sprite, shown at 750×500
+so rect fractions are art fractions) with **Kembali ke Museum** placed in the art's empty
+bottom band and wired to `EgrangRace.BackToMuseum`. Both are scene wiring, authored directly
+in the scene. `EgrangResultsView.exitButton` is deliberately **empty**: the view subscribes that
+field to a museum load at runtime, so pointing it at `LANJUT` would leave instead of showing
+the recap. Re-running `Museum/Egrang/Build Results UI` puts the old exit button back.
+
 `Results Panel` is authored **inactive** in the scene, which means `EgrangResultsView.Awake`
 does not run until `Show` turns the object on — inside `Show`. An `Awake` that hides the panel
 unconditionally therefore closes the results in the same frame the race opens them: filled in,

@@ -307,8 +307,13 @@ Structural rules that are easy to get wrong:
   through the Input System whatever is on screen. `EgrangPauseMenu` on `Pause Panel` sets
   `SkillCheckBar.InputBlocked` while the panel is active, so its `bar` must be the bar
   `EgrangRace.bar` points at — not the dead `Bar` below. Draw order: stick selection panel, …,
-  `Setting Button`, `Results Panel`, `Pause Panel` last. The gear sits under the results
-  because a finished race has its own exit.
+  `Setting Button`, `Results Panel`, `After Game Panel`, `Pause Panel` last. The gear sits
+  under the results because a finished race has its own exit.
+- **The finished race's exit is two steps.** `Results Panel/Next Button` (`LANJUT`) →
+  `After Game Panel.SetActive(true)`; that panel shows `egrang_after_game.jpeg` with
+  `Image/Back to Museum` inside the art's empty bottom band → `EgrangRace.BackToMuseum`.
+  `EgrangResultsView.exitButton` must stay **empty** — the view hooks that field to a museum
+  load at runtime, which would make LANJUT skip the recap.
 - `SkillCheckBar` needs `track` (its width is the sweep), a `cursor` that is a child of the
   track with centred anchor and pivot, an `Image` on the track for the baked gradient, and
   `EgrangInput.inputactions` (map `Egrang`, action `Step`, bound to Space).

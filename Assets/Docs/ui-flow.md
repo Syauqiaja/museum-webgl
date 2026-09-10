@@ -138,6 +138,10 @@ currently switched on in `Lobby.unity`; turn it off before any build.**
   (full / half / stumbles), the stick walked on, and one row per racer **by name** with the
   player's own row marked "(Kamu)". Offline — no session, so no `game_over` — the local
   finish line raises it instead, place 1 of 1.
+  Its bottom button is **LANJUT**, not the exit: it raises the `After Game Panel`, the
+  `egrang_after_game.jpeg` recap (the three stilts, cross-section comparison, how to win)
+  over the results, and **Kembali ke Museum** sits inside that art, in its empty bottom
+  band. That is the finished race's only way out; the recap has no click-outside close.
 - **Dakon: built.** The `Game Over` panel in `Dakon.unity`, filled in by
   `DakonView.ShowGameOver` and given its layout by `DakonUIBuilder`. It names the winner and
   both scores with the players' registered names ("… menang!" / "Seri!"), and carries its own
