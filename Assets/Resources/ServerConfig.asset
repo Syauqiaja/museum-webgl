@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Museum.Core.ServerConfig
   devEndpoint: ws://localhost:2567
   prodEndpoint: wss://api.museum.fajrsyauqi.com
-  useDevEndpoint: 0
+  useDevEndpoint: 1
