@@ -107,7 +107,7 @@ namespace Museum.Core.EditorTools
                 {
                     WirePlayer(scene);
                     WireDoorways(scene);
-                    WirePresence(scene);
+                    WirePresence(scene, serverConfig);
                 }
 
                 UnityEditor.SceneManagement.EditorSceneManager.MarkSceneDirty(scene);
@@ -242,7 +242,7 @@ namespace Museum.Core.EditorTools
         /// reference without a cycle, so it is reached by type name like the player scripts. The
         /// font it names is the same the nameplates in Egrang use.
         /// </summary>
-        private static void WirePresence(UnityEngine.SceneManagement.Scene scene)
+        private static void WirePresence(UnityEngine.SceneManagement.Scene scene, ScriptableObject serverConfig)
         {
             System.Type presenceType = null;
             foreach (System.Type type in TypeCache.GetTypesDerivedFrom<MonoBehaviour>())
@@ -278,6 +278,39 @@ namespace Museum.Core.EditorTools
             Set(presence, "player", player.transform);
             Set(presence, "nameFont", AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(SemiBoldFont));
             EditorUtility.SetDirty(player);
+
+            CompleteBootstrap(scene, serverConfig);
+        }
+
+        /// <summary>
+        /// The Museum used to ship <see cref="SceneLoader"/> alone, relying on MainMenu's bootstrap
+        /// to bring the net manager along. Presence needs the manager, and a Museum opened directly
+        /// in the Editor would otherwise walk alone with no way to test the link — so the scene's
+        /// bootstrap object now carries the full trio. The duplicate-<c>Awake</c> guards on each
+        /// component destroy the later copy, so arriving from MainMenu still keeps the travelling one.
+        /// </summary>
+        private static void CompleteBootstrap(UnityEngine.SceneManagement.Scene scene, ScriptableObject serverConfig)
+        {
+            SceneLoader loader = null;
+            foreach (GameObject root in scene.GetRootGameObjects())
+            {
+                loader = root.GetComponentInChildren<SceneLoader>(true);
+                if (loader != null) break;
+            }
+
+            if (loader == null)
+            {
+                Debug.LogWarning("SceneWiringRepair: the Museum has no SceneLoader; bootstrap not completed.");
+                return;
+            }
+
+            GameObject bootstrap = loader.gameObject;
+            if (bootstrap.GetComponent<SessionData>() == null) bootstrap.AddComponent<SessionData>();
+
+            var net = bootstrap.GetComponent<ColyseusNetManager>();
+            if (net == null) net = bootstrap.AddComponent<ColyseusNetManager>();
+            Set(net, "config", serverConfig);
+            EditorUtility.SetDirty(bootstrap);
         }
 
         /// <summary>
