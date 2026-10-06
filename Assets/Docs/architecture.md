@@ -166,10 +166,11 @@ a visitor walks up to that screen.
 - `Museum/Build/WebGL (Production)` refuses to build if any catalog entry is empty or not
   `https://`.
 
-**Live blocker:** the 16 catalog URLs point at `ik.imagekit.io/altara/…`, which returns
-`403 Video transformations limit exceeded` on every one. Nothing plays until the plan
-changes or the files move (VPS `/var/www/`, R2, Bunny). That is 16 URL edits and no code
-change. Two screens (`Vid Sluku`, `Vid Jamuran`) have keys with no video by design and show
+**Host:** since 2026-10-06 the 16 files are served by the client's own nginx container,
+`https://museumethnofun.com/videos/<key>` (`/docker/museum/site/videos/` on the VPS) —
+same origin as the game, so no CORS is involved. They moved off ImageKit, whose
+`ik.imagekit.io` some Indonesian ISPs' DNS filters (Indosat "Internet Positif") hijack.
+See [build-and-deploy.md](build-and-deploy.md#video-hosting). Two screens (`Vid Sluku`, `Vid Jamuran`) have keys with no video by design and show
 the placeholder; `Vid Bitingan` plays `Tok tok pyar.mp4` — names disagree, preserved
 deliberately, unconfirmed whether it is a bug.
 

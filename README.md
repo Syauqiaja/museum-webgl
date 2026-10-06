@@ -9,7 +9,7 @@ Two games are built:
 - **Dakon** — congklak/mancala, 2 players, turn-based. Also plays offline hotseat.
 - **Egrang** — stilt race, 3 players, real-time timing. Also runs offline solo.
 
-Unity `6000.3.19f1`, URP, WebGL only. Live at `https://museum.fajrsyauqi.com`.
+Unity `6000.3.19f1`, URP, WebGL only. Live at `https://museumethnofun.com`.
 
 ## Documentation
 
@@ -41,6 +41,33 @@ matchmaking and persistence; this client sends input events and renders what it 
 3. Play from `Assets/Scenes/MainMenu.unity` — MainMenu → Museum → doorway → Lobby → game.
 4. Tests: Window → General → Test Runner (EditMode and PlayMode). See
    [`Assets/Docs/testing.md`](Assets/Docs/testing.md).
+
+## Deploy
+
+`deploy.sh` publishes the WebGL client to `https://museumethnofun.com`. The game server
+has its own script in the server repo (`deploy/deploy.sh`); deploy the server first when a
+release touches both.
+
+```bash
+./deploy.sh            # upload Builds/WebGL as it stands
+./deploy.sh --build    # headless production build first (Unity must be closed)
+```
+
+What you need:
+
+- macOS or Linux with `bash`, `ssh`, `rsync`, `curl` and `shasum`.
+- SSH access to the VPS as `root@212.85.25.177` (key or password). You are asked to
+  authenticate once per run. Use `DEPLOY_USER` / `DEPLOY_HOST` to deploy as another user or
+  to another box.
+- For `--build`: Unity `6000.3.19f1`. The script looks for it in the default Unity Hub
+  location on macOS; set `UNITY=/path/to/Unity` if it lives elsewhere. Without `--build`,
+  build first in the Editor with **Museum → Build → WebGL (Production)**.
+
+What it does: checks the build is a production one, fixes file permissions, uploads
+`Build/` before `index.html` without deleting anything, then downloads the live files and
+compares them byte-for-byte with the local ones. It stops with an error if any step fails.
+
+Details and the traps behind each step: [`Assets/Docs/build-and-deploy.md`](Assets/Docs/build-and-deploy.md).
 
 ## Warnings
 

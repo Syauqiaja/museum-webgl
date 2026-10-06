@@ -100,6 +100,30 @@ WebGL2; if a future Unity makes WebGPU an auto candidate, pin it explicitly.
 
 ## Deploy
 
+### `deploy.sh` — the one-command path
+
+```bash
+./deploy.sh            # upload Builds/WebGL as it stands
+./deploy.sh --build    # headless production build first (Unity must be closed)
+```
+
+It does everything below by hand: refuses a build whose four payload files
+are missing or whose `index.html` still carries `BUILDSTAMP`, `chmod -R a+rX` locally,
+uploads `Build/` **before** `index.html`, then `chmod`s the remote side and hashes what
+nginx serves (`Accept-Encoding: br`) against the local files, plus a `Content-Encoding: br`
+check. `rsync --delay-updates` stands in for the `.uploading` + `mv` dance: every file
+lands in a temp dir and all of them are renamed into place only after the whole transfer
+arrives, so no live file is ever half-written. No `--delete`, ever.
+
+It connects as `root@212.85.25.177` (`DEPLOY_USER` / `DEPLOY_HOST` to override) over one
+shared ssh connection, so a key passphrase or password is asked once per run — no
+`~/.ssh/config` entry needed. The control socket lives in a short `/tmp/museum-deploy.*`
+dir because macOS caps unix socket paths at 104 bytes and `$TMPDIR` is already too long.
+`UNITY` overrides the editor path used by `--build`.
+
+The game server has its own script, `deploy/deploy.sh` in the server repo. When a release
+touches both, deploy the server first so a new client never talks to an old server.
+
 ### Current host — `museumethnofun.com` (since 2026-09-10)
 
 The client now lives on a Hostinger VPS, `root@212.85.25.177`, behind the **Traefik** that
@@ -135,9 +159,9 @@ year-long cache would pin a visitor to the first build they ever loaded. The byt
 identical between builds only when nothing changed, and nginx's ETag makes revalidation a
 304.
 
-The **game server is still the old VPS** — `wss://api.museum.fajrsyauqi.com` at
-`101.32.239.188` — and the build's `prodEndpoint` points there. Moving it is a server-repo
-job; when it happens, `ServerConfig.prodEndpoint` changes and this client is rebuilt.
+The game server runs on the same box since 2026-09-11, as `wss://api.museumethnofun.com`
+(PM2 on the host, routed by Traefik); `ServerConfig.prodEndpoint` points there. Its
+deployment is the server repo's `deploy/README.md`.
 
 ### Previous host — `museum.fajrsyauqi.com` (nginx on `101.32.239.188`)
 
@@ -261,7 +285,7 @@ import setting was `Uncompressed`, so 54 textures shipped as RGBA32 and Texture2
 accounted for 1024 MB of the 1058 MB packed payload. The second was **terrain alphamaps**
 painted at 2048 across 200 m terrains with 11-12 layers assigned.
 
-## Video hosting prerequisites
+## Video hosting
 
 Before a production build the footage must be reachable:
 
@@ -271,14 +295,26 @@ Before a production build the footage must be reachable:
   before the first frame), and `Content-Type: video/mp4`.
 - One `https://` URL per key pasted into `Assets/Resources/VideoCatalog.asset`.
 
-All 16 URLs point at `ik.imagekit.io/altara/…` with `tr=orig-true`, which serves the stored
-file and stays clear of the `403 Video transformations limit exceeded` that any
-transformation hits on the free plan. Verified 2026-09-10 from origin
-`https://museumethnofun.com`: every URL answers a `Range` GET with **206**,
-`Access-Control-Allow-Origin: *`, `Content-Type: video/mp4`; the preflight `OPTIONS` is 200
-with `*` for methods and headers. ImageKit has no per-origin allow-list to configure — it
-is wildcard — so a domain change never needs a change on the video side. Moving hosts
-(VPS, R2, Bunny) would be 16 URL edits and no code change.
+Since 2026-10-06 the 16 files live on the client's own VPS at
+`/docker/museum/site/videos/`, served by the `web` nginx container as
+`https://museumethnofun.com/videos/<key>` (spaces as `%20`). Same origin as the game, so no
+CORS headers are needed; nginx's default `location /` already answers `Range` with **206**
+and `Content-Type: video/mp4`. Uploading new footage: `scp` to `<name>.uploading`, `mv` it
+over the old file, `chmod -R a+rX /docker/museum/site/videos` — the same no-delete,
+no-half-written rule as the build. Files that change need no rebuild; a **new key** does
+(catalog edit + build).
+
+The files were remuxed with `ffmpeg -c copy -movflags +faststart` before upload — 14 of 16
+arrived from ImageKit with `moov` after `mdat`. Lossless; codecs and durations unchanged.
+Local copies: `~/Downloads/museum-videos-faststart/` on the dev Mac.
+
+They moved off `ik.imagekit.io/altara/…` because Indosat's DNS filter ("Internet Positif")
+resolves that hostname to its own block page (`*.ioh.co.id` certificate), so visitors on
+that ISP — and the dev machine — got nothing. ImageKit had also returned `403 Video
+transformations limit exceeded` for a stretch in August.
+
+Videos do **not** live under `Builds/WebGL/`, so a client deploy never touches them — and
+must never `--delete` them.
 
 ## Kiosk
 

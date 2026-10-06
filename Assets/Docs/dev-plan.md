@@ -93,6 +93,6 @@ Engklak remains **blocked on rules** — nothing exists on either side. See
 1. **Push this repo to a private remote.** It is local-only and was already lost once.
 2. Rewire the Dakon view and the four Museum doorways
    ([scene-setup.md](scene-setup.md)); refill the eight `SeedType` assets.
-3. Move the videos off ImageKit and repaste 16 URLs.
+3. ~~Move the videos off ImageKit and repaste 16 URLs.~~ Done 2026-10-06.
 4. Turn `useFakeService` off on the Lobby canvas before any build.
 5. Then P7.

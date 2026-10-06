@@ -120,10 +120,10 @@ what happens when a scene is opened **directly** in the Editor:
   screen carries a **catalog key**, never a URL. `Museum/Video/Report Video Assignments`
   predates streaming and only reports embedded clips ("no clip" everywhere) — read
   `videoKey` on each `StreamedVideoScreen` instead.
-  `CIRAK.mp4` and `BEKELAN.mp4` point at ImageKit's **transformed** URL (no `tr=orig-true`)
-  because the originals would not play on the live site; every other entry is `orig-true`.
-  Transformed URLs count against ImageKit's video-transformation quota — the `403 Video
-  transformations limit exceeded` in [build-and-deploy.md](build-and-deploy.md) is that quota.
+  The files are served from `https://museumethnofun.com/videos/` — see
+  [build-and-deploy.md](build-and-deploy.md#video-hosting). `CIRAK.mp4` and `BEKELAN.mp4`
+  there are ImageKit's *transformed* re-encodes, not the originals, because the originals
+  would not play on the live site.
 - **Lesson panels** — one per game, all eighteen, under a scene-root `Lessons (Generated)`
   container: a world-space `LessonPanel` canvas on the wall beside that game's exhibit screen,
   plus a `LessonReader` **on the screen's existing `VideoTriggerPlayer` volume** — the lessons

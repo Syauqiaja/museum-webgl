@@ -65,9 +65,8 @@ Both are fully implemented on both sides and playable end to end.
 - **Reference footage** — 16 videos of the traditional games play on the hub's screens.
   They do **not** ship in the build; each screen carries a *key* and streams the file from a
   CDN listed in `Assets/Resources/VideoCatalog.asset`. See
-  [architecture.md](architecture.md#video-configuration) — and note the live blocker there:
-  the current ImageKit URLs return `403 Video transformations limit exceeded`, so nothing
-  plays until the files move hosts.
+  [architecture.md](architecture.md#video-configuration). The files live on the client's own
+  host, `https://museumethnofun.com/videos/`.
 - **Seed species** — eight `SeedType` assets in `Assets/Resources/seeds/` supply Dakon's
   card art and 3D seeds.
 - **Stilt profiles** — three `EgrangStickProfile` assets in `Assets/Data/Egrang/` supply
