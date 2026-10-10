@@ -22,6 +22,18 @@ namespace Museum.Games.Egrang.EditorTools
 
         private static readonly string[] LaneRoots = { "Player 1 Point", "Player 2 Point", "Player 3 Point" };
 
+        /// <summary>
+        /// The bodies a walker can wear, one per <c>PlayerAvatars</c> id, matched by name. Jawa's is
+        /// required even though Jawa is the authored body: its avatar reads the authored pose.
+        /// </summary>
+        private static readonly string[] CharacterModels =
+        {
+            "Assets/Models/ASSET_NUSANTARA/1_Karakter/Char_Jawa_L.fbx",
+            "Assets/Models/ASSET_NUSANTARA/1_Karakter/Char_Bali_P.fbx",
+            "Assets/Models/ASSET_NUSANTARA/1_Karakter/Char_Bugis_P.fbx",
+            "Assets/Models/ASSET_NUSANTARA/1_Karakter/Char_Minang_L.fbx",
+        };
+
         [MenuItem("Museum/Egrang/Wire Scene References")]
         public static void Repair()
         {
@@ -92,6 +104,7 @@ namespace Museum.Games.Egrang.EditorTools
 
             WireStick(player, "EgrangAnak_Lingkaran_L", "_L_", "LeftHand", "LeftFoot");
             WireStick(player, "EgrangAnak_Lingkaran_R", "_R_", "RightHand", "RightFoot");
+            WireBody(player);
 
             Transform plate = player.Find("Name Plate");
             var nameplate = plate != null ? plate.GetComponent<EgrangNameplate>() : null;
@@ -129,6 +142,30 @@ namespace Museum.Games.Egrang.EditorTools
         }
 
         /// <summary>
+        /// The walker's <see cref="EgrangRacerBody"/>, added if missing: both stilts it re-points and
+        /// the four character models. Runs after <see cref="WireStick"/> so the stilts already hold
+        /// the authored bones it restores to.
+        /// </summary>
+        private static void WireBody(Transform player)
+        {
+            var body = player.GetComponent<EgrangRacerBody>();
+            if (body == null) body = Undo.AddComponent<EgrangRacerBody>(player.gameObject);
+
+            Transform left = player.Find("EgrangAnak_Lingkaran_L");
+            Transform right = player.Find("EgrangAnak_Lingkaran_R");
+
+            SetArray(body, "sticks", new Object[]
+            {
+                left != null ? left.GetComponent<EgrangStick>() : null,
+                right != null ? right.GetComponent<EgrangStick>() : null,
+            });
+
+            var models = new Object[CharacterModels.Length];
+            for (int i = 0; i < CharacterModels.Length; i++) models[i] = AssetDatabase.LoadAssetAtPath<GameObject>(CharacterModels[i]);
+            SetArray(body, "characters", models);
+        }
+
+        /// <summary>
         /// The race's own views. The bar is taken from the generated run root rather than by a
         /// scene-wide search: a stale second <see cref="SkillCheckBar"/> sits on the old HUD canvas,
         /// and it is the unwired one.
@@ -160,6 +197,26 @@ namespace Museum.Games.Egrang.EditorTools
             Set(race, "bar", bar);
             Set(race, "progressView", FindComponent<EgrangProgressView>(scene));
             Set(race, "stickSelector", FindComponent<EgrangStickSelector>(scene));
+
+            // The two arrays the race indexes by lane, filled from the same lane roots the lanes were
+            // just numbered from. The names builder sorts by `EgrangRacer.lane`, but it ran before
+            // those numbers were set after the rebuild and shipped the plates as lanes 3, 1, 2 — every
+            // name over someone else's walker (found 2026-09-10). The tool that owns the numbers owns
+            // what is ordered by them.
+            var racers = new Object[LaneRoots.Length];
+            var plates = new Object[LaneRoots.Length];
+
+            for (int lane = 0; lane < LaneRoots.Length; lane++)
+            {
+                Transform root = FindRoot(scene, LaneRoots[lane]);
+                Transform plate = root != null ? root.Find("Egrang Player/Name Plate") : null;
+
+                racers[lane] = root != null ? root.GetComponent<EgrangRacer>() : null;
+                plates[lane] = plate != null ? plate.GetComponent<EgrangNameplate>() : null;
+            }
+
+            SetArray(race, "racers", racers);
+            SetArray(race, "nameplates", plates);
 
             foreach (GameObject root in scene.GetRootGameObjects())
             {
@@ -248,6 +305,41 @@ namespace Museum.Games.Egrang.EditorTools
             }
 
             property.objectReferenceValue = value;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(target);
+        }
+
+        /// <summary>
+        /// Writes a lane-indexed array whole, or not at all: a half-filled one would put a later
+        /// lane's reference in an earlier lane's slot, which is the fault this exists to prevent.
+        /// </summary>
+        private static void SetArray(Object target, string field, Object[] values)
+        {
+            for (int i = 0; i < values.Length; i++)
+            {
+                if (values[i] == null)
+                {
+                    Debug.LogWarning($"EgrangWiringRepair: no target for {target.GetType().Name}.{field}[{i}]; " +
+                                     "left the array as it was.");
+                    return;
+                }
+            }
+
+            var serialized = new SerializedObject(target);
+            SerializedProperty property = serialized.FindProperty(field);
+
+            if (property == null || !property.isArray)
+            {
+                Debug.LogWarning($"EgrangWiringRepair: {target.GetType().Name} has no array '{field}'.");
+                return;
+            }
+
+            property.arraySize = values.Length;
+            for (int i = 0; i < values.Length; i++)
+            {
+                property.GetArrayElementAtIndex(i).objectReferenceValue = values[i];
+            }
+
             serialized.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(target);
         }

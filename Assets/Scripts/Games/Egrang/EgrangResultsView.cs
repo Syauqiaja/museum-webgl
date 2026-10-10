@@ -181,11 +181,6 @@ namespace Museum.Games.Egrang
         {
             if (string.IsNullOrEmpty(exitScene)) return;
 
-            // Same reason DakonView.BackToMainMenu clears it: the race is over and its room is
-            // closing, so a kept reconnection token would send the next visit to this scene
-            // reconnecting into a room that no longer exists.
-            if (SessionData.Instance != null) SessionData.Instance.ClearRoomSession();
-
             // The loader lives on the bootstrap object the lobby carries between scenes. Playing the
             // Egrang scene on its own — in the editor, or straight off a build — has no loader, and
             // "the exit button does nothing" would be a worse answer than a cut to the museum.

@@ -1,0 +1,15 @@
+<!--
+  Managed stripping is High on WebGL (see Assets/Docs/asset-budget.md). The Colyseus SDK builds
+  everything it receives by reflection — schema state via Activator.CreateInstance + GetField,
+  message payloads via its MsgPack deserializer — and the linker cannot see either. Without this
+  file a WebGL build strips payload constructors and fields that only the SDK touches, and the
+  games stall on their first message while the Editor (which never strips) works.
+-->
+<linker>
+  <assembly fullname="ColyseusSDK" preserve="all" />
+  <assembly fullname="colyseus.nativewebsocket" preserve="all" />
+  <!-- Generated schema (Net/Schema) and the session payload DTOs. -->
+  <assembly fullname="Museum.Net" preserve="all" />
+  <!-- NetworkPayloads.cs: ErrorPayload, GameOverPayload. -->
+  <assembly fullname="Museum.Core" preserve="all" />
+</linker>

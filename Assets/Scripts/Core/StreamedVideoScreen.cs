@@ -93,16 +93,24 @@ namespace Museum.Core
 
             _player.errorReceived += OnVideoError;
             _player.prepareCompleted += OnPrepared;
+            _player.loopPointReached += OnFinished;
 
             ShowPlaceholder();
         }
 
         private void OnDestroy()
         {
+            // The music was held down for this video; a screen unloaded mid-play lets it back up.
+            GameAudio.SetDucked(this, false);
+
             if (_player == null) return;
             _player.errorReceived -= OnVideoError;
             _player.prepareCompleted -= OnPrepared;
+            _player.loopPointReached -= OnFinished;
         }
+
+        /// <summary>The video ran to its end: the screen stays on its last frame, the music comes back.</summary>
+        private void OnFinished(VideoPlayer source) => GameAudio.SetDucked(this, false);
 
         /// <summary>Starts loading and then playing this screen's video. Safe to call repeatedly.</summary>
         public void RequestPlay()
@@ -126,6 +134,8 @@ namespace Museum.Core
             {
                 _player.Stop();
             }
+
+            GameAudio.SetDucked(this, false);
 
             // Walking away and back is the retry the museum actually offers: the canvas is
             // world-space with no event camera, so a Retry button would not reliably take clicks.
@@ -200,6 +210,10 @@ namespace Museum.Core
             State = ScreenState.Playing;
             ShowVideo();
             _player.Play();
+
+            // The videos have narration, and their sound is not 3D — the museum's music dips
+            // under it while it plays.
+            GameAudio.SetDucked(this, true);
         }
 
         private void OnVideoError(VideoPlayer source, string message)
@@ -228,6 +242,7 @@ namespace Museum.Core
             StopTimeout();
             State = ScreenState.Failed;
             ShowPlaceholder();
+            GameAudio.SetDucked(this, false);
             Debug.LogError($"[StreamedVideoScreen] {name} failed to load '{VideoKey}': {reason}", this);
 
             if (_retries < maxAutoRetries && _retryRoutine == null)

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Museum.Core;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Museum.Games.Egrang
 {
@@ -33,7 +34,8 @@ namespace Museum.Games.Egrang
         [SerializeField] private EgrangCountdownView countdownView;
         [Tooltip("HUD list of who is racing and how far along they are. Optional.")]
         [SerializeField] private EgrangRosterView rosterView;
-        [Tooltip("Name plates above the racers, in lane order. Empty entries are skipped.")]
+        [Tooltip("Name plates above the racers, in lane order. Fallback only: a plate parented under a " +
+                 "lane's racer is used for that lane whatever this array says. Empty entries are skipped.")]
         [SerializeField] private EgrangNameplate[] nameplates = new EgrangNameplate[0];
 
         [Header("Start")]
@@ -41,6 +43,10 @@ namespace Museum.Games.Egrang
                  "this number is the server's, not this one.")]
         [Min(0f)]
         [SerializeField] private float offlineCountdownSeconds = 15f;
+
+        [Header("Exit")]
+        [Tooltip("Scene the pause panel's \"Kembali ke Museum\" loads.")]
+        [SerializeField] private string exitScene = SceneReference.Museum;
 
         readonly EgrangSeating _seating = new EgrangSeating();
         IEgrangSession _session;
@@ -179,36 +185,32 @@ namespace Museum.Games.Egrang
             this.nameplates = nameplates ?? new EgrangNameplate[0];
         }
 
-        /// <summary>Length of the offline picking window, for the tests and for a kiosk retune.</summary>
-        public void SetOfflineCountdown(float seconds) => offlineCountdownSeconds = Mathf.Max(0f, seconds);
-
         /// <summary>
-        /// Leaves the race mid-run for the museum. The results panel has its own exit for a
-        /// finished race; this one is for the player who wants out before the line, and until it
-        /// existed the only way off the track was the browser's back button.
+        /// Leaves the race for <see cref="exitScene"/> — the museum the player walked in from.
         ///
-        /// The name is frozen: the HUD's exit button stores it as a persistent listener in
-        /// Egrang.unity, and CLAUDE.md lists it among the handler names a generated scene wires
-        /// by string.
+        /// The name is frozen: the pause panel's "Kembali ke Museum" stores it as a persistent
+        /// listener in Egrang.unity, and CLAUDE.md lists it among
+        /// the handler names a generated scene wires by string. Renaming it breaks that button
+        /// silently.
         ///
-        /// Online the leave is consented, so the server withdraws this lane at once and the other
-        /// two keep racing (see the server's <c>EgrangRoom.onLeave</c>); a socket merely dropped
-        /// by the scene unloading would hold the seat open through the reconnection window
-        /// instead. The session also clears the held room, so the next visit does not try to
-        /// reconnect into a race that ended without us.
+        /// The same exit as <c>DakonView.BackToMainMenu</c>: no consented room leave — mid-race a
+        /// dropped socket is the withdrawal the server already models — but the held seat is
+        /// cleared, or the next visit to this scene would try to reconnect into a race that is over.
         /// </summary>
         public void BackToMuseum()
         {
-            _session?.Leave();
-            Unsubscribe();
+            if (string.IsNullOrEmpty(exitScene)) return;
 
             if (SessionData.Instance != null) SessionData.Instance.ClearRoomSession();
 
-            // Playing the Egrang scene on its own has no loader — same fallback as the results
-            // panel's exit, for the same reason.
-            if (SceneLoader.Instance != null) SceneLoader.Instance.LoadScene(SceneReference.Museum);
-            else UnityEngine.SceneManagement.SceneManager.LoadScene(SceneReference.Museum);
+            // The loader rides in on the bootstrap object from MainMenu. The scene opened on its
+            // own has none, and "the exit does nothing" is a worse answer than a cut to the museum.
+            if (SceneLoader.Instance != null) SceneLoader.Instance.LoadScene(exitScene);
+            else SceneManager.LoadScene(exitScene);
         }
+
+        /// <summary>Length of the offline picking window, for the tests and for a kiosk retune.</summary>
+        public void SetOfflineCountdown(float seconds) => offlineCountdownSeconds = Mathf.Max(0f, seconds);
 
         /// <summary>
         /// Attaches the race to a session, or to nothing. A null session is the offline scene: lane 1
@@ -413,6 +415,33 @@ namespace Museum.Games.Egrang
         public bool IsLocalLane(int lane) => LocalRacer != null && RacerAt(lane) == LocalRacer;
 
         /// <summary>
+        /// The character a lane's walker wears: its player's choice as the room synced it, or —
+        /// offline, where lane 1 is this visitor — the one picked on the welcome screen. An empty
+        /// lane, and the offline scenery lanes, wear Jawa.
+        /// </summary>
+        public string AvatarOfLane(int lane)
+        {
+            if (_session == null)
+            {
+                return lane == 0 && SessionData.Instance != null ? SessionData.Instance.PlayerAvatar : PlayerAvatars.Default;
+            }
+
+            string sessionId = _seating.SessionAt(lane);
+            return string.IsNullOrEmpty(sessionId) ? PlayerAvatars.Default : _session.AvatarOf(sessionId);
+        }
+
+        /// <summary>Puts the lane's walker in <see cref="AvatarOfLane"/>'s body — a no-op when it already wears it.</summary>
+        void DressLane(int lane)
+        {
+            EgrangRacer racer = RacerAt(lane);
+            if (racer == null || racer.Body == null) return;
+
+            // Racers built in code (the tests) have no body to dress.
+            EgrangRacerBody body = racer.Body.GetComponent<EgrangRacerBody>();
+            if (body != null) body.Wear(AvatarOfLane(lane));
+        }
+
+        /// <summary>
         /// Writes the names onto everything that shows them: the plates over the racers, the HUD
         /// list, and the countdown panel's roster. Called whenever seating changes, which is the
         /// only time a name can appear or move.
@@ -420,6 +449,12 @@ namespace Museum.Games.Egrang
         void DrawRoster()
         {
             var roster = new List<EgrangStanding>();
+
+            // Online, a lane nobody sat down in is not drawn at all: a two-player race shows two
+            // walkers, not two and a stranger who never moves. Only once seats have arrived, so a
+            // patch that lands before the state does cannot blank every lane, the local one included.
+            // Offline there is no seating, so the other two lanes stay as scenery.
+            bool hideEmptyLanes = _session != null && _seating.Count > 0;
 
             for (int lane = 0; lane < LaneCount; lane++)
             {
@@ -429,10 +464,11 @@ namespace Museum.Games.Egrang
                 bool isLocal = IsLocalLane(lane);
                 string label = occupied ? NameOfLane(lane) : string.Empty;
 
-                if (nameplates != null && lane < nameplates.Length && nameplates[lane] != null)
-                {
-                    nameplates[lane].SetName(label);
-                }
+                ShowLane(lane, !hideEmptyLanes || occupied || isLocal);
+                DressLane(lane);
+
+                EgrangNameplate plate = NameplateAt(lane);
+                if (plate != null) plate.SetName(label);
 
                 if (rosterView != null) rosterView.SetName(lane, label, isLocal);
 
@@ -440,6 +476,37 @@ namespace Museum.Games.Egrang
             }
 
             if (countdownView != null) countdownView.SetRoster(roster);
+        }
+
+        /// <summary>
+        /// The plate over a lane's walker. The one parented under that lane's racer wins over the
+        /// inspector array: the array is indexed by lane, and the recovered scene shipped it as
+        /// lanes 3, 1, 2 — every name floated over someone else's walker, so the host read as the
+        /// right-hand racer and "the opponent" was whichever lane nobody drove. A plate that belongs
+        /// to the racer structurally cannot be put in the wrong slot. The array is the fallback, for
+        /// racers built in code with no plate under them.
+        /// </summary>
+        EgrangNameplate NameplateAt(int lane)
+        {
+            EgrangRacer racer = RacerAt(lane);
+            EgrangNameplate own = racer != null ? racer.GetComponentInChildren<EgrangNameplate>(true) : null;
+            if (own != null) return own;
+
+            return nameplates != null && lane >= 0 && lane < nameplates.Length ? nameplates[lane] : null;
+        }
+
+        /// <summary>
+        /// Shows or hides a lane's walker — the mover's object, which carries the model, the stilts
+        /// and the plate. The lane root and its track markers stay put, so nothing that measures the
+        /// lane loses its geometry.
+        /// </summary>
+        void ShowLane(int lane, bool visible)
+        {
+            EgrangRacer racer = RacerAt(lane);
+            if (racer == null) return;
+
+            GameObject body = racer.Body.gameObject;
+            if (body.activeSelf != visible) body.SetActive(visible);
         }
 
         void DrawRosterProgress()
@@ -541,6 +608,9 @@ namespace Museum.Games.Egrang
             if (_resultsShown || resultsView == null) return;
 
             _resultsShown = true;
+
+            // First over the line — alone offline, or ahead of the others online.
+            if (place == 1) Museum.Core.GameAudio.PlayWin();
 
             float seconds = _startTime >= 0f && _finishTime >= _startTime ? _finishTime - _startTime : -1f;
 

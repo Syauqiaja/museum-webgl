@@ -86,6 +86,14 @@ namespace Museum.Games.Egrang
         /// <summary>True while a step is playing out and presses are being ignored.</summary>
         public bool IsLocked => _lockoutRemaining > 0f;
 
+        /// <summary>
+        /// While true every press is ignored, whatever it came from — Space or the JALAN button —
+        /// and the cursor keeps sweeping. Held by <see cref="EgrangPauseMenu"/>:
+        /// the race is real-time and the server keeps its clock, so a pause cannot stop the race,
+        /// only stop a key typed at the menu from walking the racer behind it.
+        /// </summary>
+        public bool InputBlocked { get; set; }
+
         /// <summary>The stick whose difficulty the bar is currently running, or null while on its inspector-authored defaults.</summary>
         public EgrangStickProfile Profile { get; private set; }
 
@@ -121,6 +129,7 @@ namespace Museum.Games.Egrang
             }
 
             BakeTrackGradient();
+            SilenceStepButtons();
 
             if (inputAsset != null)
             {
@@ -174,12 +183,39 @@ namespace Museum.Games.Egrang
         void OnStepPerformed(InputAction.CallbackContext context) => Press();
 
         /// <summary>
+        /// The JALAN buttons are pressed once a stride, dozens of times a race, and a UI click on
+        /// every one is noise — so every button wired to this bar's <see cref="Press"/> is marked
+        /// <see cref="Museum.Core.SilentButton"/>. Found by that wiring rather than by name: the
+        /// scene has held several "Step Button"s, and the generators that make them would drop a
+        /// marker placed by hand.
+        /// </summary>
+        void SilenceStepButtons()
+        {
+            foreach (Button button in FindObjectsByType<Button>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                if (button.gameObject.scene != gameObject.scene || !CallsPress(button.onClick)) continue;
+                if (!button.TryGetComponent(out Museum.Core.SilentButton _)) button.gameObject.AddComponent<Museum.Core.SilentButton>();
+            }
+        }
+
+        bool CallsPress(UnityEventBase onClick)
+        {
+            for (int i = 0; i < onClick.GetPersistentEventCount(); i++)
+            {
+                if (onClick.GetPersistentTarget(i) == this && onClick.GetPersistentMethodName(i) == nameof(Press)) return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Scores a press at the cursor's current position and starts the lockout. Ignored while
-        /// locked. Public so the bar can be driven from a UI button or a test without an action asset.
+        /// locked or while <see cref="InputBlocked"/>. Public so the bar can be driven from a UI
+        /// button or a test without an action asset.
         /// </summary>
         public void Press()
         {
-            if (IsLocked) return;
+            if (IsLocked || InputBlocked) return;
 
             _cursor.Freeze();
             EgrangStepResult result = zones.Evaluate(_cursor.Position);

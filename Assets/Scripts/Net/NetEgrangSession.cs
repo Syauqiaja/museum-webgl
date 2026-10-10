@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using Colyseus;
-using Museum.Core;
 using Museum.Games.Egrang;
 using Museum.Net.State;
 using UnityEngine;
@@ -24,6 +23,9 @@ namespace Museum.Net
 
         /// <summary>Nickname per session id, mirrored from `state.players` on every patch.</summary>
         readonly Dictionary<string, string> _namesBySession = new Dictionary<string, string>();
+
+        /// <summary>Chosen character per session id, mirrored from `state.players` on every patch.</summary>
+        readonly Dictionary<string, string> _avatarBySession = new Dictionary<string, string>();
 
         /// <summary>Chosen stilt per session id, mirrored from `state.racers` on every patch — the
         /// results panel names every racer's stilt, not only the local one.</summary>
@@ -60,15 +62,6 @@ namespace Museum.Net
 
         public void RequestCountdown() => _room.Send("countdown_sync", new { });
 
-        public void Leave()
-        {
-            // Through the manager, not room.Leave directly: it also clears the held reconnection
-            // token, and a stale one would send the next visit to this scene reconnecting into a
-            // race that finished without us.
-            if (ColyseusNetManager.Instance != null) _ = ColyseusNetManager.Instance.Leave(_room);
-            else _ = _room.Leave(true);
-        }
-
         public int FinishUnits => _finishUnits;
 
         public EgrangStickShape StickOf(string sessionId) =>
@@ -84,6 +77,11 @@ namespace Museum.Net
                 ? name ?? string.Empty
                 : string.Empty;
 
+        public string AvatarOf(string sessionId) =>
+            !string.IsNullOrEmpty(sessionId) && _avatarBySession.TryGetValue(sessionId, out string avatar)
+                ? avatar
+                : Museum.Core.PlayerAvatars.Default;
+
         void ReadSeats()
         {
             EgrangState state = _room.State;
@@ -91,10 +89,13 @@ namespace Museum.Net
 
             _seats.Clear();
             _namesBySession.Clear();
+            _avatarBySession.Clear();
             state.players.ForEach((sessionId, player) =>
             {
                 _seats.Add((sessionId, player.seat));
                 _namesBySession[sessionId] = player.displayName ?? string.Empty;
+                // Sanitised again here: an older server sends no avatar field at all.
+                _avatarBySession[sessionId] = Museum.Core.PlayerAvatars.Sanitize(player.avatar);
             });
 
             _finishUnits = state.finishUnits;

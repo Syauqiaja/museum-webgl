@@ -145,6 +145,8 @@ namespace Museum.Lobby
             {
                 { "displayName", displayName },
                 { "private", true },
+                // Cosmetic; the server sanitises it and the Egrang lanes render it.
+                { "avatar", SessionData.Instance != null ? SessionData.Instance.PlayerAvatar : PlayerAvatars.Default },
             };
 
             if (SessionData.Instance != null && SessionData.Instance.PlayerId.Length > 0)

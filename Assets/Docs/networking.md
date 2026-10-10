@@ -23,7 +23,93 @@ from `ServerConfig` ([architecture.md](architecture.md#endpoint-configuration)):
 - the endpoint is host + port only — the Unity C# SDK has **no path setting**, so it can
   never be a subpath of the client host
 
-The Museum scene creates no client at all.
+The Museum scene uses the same client for **presence**: `MuseumPresence` (on the player rig)
+`JoinOrCreate`s the server's `museum` room straight on `ColyseusNetManager.Client` — not via
+its create/join helpers, which would record it as the seat `SessionData` holds — sends `move`
+`{ x, y, z, yaw }` at most 10×/s, and spawns a `MuseumVisitorAvatar` per other entry in
+`state.visitors`, with their name overhead. The body is one of the four
+`Assets/Models/ASSET_NUSANTARA/1_Karakter` characters (Jawa L, Bali P, Bugis P, Minang L), as
+prefab variants in `Assets/Prefabs/Visitors/` scaled to 1.7 m. Which one a visitor wears is
+**their own choice** from MainMenu's avatar row: `SessionData.PlayerAvatar` goes out as the
+`avatar` join option (every room — `ColyseusNetManager.BuildOptions`, the lobby, and presence),
+the server sanitises it onto `MuseumVisitor.avatar` / `BasePlayer.avatar`, and
+`MuseumPresence` matches it to a prefab by name. Jawa is the default everywhere. The ids are
+`PlayerAvatars.Ids` here and `AVATAR_IDS` in the server's `src/rooms/avatars.ts` — held twice,
+kept identical (`PlayerAvatarsTests` pins the client's copy).
+All four are **Humanoid** (each its own avatar) and share `Anim_MuseumVisitor`, a 1D blend on
+`Speed` over the `2_Animasi` clips: `Idle` 0, `Walk` 0.80 m/s, `Run` 1.50 m/s (the ground speeds
+the clips imply at that scale), with `Run` sped up past that, capped at 3.5×. The clips are
+in-place: `Anim_*.fbx` import as Humanoid *Copy From Other Avatar* (Jawa), Loop Time on, root
+rotation/height/XZ baked into the pose — as `ASSET_NUSANTARA/BACA_DULU.md` prescribes.
+
+**The idle is not `Anim_Idle.fbx`.** That file's legs are the egrang stance: the right leg holds
+`Anim_Egrang`'s planted pose (Upper Leg Front-Back 0.48, Lower Leg Stretch 0.88) and the left leg
+is frozen at its step pose (−0.25 / 0.15), with the body rolled ~7° — the idle action in
+`_Sumber/blender/karakter_animasi.blend` never keyed the legs, so the export took them from the
+egrang action. The blend's `Idle` slot plays `Assets/AnimationClip/Visitor Idle Stand.anim`
+instead: `Anim_Idle`'s arms, spine, head and breathing, with both legs set to the characters'
+rest pose (left/right averaged), `RootQ` levelled, the foot IK-goal curves dropped, and root
+height set so the soles sit on the model's origin. Once the `.blend` is fixed and re-exported,
+point the blend back at `Anim_Idle` and delete the derived clip.
+
+**Walk and Run are derived too.** The Meshy `Anim_Walk`/`Anim_Run` hold the arms out near
+horizontal (Arm Down-Up ≈ +0.26 walking, +0.45 running, where hanging is −1.16) — on every
+character, Jawa included. On Minang, the one character modelled in an A-pose, that tore the
+mesh: its jacket and sleeves are skinned for hanging arms and ballooned as the walk lifted
+them. Skinning and retargeting are sound on all four (bind poses exact; identical muscles land
+every body's bones within a few degrees of Jawa's), so the fix is the clips, not the rigs:
+`Assets/AnimationClip/Visitor Walk.anim` and `Visitor Run.anim` are the FBX clips with only the
+arm curves moved, swing kept: Arm Down-Up lowered from the near-horizontal source (walk mean
+−0.25, run −0.20 — a toon walk, arms held clear of the body) and Arm Front-Back re-centred to
+0.40 (the source swung forward-biased at 0.65, which carried each forward hand across the belly
+of these wide chibi torsos). Arms hung fully down (−1.0) clipped through the body. The idle
+opens them slightly (Arm Down-Up mean −0.88). Their Y root is "Based
+Upon: Feet" (set on the FBX import too), so with the idle every clip keeps the soles on the
+model's origin and `MuseumVisitorAvatar` drops the body exactly 1 m. If the
+`visitorCharacters` array is lost the avatar falls back to a tinted copy of the player
+capsule; `Museum/Rebuild UI/Wire Scene References` re-wires it from the folder.
+
+Remote visitors move by **snapshot interpolation**, not by chasing the newest position: each
+received position is stamped with its arrival time and the avatar is drawn
+`MuseumVisitorAvatar.InterpolationDelay` (0.2 s — two report intervals) in the past, between
+the positions either side of that moment. Chasing the newest position made avatars lurch and
+stop between packets. The report rate (`MuseumPresence.SendHz`, 10) and the delay move
+together; the server's 20 Hz patch only forwards. Avatars **face their direction of travel**,
+not the `yaw` they are sent: that yaw is the visitor's first-person camera, and a body that
+followed it spun whenever they looked around. It orients a first sighting only; after that the
+body turns (0.12 s smoothing) toward where it is moving above 0.3 m/s and keeps that heading
+when it stops. With Multiplayer Play Mode, a virtual player
+started before a script change keeps running the old code until it is restarted — a visitor
+drawn as a capsule there is usually that, not a lost reference.
+
+**The room outlives the Museum scene.** It is held by `MuseumPresenceLink` (a
+`DontDestroyOnLoad` object `MuseumPresence` makes on first use); `MuseumPresence` is only the
+scene's view of it. Going through a doorway does **not** leave: `SceneTriggerPrompt.Enter`
+records the pose and the game on `SessionData.RememberMuseumReturn`, `MuseumPresence` stops
+reporting and sends `activity { game: "dakon" | "egrang" }`, and the others keep seeing the
+visitor idling at the doorway, tagged **"Sedang bermain Dakon"** under the name
+(`MuseumVisitorAvatar.SetActivity`, `MuseumActivities.Tag`). Coming back, `FPSController.Awake`
+takes the pose (`TryTakeMuseumReturn`, read once) and puts the rig where it left, facing the
+same way, before any `Start` — so the first `move` is that spot and nobody sees a jump — and
+`MuseumPresence.Start` sends `activity ""`. `MainMenu.GoToMuseum` forgets any pending return
+(the menu starts at the entrance), and the link leaves the room when MainMenu loads, which is
+how a visit ends. A closed tab closes the socket and the server drops the visitor. Up to 3
+rejoins are tried if it drops, wherever the visitor is; a rejoin while away re-sends the last
+pose and the tag. No server means the museum is walked alone.
+
+**Shared exhibits.** What one visitor sets off at the ground-floor gallery, the others see and
+hear: the gong, the gasing, the tembang's melody and each accepted engklek step (the petak
+lights, the chime or fanfare plays). A station reports a local press through
+`MuseumInteractions.ReportLocal`; `MuseumPresence` sends it as `interact { station, index }`, and
+hands every `interacted` back through `MuseumInteractions.PlayRemote` to the station registered
+under that id, which plays it without reporting it again. Per-visitor on purpose: the engklek
+run and its status line, the tembang's lyric banner, the video screens, the lesson plaques'
+pages — sharing those would let one visitor start, stop, restart or turn them under someone
+else. The ids (`gong`, `gasing`, `tembang`, `engklek`) are the server's `MUSEUM_STATIONS`, held
+twice. "Heard if close enough" is the stations' 3D sources: `GalleryStation.TuneSource` uses a
+**linear** rolloff to silence at 25 m (`AudibleDistance`) — logarithmic never reaches zero, so
+a lobby gong would have carried to every floor. Contract: server
+`docs/protocol.md#exhibition-museum-scene`.
 
 ## 3. Opening a room
 
@@ -136,7 +222,7 @@ reaches a client that was still loading the scene when the broadcast went out.
 
 | Game | Predicted | Not predicted |
 |---|---|---|
-| Dakon | that a hole with a drop **in flight** is already sown (so a burst cannot aim two seeds at one hole) | nothing is drawn until `drop_applied` — the board on screen is always one the server agrees with |
+| Dakon | the **target hole** of a queued drop (one past the last drop the server accepted) | nothing is drawn until `drop_applied` — the board on screen is always one the server agrees with |
 | Egrang | the **whole stride**: the bar grades the press and the racer walks immediately | the banked count, the places, the winner — all server numbers |
 
 Dakon's hole prediction exists so the player can click a whole hand without waiting a round
@@ -144,6 +230,16 @@ trip each time; Colyseus delivers one client's messages in order, so the server 
 burst in the order it was predicted. A wrong guess is a refusal, not a divergence, and a
 refusal clears the entire in-flight queue (the server stopped at the rejected drop, so
 everything queued behind it was aimed one hole too far).
+
+It counts forward from the last drop `drop_applied` reported — anyone's drop, since both
+players walk the same ring — and falls back to the synced `nextHoleIndex` only when nothing
+anchors it: the first drop of a turn, or after a refusal. Anchoring on `nextHoleIndex`
+instead is the bug that shipped: `drop_applied` is broadcast the instant a drop is applied,
+while the patch moving `nextHoleIndex` follows on the room's patch interval, so a tap inside
+that window aimed at the hole that had just been filled and was refused. On a LAN the window
+is a millisecond; over wss from a phone it is a round trip, which is why it looked
+mobile-only. `Assets/Scripts/Net/DakonHolePrediction.cs` owns the rule and is tested in
+EditMode without a room.
 
 Egrang predicts because the cursor sweeps a lap in 0.85–2.0 s: grading on arrival would turn
 a green press into a yellow one on any real connection. The server bounds the *rate* instead

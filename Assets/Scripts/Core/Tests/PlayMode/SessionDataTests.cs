@@ -13,10 +13,13 @@ namespace Museum.Core.Tests
     public class SessionDataTests
     {
         private const string PlayerNameKey = "museum.session.playerName";
+        private const string PlayerAvatarKey = "museum.session.playerAvatar";
 
         private GameObject _go;
         private string _savedPrefValue;
         private bool _hadPrefValue;
+        private string _savedAvatarValue;
+        private bool _hadAvatarValue;
 
         [SetUp]
         public void SetUp()
@@ -24,6 +27,10 @@ namespace Museum.Core.Tests
             _hadPrefValue = PlayerPrefs.HasKey(PlayerNameKey);
             _savedPrefValue = PlayerPrefs.GetString(PlayerNameKey, string.Empty);
             PlayerPrefs.DeleteKey(PlayerNameKey);
+
+            _hadAvatarValue = PlayerPrefs.HasKey(PlayerAvatarKey);
+            _savedAvatarValue = PlayerPrefs.GetString(PlayerAvatarKey, string.Empty);
+            PlayerPrefs.DeleteKey(PlayerAvatarKey);
         }
 
         [TearDown]
@@ -42,6 +49,42 @@ namespace Museum.Core.Tests
             {
                 PlayerPrefs.DeleteKey(PlayerNameKey);
             }
+
+            if (_hadAvatarValue)
+            {
+                PlayerPrefs.SetString(PlayerAvatarKey, _savedAvatarValue);
+            }
+            else
+            {
+                PlayerPrefs.DeleteKey(PlayerAvatarKey);
+            }
+        }
+
+        [Test]
+        public void PlayerAvatar_IsJawaUntilChosen()
+        {
+            Assert.AreEqual(PlayerAvatars.Jawa, NewSession().PlayerAvatar);
+        }
+
+        [Test]
+        public void PlayerAvatar_UnknownIdFallsBackToJawa()
+        {
+            SessionData session = NewSession();
+
+            session.PlayerAvatar = "Bali";
+            Assert.AreEqual(PlayerAvatars.Bali, session.PlayerAvatar, "stored lower-cased");
+
+            session.PlayerAvatar = "naga";
+            Assert.AreEqual(PlayerAvatars.Jawa, session.PlayerAvatar);
+        }
+
+        [Test]
+        public void PlayerAvatar_SurvivesAFreshSession()
+        {
+            NewSession().PlayerAvatar = PlayerAvatars.Minang;
+            Object.DestroyImmediate(_go);
+
+            Assert.AreEqual(PlayerAvatars.Minang, NewSession().PlayerAvatar);
         }
 
         [Test]
@@ -129,6 +172,46 @@ namespace Museum.Core.Tests
             // the client would claim a seat nobody is holding.
             Assert.IsFalse(revisit.HasSession);
             Assert.IsFalse(revisit.CanReconnect);
+        }
+
+        [Test]
+        public void MuseumReturn_IsTakenOnceAndCarriesTheGameUntilThen()
+        {
+            SessionData session = NewSession();
+            Assert.IsFalse(session.HasMuseumReturn);
+
+            session.RememberMuseumReturn(new Vector3(1f, 2f, 3f), 90f, "dakon");
+            Assert.AreEqual("dakon", session.MuseumReturnActivity);
+
+            Assert.IsTrue(session.TryTakeMuseumReturn(out Vector3 position, out float yaw));
+            Assert.AreEqual(new Vector3(1f, 2f, 3f), position);
+            Assert.AreEqual(90f, yaw);
+
+            // Only the load straight after the game uses it.
+            Assert.IsFalse(session.TryTakeMuseumReturn(out _, out _));
+            Assert.AreEqual(string.Empty, session.MuseumReturnActivity);
+        }
+
+        [Test]
+        public void MuseumReturn_ForgottenFromTheMenu()
+        {
+            SessionData session = NewSession();
+            session.RememberMuseumReturn(Vector3.one, 0f, "egrang");
+
+            session.ForgetMuseumReturn();
+
+            Assert.IsFalse(session.HasMuseumReturn);
+            Assert.IsFalse(session.TryTakeMuseumReturn(out _, out _));
+        }
+
+        [Test]
+        public void MuseumReturn_IsNotRestoredOnAFreshSession()
+        {
+            NewSession().RememberMuseumReturn(Vector3.one, 0f, "dakon");
+            Object.DestroyImmediate(_go);
+
+            // A refreshed tab is a new visit: it starts at the entrance.
+            Assert.IsFalse(NewSession().HasMuseumReturn);
         }
 
         /// <summary>A bootstrap object as a scene creates it — Awake runs on AddComponent.</summary>

@@ -4,13 +4,9 @@ using System.Collections.Generic;
 namespace Museum.Games.Dakon
 {
     /// <summary>
-    /// Pure-C# Dakon model (v7 ruleset). Sole owner of all game state and rules; contains no
+    /// Pure-C# Dakon model (v6 ruleset). Sole owner of all game state and rules; contains no
     /// UnityEngine dependency so it can be unit-tested without a scene. Deterministic given a
-    /// fixed rng seed. See Assets/Docs/games/dakon.md.
-    ///
-    /// v7 replaced the forced sowing order: the player chooses which held seed goes into which
-    /// of their own holes, one seed per hole per turn. A hand is the size of a side, so a turn
-    /// is "fill your ten holes" and the decision is which unavoidable mismatches to take.
+    /// fixed rng seed. See docs/superpowers/specs/2026-07-21-dakon-offline-design.md.
     /// </summary>
     public sealed class DakonBoard
     {
@@ -18,12 +14,12 @@ namespace Museum.Games.Dakon
         readonly Random _rng;
 
         SeedCategory[] _holes;                 // hole type per ring index, fixed for the game
-        bool[] _sown;                          // hole received a seed this turn
         readonly List<Seed> _pool = new List<Seed>();
         readonly List<Seed> _hand = new List<Seed>();
         readonly List<Seed>[,] _store;         // [player, category] -> scored seeds
 
         int _activePlayer;
+        int _nextHoleIndex;
         Phase _phase = Phase.Waiting;
         int _monocotTypeCursor;
         int _dicotTypeCursor;
@@ -43,10 +39,10 @@ namespace Museum.Games.Dakon
         public void StartGame()
         {
             _holes = HoleLayout();
-            _sown = new bool[_holes.Length];
             FillPool();
 
             _activePlayer = 0;
+            _nextHoleIndex = StartHoleFor(_activePlayer);
             _phase = Phase.InProgress;
             GrabHand();
         }
@@ -112,26 +108,15 @@ namespace Museum.Games.Dakon
             }
         }
 
-        /// <summary>
-        /// Which seat a ring index belongs to: 0 for the first <paramref name="holesPerSide"/>
-        /// holes, 1 for the rest. Static because the view needs the same answer for a hole it
-        /// is about to raycast, before any session has said anything.
-        /// </summary>
-        public static int SideOf(int holeIndex, int holesPerSide) => holeIndex < holesPerSide ? 0 : 1;
+        int StartHoleFor(int player) => player == 0 ? 0 : _config.HolesPerSide;
 
         // ---- play ----
 
-        /// <summary>
-        /// Drop one held seed into one of the active player's own holes. Every rejection is a
-        /// rule, not an exception; the caller turns the error into wording.
-        /// </summary>
         public DropResult DropSeed(int player, string seedId, int holeIndex)
         {
             if (_phase != Phase.InProgress) return DropResult.Fail(DakonError.InvalidHole);
             if (player != _activePlayer) return DropResult.Fail(DakonError.NotYourTurn);
-            if (holeIndex < 0 || holeIndex >= _holes.Length) return DropResult.Fail(DakonError.InvalidHole);
-            if (SideOf(holeIndex, _config.HolesPerSide) != _activePlayer) return DropResult.Fail(DakonError.InvalidHole);
-            if (_sown[holeIndex]) return DropResult.Fail(DakonError.HoleAlreadySown);
+            if (holeIndex != _nextHoleIndex) return DropResult.Fail(DakonError.InvalidHole);
 
             int handIdx = _hand.FindIndex(s => s.Id == seedId);
             if (handIdx < 0) return DropResult.Fail(DakonError.SeedNotInHand);
@@ -142,7 +127,7 @@ namespace Museum.Games.Dakon
 
             _store[scoringPlayer, (int)seed.Category].Add(seed);
             _hand.RemoveAt(handIdx);
-            _sown[holeIndex] = true;
+            _nextHoleIndex = (_nextHoleIndex + 1) % _config.TotalHoles;
 
             var result = new DropResult
             {
@@ -155,8 +140,6 @@ namespace Museum.Games.Dakon
             if (_hand.Count == 0)
             {
                 result.TurnEnded = true;
-                Array.Clear(_sown, 0, _sown.Length);
-
                 if (_pool.Count == 0)
                 {
                     _phase = Phase.Finished;
@@ -165,6 +148,7 @@ namespace Museum.Games.Dakon
                 else
                 {
                     _activePlayer = 1 - _activePlayer;
+                    _nextHoleIndex = StartHoleFor(_activePlayer);
                     GrabHand();
                 }
             }
@@ -176,29 +160,9 @@ namespace Museum.Games.Dakon
 
         public int ActivePlayer => _activePlayer;
         public IReadOnlyList<Seed> Hand => _hand;
+        public int NextHoleIndex => _nextHoleIndex;
         public int HoleCount => _holes.Length;
-        public int HolesPerSide => _config.HolesPerSide;
         public SeedCategory HoleTypeAt(int index) => _holes[index];
-
-        /// <summary>True once a seed has landed in this hole during the current turn.</summary>
-        public bool IsSown(int index) => _sown != null && index >= 0 && index < _sown.Length && _sown[index];
-
-        /// <summary>
-        /// The sown holes as a bitmask, bit i = hole i — the shape the server syncs it in, so the
-        /// two sessions read the same thing. Twenty holes fit comfortably in 32 bits.
-        /// </summary>
-        public uint SownMask
-        {
-            get
-            {
-                uint mask = 0;
-                if (_sown == null) return mask;
-                for (int i = 0; i < _sown.Length && i < 32; i++)
-                    if (_sown[i]) mask |= 1u << i;
-                return mask;
-            }
-        }
-
         public int Store(int player, SeedCategory category) => _store[player, (int)category].Count;
         public IReadOnlyList<Seed> StoreSeeds(int player, SeedCategory category) => _store[player, (int)category];
         public int Total(int player) => Store(player, SeedCategory.Monocot) + Store(player, SeedCategory.Dicot);

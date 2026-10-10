@@ -30,5 +30,11 @@ public MuseumVisitor() { }
 
 		[Type(4, "float32")]
 		public float yaw = default(float);
+
+		[Type(5, "string")]
+		public string avatar = default(string);
+
+		[Type(6, "string")]
+		public string activity = default(string);
 	}
 }

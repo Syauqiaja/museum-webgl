@@ -25,6 +25,22 @@ namespace Museum.Core.EditorTools
         private const string ButtonFaceSprite = "Assets/Texture2D/Rectangle 2.png";
         private const string ButtonGlowSprite = "Assets/Texture2D/Rectangle 3.png";
 
+        // The avatar row. Portraits are named after the id they stand for: "Jawa.png" is "jawa".
+        private const string AvatarPickerName = "Avatar Picker";
+        private const string AvatarSpriteFolder = "Assets/Sprites/Char Avatars/";
+        private const float AvatarPickerY = -112f;     // centre of the row, under the name field (-42..-2)
+        private const float PortraitSize = 72f;
+        private const float PortraitSpacing = 88f;
+        private const float PortraitInset = 5f;        // portrait art inside the button frame
+        private const float SelectedFrameOutset = 5f;  // gold frame outside it
+
+        /// <summary>
+        /// "Mulai" moves down to make room for the avatar row. The one RectTransform this builder
+        /// writes on an adopted object — ui-style.md §9 otherwise leaves them to the scene — and
+        /// written deliberately: the row has no room between the field and the button otherwise.
+        /// </summary>
+        private const float PlayButtonY = -200f;   // clear of the backdrop's "16 Permainan" line below
+
         [MenuItem("Museum/Rebuild UI/Main Menu")]
         public static void Rebuild()
         {
@@ -52,6 +68,8 @@ namespace Museum.Core.EditorTools
             }
 
             StyleBackground(canvas);
+            // Before the picker: it collects the objects it covers by name, the row among them.
+            StyleAvatarPicker(canvas, scene);
             StylePlatformPicker(canvas, scene);
             StyleTitle(canvas);
             StyleNameInput(canvas, scene);
@@ -305,7 +323,7 @@ namespace Museum.Core.EditorTools
 
             // Everything the picker covers. BG stays on: it is the screen's backdrop, not menu chrome.
             var covered = new System.Collections.Generic.List<Object>();
-            foreach (string name in new[] { "Title", "Name Input", "Play Button" })
+            foreach (string name in new[] { "Title", "Name Input", AvatarPickerName, "Play Button" })
             {
                 Transform found = canvas.Find(name);
                 if (found != null) covered.Add(found.gameObject);
@@ -314,6 +332,93 @@ namespace Museum.Core.EditorTools
             FillArray(serialized.FindProperty("menuObjects"), covered.ToArray());
             serialized.ApplyModifiedPropertiesWithoutUndo();
 
+            EditorUtility.SetDirty(menu);
+        }
+
+        /// <summary>
+        /// The "Pilih karakter" row between the name field and "Mulai": one portrait button per
+        /// <see cref="PlayerAvatars.Ids"/>, a gold corner frame on the chosen one (the Egrang stilt
+        /// cards' selected state, ui-style.md §6), and the character's name under each. Each button
+        /// calls <see cref="MainMenu.SelectAvatar"/> with its index. Re-runnable: an existing row is
+        /// replaced.
+        /// </summary>
+        private static void StyleAvatarPicker(Transform canvas, UnityEngine.SceneManagement.Scene scene)
+        {
+            Transform existing = canvas.Find(AvatarPickerName);
+            if (existing != null) Object.DestroyImmediate(existing.gameObject);
+
+            GameObject row = CreateUI(AvatarPickerName, canvas);
+            RectTransform rowRect = row.GetComponent<RectTransform>();
+            Anchor(rowRect, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f));
+            rowRect.sizeDelta = new Vector2(PortraitSpacing * PlayerAvatars.Ids.Count, 130f);
+            rowRect.anchoredPosition = new Vector2(0f, AvatarPickerY);
+
+            // Keep it with the menu chrome, behind the platform picker drawn over everything.
+            Transform play = canvas.Find("Play Button");
+            if (play != null) row.transform.SetSiblingIndex(play.GetSiblingIndex());
+
+            TMP_Text caption = AddLabel(row.transform, "Caption", "PILIH KARAKTER", SemiBoldFont, 12f, Gold,
+                                        new Vector2(0f, 55f), new Vector2(360f, 20f), new Vector2(0.5f, 0.5f));
+            caption.characterSpacing = 10f;
+
+            MainMenu menu = FindMenu(scene);
+            var frames = new Object[PlayerAvatars.Ids.Count];
+            float left = -PortraitSpacing * (PlayerAvatars.Ids.Count - 1) * 0.5f;
+
+            for (int i = 0; i < PlayerAvatars.Ids.Count; i++)
+            {
+                string display = PlayerAvatars.DisplayName(PlayerAvatars.Ids[i]);
+                float x = left + PortraitSpacing * i;
+
+                GameObject button = CreateButton("Avatar " + display, row.transform, string.Empty, PortraitSize, PortraitSize, 12f);
+                RectTransform rect = button.GetComponent<RectTransform>();
+                Anchor(rect, new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f), new Vector2(0.5f, 0.5f));
+                rect.anchoredPosition = new Vector2(x, 6f);
+
+                // An empty label is still the button's single text child (ui-style.md §2); nothing to read.
+                Transform emptyLabel = button.transform.Find("Text (TMP)");
+                if (emptyLabel != null) emptyLabel.gameObject.SetActive(false);
+
+                GameObject portrait = CreateUI("Portrait", button.transform, typeof(Image));
+                Stretch(portrait.GetComponent<RectTransform>(), PortraitInset);
+                var art = portrait.GetComponent<Image>();
+                art.sprite = LoadSprite(AvatarSpriteFolder + display + ".png");
+                art.type = Image.Type.Simple;
+                art.preserveAspect = true;
+                art.raycastTarget = false;
+                if (art.sprite == null) Debug.LogWarning($"MainMenuUIBuilder: no portrait at '{AvatarSpriteFolder}{display}.png'.");
+
+                GameObject frame = CreateUI("Selected Frame", button.transform, typeof(Image));
+                Stretch(frame.GetComponent<RectTransform>(), -SelectedFrameOutset);
+                SetFrame(frame.GetComponent<Image>(), CornerFrameSprite(), Gold, ContainerPixelsPerUnitMultiplier);
+                frame.transform.SetAsFirstSibling();
+                frame.SetActive(PlayerAvatars.Ids[i] == PlayerAvatars.Default);
+                frames[i] = frame;
+
+                AddLabel(row.transform, "Name " + display, display, MediumFont, 12f, Tan,
+                         new Vector2(x, -42f), new Vector2(PortraitSpacing, 18f), new Vector2(0.5f, 0.5f));
+
+                if (menu != null)
+                {
+                    UnityEventTools.AddIntPersistentListener(button.GetComponent<Button>().onClick, menu.SelectAvatar, i);
+                }
+            }
+
+            if (play != null)
+            {
+                ((RectTransform)play).anchoredPosition = new Vector2(((RectTransform)play).anchoredPosition.x, PlayButtonY);
+                EditorUtility.SetDirty(play);
+            }
+
+            if (menu == null)
+            {
+                Debug.LogWarning("MainMenuUIBuilder: no MainMenu component — the avatar row is built but unwired.");
+                return;
+            }
+
+            var serialized = new SerializedObject(menu);
+            FillArray(serialized.FindProperty("avatarFrames"), frames);
+            serialized.ApplyModifiedPropertiesWithoutUndo();
             EditorUtility.SetDirty(menu);
         }
 

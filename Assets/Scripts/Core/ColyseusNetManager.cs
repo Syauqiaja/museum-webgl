@@ -45,6 +45,12 @@ namespace Museum.Core
             }
         }
 
+        /// <summary>
+        /// The chosen character, sent as `avatar` on every create/join (server `docs/protocol.md`).
+        /// Stored on <see cref="SessionData"/>; <see cref="PlayerAvatars.Default"/> without one.
+        /// </summary>
+        public string PlayerAvatar => SessionData.Instance != null ? SessionData.Instance.PlayerAvatar : PlayerAvatars.Default;
+
         private Client _client;
 
         /// <summary>
@@ -255,6 +261,7 @@ namespace Museum.Core
         {
             options ??= new Dictionary<string, object>();
             options["displayName"] = PlayerName;
+            options["avatar"] = PlayerAvatar;
             return options;
         }
 

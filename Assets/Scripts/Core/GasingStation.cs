@@ -27,6 +27,8 @@ namespace Museum.Core
         [Tooltip("Fraction of the speed lost per second.")]
         [SerializeField] private float drag = 0.35f;
 
+        protected override string StationId => MuseumInteractions.Gasing;
+
         private float _speed;
 
         protected override void Awake()

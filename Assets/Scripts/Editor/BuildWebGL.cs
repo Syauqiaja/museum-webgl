@@ -206,11 +206,51 @@ namespace Museum.Build.Editor
                 return;
             }
 
+            var stamp = StampCacheBuster();
+
             Debug.Log(
                 $"WebGL build succeeded in {summary.totalTime:hh\\:mm\\:ss}.\n" +
                 $"  Output:   {Path.GetFullPath(OutputPath)}\n" +
                 $"  Endpoint: {endpoint}\n" +
+                $"  Cache:    ?v={stamp}\n" +
                 $"  Payload:  {DescribePayload()}");
+        }
+
+        /// <summary>
+        /// Rewrites the <c>BUILDSTAMP</c> placeholder the Wiraga template puts in its
+        /// <c>?v=</c> query onto the four <c>Build/</c> URLs.
+        ///
+        /// nginx serves <c>Build/</c> as <c>immutable, max-age=31536000</c> and every build
+        /// emits the same four filenames, so without this a returning visitor pairs a cached
+        /// <c>framework.js</c> with a freshly downloaded <c>.wasm</c>. Add or remove a
+        /// <c>.jslib</c> function and that mismatch is a hard <c>LinkError</c> at instantiate
+        /// — <c>"function import requires a callable"</c> — which no reload clears, because
+        /// the stale response is the one the cache was told to keep. <c>index.html</c> is
+        /// served <c>no-cache</c>, so changing the query there invalidates all four.
+        /// </summary>
+        private static string StampCacheBuster()
+        {
+            var stamp = DateTime.UtcNow.ToString("yyyyMMddHHmm");
+            var indexPath = Path.Combine(OutputPath, "index.html");
+
+            if (!File.Exists(indexPath))
+            {
+                Debug.LogWarning($"[BuildWebGL] No index.html at {indexPath}; skipped cache buster.");
+                return stamp;
+            }
+
+            var html = File.ReadAllText(indexPath);
+            if (!html.Contains("BUILDSTAMP"))
+            {
+                Debug.LogWarning(
+                    "[BuildWebGL] index.html has no BUILDSTAMP placeholder. The Wiraga template " +
+                    "must keep it, or returning visitors will load a stale framework.js against " +
+                    "a new .wasm. See Assets/Docs/build-and-deploy.md.");
+                return stamp;
+            }
+
+            File.WriteAllText(indexPath, html.Replace("BUILDSTAMP", stamp));
+            return stamp;
         }
 
         /// <summary>

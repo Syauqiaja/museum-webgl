@@ -49,7 +49,7 @@ Never invent a message type or a rule client-side. If it is not in the server's
 | [lighting.md](lighting.md) | You are touching how the Museum looks: lights, ambient, fog, bloom, colour space |
 | [museum-decor.md](museum-decor.md) | You are touching the generated dressing: screen bezels, signboards, per-game bay props, the ground-floor gallery and its stations, or a Blender-built prop |
 | [scenario-compliance.md](scenario-compliance.md) | You want to know how the built games compare to the curriculum sheet's scenarios, and the min-2-players rule |
-| [games/dakon.md](games/dakon.md) | Anything Dakon — full v7 ruleset plus how the scene renders it |
+| [games/dakon.md](games/dakon.md) | Anything Dakon — full v6 ruleset plus how the scene renders it |
 | [games/egrang.md](games/egrang.md) | Anything Egrang — full race ruleset, stilt tuning, prediction model |
 | [games/engklak.md](games/engklak.md) | Engklak — not built, and what it would take |
 | [testing.md](testing.md) | You are adding tests, or a suite failed |

@@ -1,4 +1,4 @@
-# Asset Budget — why the payload is 29.5 MB and how to keep it there
+# Asset Budget — why the payload is 40.5 MB and how to keep it there
 
 This is a museum kiosk that also has to load over a hotel-grade connection on a visitor's
 phone. The build is a **download before it is a game**, so asset import settings are a
@@ -11,9 +11,9 @@ Build sizes and the deploy runbook live in [build-and-deploy.md](build-and-deplo
 
 | | 2026-09-09 | 2026-09-10 |
 |---|---|---|
-| `WebGL.data.br` | 135.5 MB | **22.4 MB** |
+| `WebGL.data.br` | 135.5 MB | **33.4 MB** |
 | `WebGL.wasm.br` | 9.0 MB | **6.9 MB** |
-| total | 144.6 MB | **29.5 MB** |
+| total | 144.6 MB | **40.5 MB** |
 | packed (uncompressed) | 1058 MB | — |
 | of which Texture2D | 1024 MB | — |
 
@@ -28,6 +28,9 @@ The build report is the only truth:
 ```bash
 cp Library/LastBuild.buildreport Assets/LastBuild.buildreport   # not loadable in place
 ```
+
+(and take the headline number from the `[BuildWebGL] Payload:` line in the log, never from
+`ls` on `Builds/WebGL/Build/` — Brotli stalls mid-write at a plausible-looking size)
 
 then in the Editor, `AssetDatabase.LoadAssetAtPath<BuildReport>(...)` and walk
 `report.packedAssets[].contents[]`, summing `packedSize` by `type` and by `sourceAssetPath`.
@@ -70,6 +73,43 @@ The lobby stations synthesise their sounds at runtime (`ProceduralAudio`), so no
 ship for them. Eight more `GameLessonData` assets sit in `Resources/lessons/` (`lobby_*`) —
 text only. Expect the payload to move by well under a megabyte; re-read the build report after
 the next production build and update the table above.
+
+### Music and sound effects (2026-09-11)
+
+Six clips in `Assets/Sounds/`, referenced only by `Resources/GameAudio.asset`
+(`GameAudioLibrary`, played by `GameAudio`) — the first audio files the build ships. The WAVs
+are 16.4 MB on disk; what the build carries is the import below.
+
+| Clip | Length | Import | Imported size |
+|---|---|---|---|
+| `museum music.wav` | 23 s, stereo | Compressed In Memory, Vorbis 50 %, **Preload Audio Data off**, **Load In Background on** | 364 KB |
+| `dakon music.wav` | 32 s, stereo | as above | 495 KB |
+| `egrang music.wav` | 30 s, stereo | as above | 467 KB |
+| `win sfx.wav` | 4 s | Decompress On Load, Vorbis 70 %, mono | 85 KB |
+| `button click sfx.wav`, `button hover sfx.wav` | < 0.1 s | Decompress On Load, Vorbis 70 %, mono | 7 KB + 6 KB |
+
+About **1.4 MB** in all (the importer's figures, 2026-09-11), from 16.4 MB of WAV.
+
+- **Preload off on the music is load-bearing.** Anything a `Resources` asset references is in
+  the build and loads with it; with preload on, all three tracks would be decoded at boot, before
+  MainMenu has drawn, for a track that plays only after the first tap anyway. Off, a track loads
+  the first time `GameAudio` plays it.
+- WebGL re-encodes to AAC whatever the importer's format; the quality slider still sets the
+  bitrate. Do not raise it for the music — it plays under everything, at 45 % volume.
+- Re-read the build report after the next production build and put the measured sizes here.
+
+### Visitor characters (2026-09-11)
+
+The museum's remote visitors wear the four `Assets/Models/ASSET_NUSANTARA/1_Karakter` models
+(via `Assets/Prefabs/Visitors/`). What ships: four skinned meshes of 18–22k vertices, four
+1024² albedo textures (extracted from the FBXs to `1_Karakter/Textures/<char>/`, crunched at
+quality 50 per the rules above), four materials, and three Humanoid clips. The seven
+`2_Animasi/Anim_*.fbx` files are 9.4 MB each on disk because every one carries a full copy of
+the Jawa mesh — only their clips are referenced, so the meshes never reach a build. Estimate:
+2–3 MB added; confirm against the next build report. The Egrang lanes wear the same four
+models (`EgrangRacerBody`), so they add no second copy. The welcome screen's four portraits
+(`Assets/Sprites/Char Avatars/*.png`, 403² sources) are capped at **256** and crunched at 50 —
+they are drawn at 72 units.
 
 ### Terrain
 
@@ -139,21 +179,37 @@ it drops anything into `Resources/`.
 codegen settings above live in `ProjectSettings.asset` and are **not** re-asserted per build.
 If a Unity upgrade resets them, the payload silently doubles.
 
+**High stripping requires [`Assets/link.xml`](../link.xml).** The Colyseus SDK creates schema
+state (`Activator.CreateInstance`, `GetField`) and message payloads (its MsgPack deserializer)
+by reflection, which the linker cannot see. Without the file the WebGL build strips the payload
+classes' constructors and unread fields: the lobby still works, but Dakon and Egrang stall on
+their first message — and the Editor, which never strips, cannot reproduce it (2026-09-10).
+The file keeps `ColyseusSDK`, `colyseus.nativewebsocket`, `Museum.Net` and `Museum.Core`
+whole. **A new payload or schema type outside those two assemblies needs its assembly added.**
+
 ## Dead weight still on disk
 
 Not in the build — nothing in the five enabled scenes depends on it — but it is in git and
-in every clone:
+in every clone. **Deleting any of it changes the payload by zero bytes.** Do it for clone
+time, not download time, delete through the Editor so the `.meta` files go too, and push to
+a remote first — [the repo is still local-only](../../CLAUDE.md).
+
+Cleared on 2026-09-10 (commit `4530073`): `BOKI/.../Terrain/data/` (610 MB of demo
+terrains) and `BOKI/.../Scenes/` (the DemoScene that was their only referent, plus its
+lightmaps), plus the six orphan `Assets/TerrainData/` terrains. `Assets/BOKI` went
+705 MB → 83 MB; `Assets/TerrainData/` holds only the five live terrains, 10.5 MB in total.
+
+Still there:
 
 | Path | Size | Referenced by |
 |---|---|---|
-| `Assets/BOKI/LowPolyNature/Terrain/data/` | 610 MB | `BOKI/.../Scenes/DemoScene.unity` only |
-| `Assets/TerrainData/Terrain Museum.asset` + `TerrainData_{d9597bd5,c84becd5,c470dc71,ae9cd3bd,94bbdfa0}` | 175 MB | nothing |
-| `Assets/BOKI/LowPolyNature/Textures/leaves/` | 46 MB | nothing in a build scene |
+| `Assets/BOKI/LowPolyNature/Textures/ground/` | 37 MB | nothing — the shipped terrains use `Assets/Texture2D/Ground_*` via `Assets/TerrainLayer/` |
 | `Assets/BOKI/LowPolyNature/Audio/` | 31 MB | nothing in a build scene |
+| `Assets/BOKI/LowPolyNature/Textures/leaves/` | 7.5 MB | nothing in a build scene |
 
-Deleting these changes the payload by **zero bytes**. Do it for clone time, not download
-time, delete through the Editor so the `.meta` files go too, and **push to a remote first** —
-[the repo is still local-only](../../CLAUDE.md).
+`Assets/BOKI/LowPolyNature/Terrain/layers/` should go with the ground textures — those two
+exist only as the uncompressed twin of the canonical layer set, and keeping them around is
+how a future terrain edit reintroduces 550 MB by picking the wrong layer in the inspector.
 
 What the Museum genuinely uses from BOKI: `Models/cliff_1.fbx`, `cliff_2.fbx`,
 `mountain_1.fbx`, their prefabs, `Materials/gradient_color_palate.mat`,

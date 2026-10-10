@@ -45,10 +45,9 @@ namespace Museum.Games.Dakon
         public bool IsMyTurn => _board.Phase == Phase.InProgress;
 
         public IReadOnlyList<Seed> Hand => _board.Hand;
+        public int NextHoleIndex => _board.NextHoleIndex;
         public int HoleCount => _board.HoleCount;
-        public int HolesPerSide => _board.HolesPerSide;
         public SeedCategory HoleTypeAt(int index) => _board.HoleTypeAt(index);
-        public bool IsSown(int index) => _board.IsSown(index);
         public int PoolCount => _board.PoolCount;
         public int Total(int seat) => _board.Total(seat);
 
@@ -61,7 +60,7 @@ namespace Museum.Games.Dakon
         public string DisplayNameOf(int seat) => $"Pemain {seat + 1}";
         public int? Winner => _board.Winner;
 
-        public void RequestDrop(string seedId, int holeIndex)
+        public void RequestDrop(string seedId)
         {
             if (_board.Phase != Phase.InProgress)
             {
@@ -69,10 +68,11 @@ namespace Museum.Games.Dakon
                 return;
             }
 
-            // Captured before the model applies the drop and removes it from the hand.
+            // Captured before the model applies the drop and advances past them.
+            int hole = _board.NextHoleIndex;
             Seed? seed = FindHandSeed(seedId);
 
-            DropResult result = _board.DropSeed(_board.ActivePlayer, seedId, holeIndex);
+            DropResult result = _board.DropSeed(_board.ActivePlayer, seedId, hole);
 
             if (!result.Ok)
             {
@@ -82,7 +82,7 @@ namespace Museum.Games.Dakon
 
             DropApplied?.Invoke(new DakonDrop(
                 seedId,
-                holeIndex,
+                hole,
                 result.ScoringPlayer,
                 result.ScoringCategory,
                 seed?.TypeId ?? string.Empty,

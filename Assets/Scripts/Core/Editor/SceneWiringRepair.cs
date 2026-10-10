@@ -68,6 +68,9 @@ namespace Museum.Core.EditorTools
         /// <summary>The presence component, by name: it lives in <c>Museum.Net</c>, which depends on this assembly's runtime half.</summary>
         private const string PresenceTypeName = "Museum.Net.MuseumPresence";
 
+        /// <summary>One prefab per ASSET_NUSANTARA character — what other visitors look like in the museum.</summary>
+        private const string VisitorCharacterFolder = "Assets/Prefabs/Visitors";
+
         private const string EngklekDoorwayPath = "Vid LT1/Vid Engklek/Cube";
         private const string EgrangDoorwayPath = "Vid LT1/Vid Egrang/Cube";
 
@@ -277,6 +280,17 @@ namespace Museum.Core.EditorTools
 
             Set(presence, "player", player.transform);
             Set(presence, "nameFont", AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(SemiBoldFont));
+
+            // Every prefab in the folder, in name order, so a fifth character is one prefab away.
+            var characters = new System.Collections.Generic.List<Object>();
+            foreach (string guid in AssetDatabase.FindAssets("t:Prefab", new[] { VisitorCharacterFolder }))
+            {
+                characters.Add(AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(guid)));
+            }
+            characters.Sort((a, b) => string.CompareOrdinal(a.name, b.name));
+
+            if (characters.Count == 0) Debug.LogWarning($"SceneWiringRepair: no prefabs in '{VisitorCharacterFolder}'; visitors will be capsules.");
+            SetArray(presence, "visitorCharacters", characters);
             EditorUtility.SetDirty(player);
 
             CompleteBootstrap(scene, serverConfig);
@@ -317,6 +331,11 @@ namespace Museum.Core.EditorTools
         /// The doorways, and the prompt they raise. Every one shows the same "ENTER" panel — there is
         /// one prompt on the HUD, not one per door, and the trigger only switches it on and off.
         /// </summary>
+        /// <remarks>
+        /// <c>promptLabel</c> is wired here alongside <c>promptUI</c> because leaving it null does not
+        /// fail loudly: the panel still opens, still says ENTER, and a touch visitor is told to press
+        /// a key their device does not have. It was null on all four doorways until 2026-09-10.
+        /// </remarks>
         private static void WireDoorways(UnityEngine.SceneManagement.Scene scene)
         {
             GameObject prompt = FindPrompt(scene);
@@ -325,6 +344,15 @@ namespace Museum.Core.EditorTools
             {
                 Debug.LogWarning("SceneWiringRepair: no 'Enter' prompt under the HUD canvas.");
                 return;
+            }
+
+            Transform cap = prompt.transform.Find("Text (TMP)");
+            Object label = cap == null ? null : cap.GetComponent<TMPro.TMP_Text>();
+
+            if (label == null)
+            {
+                Debug.LogWarning("SceneWiringRepair: the 'Enter' prompt has no 'Text (TMP)' cap, so " +
+                                 "its wording cannot follow the control scheme.");
             }
 
             foreach (Doorway doorway in Doorways)
@@ -339,6 +367,7 @@ namespace Museum.Core.EditorTools
 
                 var serialized = new SerializedObject(trigger);
                 serialized.FindProperty("promptUI").objectReferenceValue = prompt;
+                if (label != null) serialized.FindProperty("promptLabel").objectReferenceValue = label;
                 serialized.FindProperty("useLobby").boolValue = true;
                 serialized.FindProperty("roomName").stringValue = doorway.RoomName;
                 serialized.FindProperty("displayName").stringValue = doorway.DisplayName;
@@ -503,6 +532,30 @@ namespace Museum.Core.EditorTools
             }
 
             return path;
+        }
+
+        /// <summary><see cref="Set"/> for an array field: replaces its contents with <paramref name="values"/>.</summary>
+        private static void SetArray(Object target, string field, System.Collections.Generic.IList<Object> values)
+        {
+            if (values == null || values.Count == 0) return;
+
+            var serialized = new SerializedObject(target);
+            SerializedProperty property = serialized.FindProperty(field);
+
+            if (property == null || !property.isArray)
+            {
+                Debug.LogWarning($"SceneWiringRepair: {target.GetType().Name} has no array field '{field}'.");
+                return;
+            }
+
+            property.arraySize = values.Count;
+            for (int i = 0; i < values.Count; i++)
+            {
+                property.GetArrayElementAtIndex(i).objectReferenceValue = values[i];
+            }
+
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(target);
         }
 
         private static void Set(Object target, string field, Object value)

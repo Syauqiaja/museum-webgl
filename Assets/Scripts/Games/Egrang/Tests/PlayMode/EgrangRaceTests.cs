@@ -38,9 +38,10 @@ namespace Museum.Games.Egrang.Tests.PlayMode
                     : EgrangStickShape.Persegi;
             public string DisplayNameOf(string sessionId) =>
                 sessionId != null && Names.TryGetValue(sessionId, out string name) ? name : string.Empty;
+            public Dictionary<string, string> Avatars = new Dictionary<string, string>();
+            public string AvatarOf(string sessionId) =>
+                sessionId != null && Avatars.TryGetValue(sessionId, out string avatar) ? avatar : "jawa";
             public void RequestCountdown() => CountdownRequests++;
-            public int Leaves;
-            public void Leave() => Leaves++;
 
             public void RaiseCountdown(float seconds) => CountdownChanged?.Invoke(seconds);
             public void RaiseSeats() => SeatsChanged?.Invoke();
@@ -143,6 +144,23 @@ namespace Museum.Games.Egrang.Tests.PlayMode
         }
 
         [Test]
+        public void EachSeatedLaneWearsItsPlayersAvatarAndAnEmptyLaneWearsJawa()
+        {
+            var session = new FakeSession { LocalSessionId = "me" };
+            session.SeatList.Add(("me", 0));
+            session.SeatList.Add(("them", 2));
+            session.Avatars["me"] = "bali";
+            session.Avatars["them"] = "minang";
+
+            _race.Bind(session);
+            session.RaiseSeats();
+
+            Assert.That(_race.AvatarOfLane(0), Is.EqualTo("bali"));
+            Assert.That(_race.AvatarOfLane(1), Is.EqualTo("jawa"), "nobody sat in lane 2");
+            Assert.That(_race.AvatarOfLane(2), Is.EqualTo("minang"));
+        }
+
+        [Test]
         public void ARemoteStepAnimatesThatLaneOnly()
         {
             var session = new FakeSession { LocalSessionId = "me" };
@@ -155,6 +173,78 @@ namespace Museum.Games.Egrang.Tests.PlayMode
 
             Assert.That(_racers[1].BankedUnits, Is.EqualTo(2));
             Assert.That(_racers[0].BankedUnits, Is.EqualTo(0));
+        }
+
+        [Test]
+        public void ALaneNobodySatInIsHiddenOnline()
+        {
+            var session = new FakeSession { LocalSessionId = "me" };
+            session.SeatList.Add(("me", 0));
+            session.SeatList.Add(("them", 1));
+
+            _race.Bind(session);
+
+            Assert.That(_racers[0].Body.gameObject.activeSelf, Is.True);
+            Assert.That(_racers[1].Body.gameObject.activeSelf, Is.True);
+            Assert.That(_racers[2].Body.gameObject.activeSelf, Is.False);
+        }
+
+        [Test]
+        public void AFullRoomShowsEveryLane()
+        {
+            var session = new FakeSession { LocalSessionId = "me" };
+            session.SeatList.Add(("me", 0));
+            session.SeatList.Add(("them", 1));
+            session.SeatList.Add(("other", 2));
+
+            _race.Bind(session);
+
+            foreach (EgrangRacer racer in _racers) Assert.That(racer.Body.gameObject.activeSelf, Is.True);
+        }
+
+        [Test]
+        public void NoLaneIsHiddenBeforeAnySeatArrives()
+        {
+            _race.Bind(new FakeSession { LocalSessionId = "me" });
+
+            foreach (EgrangRacer racer in _racers) Assert.That(racer.Body.gameObject.activeSelf, Is.True);
+        }
+
+        [Test]
+        public void OfflineEveryLaneStaysVisible()
+        {
+            _race.Bind(null);
+
+            foreach (EgrangRacer racer in _racers) Assert.That(racer.Body.gameObject.activeSelf, Is.True);
+        }
+
+        [Test]
+        public void APlateUnderALanesRacerNamesThatLaneWhateverTheArrayOrder()
+        {
+            var plates = new EgrangNameplate[3];
+            for (int lane = 0; lane < 3; lane++)
+            {
+                var plateObject = new GameObject("plate");
+                plateObject.transform.SetParent(_racers[lane].Body);
+                plates[lane] = plateObject.AddComponent<EgrangNameplate>();
+            }
+
+            // The order the recovered scene shipped: lanes 3, 1, 2.
+            _race.Configure(_racers, _camera, progressView: null, bar: null, resultsView: _results,
+                            stickSelector: _selector, countdownView: _countdown,
+                            nameplates: new[] { plates[2], plates[0], plates[1] });
+
+            var session = new FakeSession { LocalSessionId = "me" };
+            session.SeatList.Add(("me", 0));
+            session.SeatList.Add(("them", 1));
+            session.Names["me"] = "Budi";
+            session.Names["them"] = "Sari";
+
+            _race.Bind(session);
+
+            Assert.That(plates[0].Text, Is.EqualTo("Budi"));
+            Assert.That(plates[1].Text, Is.EqualTo("Sari"));
+            Assert.That(plates[2].Text, Is.Empty);
         }
 
         [Test]

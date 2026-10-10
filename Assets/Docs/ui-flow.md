@@ -12,8 +12,8 @@ Visual rules (canvas setup, palette, typography, frames, buttons, motion) live i
 
 ```
 Boot ─► MainMenu ─► Museum hub ─► game doorway ─► Lobby ─► game scene ─► Results ─┬─► Play Again
-        (nickname)  (single-player, (SceneTrigger-  (create /   (per game)         └─► Return to Museum
-                     no room)        Prompt)         join /
+        (nickname)  (shared hall,   (SceneTrigger-  (create /   (per game)         └─► Return to Museum
+                     presence room)  Prompt)         join /
                                                      host start)
 
         ?room=CODE deep-link ─► auto-JoinById ─► Lobby room panel   ← NOT YET IMPLEMENTED
@@ -44,14 +44,32 @@ with a 3D background.
   `SessionData`, which survives scene loads; every room later sends it as `displayName`.
   It is also written to PlayerPrefs, so the field comes back pre-filled after a tab
   refresh and the name panel in the lobby stays the fallback it was meant to be.
-- **Enter Museum** → load Museum scene (no room). The button stays **disabled until the
+- **Avatar row — `PILIH KARAKTER`.** Four portraits under the name field (Jawa, Bali, Bugis,
+  Minang — `Assets/Sprites/Char Avatars`), each wired to `MainMenu.SelectAvatar(index)`
+  (handler name, API). The chosen one wears the gold corner frame; **Jawa is selected until the
+  visitor picks.** The tap is stored on `SessionData.PlayerAvatar` at once (PlayerPrefs, like the
+  name) and every room sends it as the `avatar` join option, so the visitor appears as that
+  character to others in the museum and on their Egrang lane.
+- **Enter Museum** → load Museum scene (presence room only, no game seat). The button stays **disabled until the
   typed name is valid**, so nobody can reach a room unnamed.
 - **Deep-link — not yet implemented.** The intent stands: on WebGL boot, read `?room=CODE`
   from the page URL (via `Application.absoluteURL` / jslib) and skip straight to auto-join
   in the Lobby. It waits on the real transport (see the Lobby note below).
 
 ### Museum hub
-- Single-player walkable scene, no room.
+- Shared walkable scene. Other visitors appear as one of four costumed characters (Jawa,
+  Bali, Bugis, Minang — the same one on every screen) idling, walking or running through
+  the halls with their nickname overhead (`MuseumPresence` → server room `museum`); with no server it is walked alone,
+  with no error shown. See [networking.md](networking.md#2-client-construction).
+- **Going into a game does not leave the museum.** While a visitor is in the Lobby, Dakon or
+  Egrang, the others see them standing idle at the doorway they used, tagged "Sedang bermain
+  Dakon" / "Sedang bermain Egrang" under the name. Coming back — the Lobby's back button, a
+  game's Kembali ke Museum, the results screen — they reappear **exactly where they went
+  through the doorway**, facing the same way, not at the entrance (so the doorway's prompt and
+  video come up again). Entering from MainMenu always starts at the entrance.
+- **The gallery's gong, gasing, tembang and engklek court are shared**: another visitor's
+  strike, spin, song or accepted step plays on your screen too, audible within 25 m. Your
+  engklek run, the tembang's lyric banner, the videos and the lesson plaques stay yours.
 - Each game has a doorway (`SceneTriggerPrompt`): walk in, press Enter. With `useLobby` on
   the doorway does **not** load the game — it fills in `LobbyRequest.Pending`
   (`roomName`, `maxPlayers`, its `sceneName` as the destination, and a `displayName` for the
@@ -110,8 +128,15 @@ currently switched on in `Lobby.unity`; turn it off before any build.**
   steps before its own start instant.
 - Then the run HUD — timing bar at the bottom, race progress strip at the top
   (`MULAI ──▮────── FINIS` with metres remaining), and a named roster with per-lane progress
-  in the top left. Bar and strip live under one run root that ships inactive; `EgrangRace`
-  switches it on when the countdown ends.
+  in the top left. Bar, strip and roster all live under one run root that ships inactive;
+  `EgrangRace` switches it on when the countdown ends, so none of the three is on screen while
+  stilts are still being picked (the countdown panel carries its own list of who is racing).
+- **Pause (both games).** A gear in the top-right corner opens the same `Jeda` dialog in
+  Dakon and Egrang: **Lanjutkan** (or a click on the scrim) closes it, **Kembali ke Museum**
+  leaves. Neither game freezes — both are server-authoritative — so it is a menu over a live
+  match. Egrang's also blocks the timing bar while it is up, because Space reaches the bar
+  past the scrim. It is available from the stilt-picking window onward; once the results are
+  up the gear sits under them and the results' own exit is the way out.
 
 ### Results (Finished state)
 - From the `game_over` message. Winner / scores / tie, and **Return to Museum** (the hub
@@ -122,6 +147,10 @@ currently switched on in `Lobby.unity`; turn it off before any build.**
   (full / half / stumbles), the stick walked on, and one row per racer **by name** with the
   player's own row marked "(Kamu)". Offline — no session, so no `game_over` — the local
   finish line raises it instead, place 1 of 1.
+  Its bottom button is **LANJUT**, not the exit: it raises the `After Game Panel`, the
+  `egrang_after_game.jpeg` recap (the three stilts, cross-section comparison, how to win)
+  over the results, and **Kembali ke Museum** sits inside that art, in its empty bottom
+  band. That is the finished race's only way out; the recap has no click-outside close.
 - **Dakon: built.** The `Game Over` panel in `Dakon.unity`, filled in by
   `DakonView.ShowGameOver` and given its layout by `DakonUIBuilder`. It names the winner and
   both scores with the players' registered names ("… menang!" / "Seri!"), and carries its own

@@ -35,6 +35,8 @@ public class FPSController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
 
+        ReturnToWhereTheVisitorLeft();
+
         if (cameraTransform == null)
         {
             Camera mainCam = Camera.main;
@@ -57,6 +59,22 @@ public class FPSController : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
+    }
+
+    /// <summary>
+    /// Back from a game: stand where the doorway was walked through, facing the way the visitor
+    /// faced, instead of at the rig's authored spot by the entrance. Runs in Awake, before any
+    /// Start, so the museum presence's first report is already this spot and nobody sees a jump.
+    /// </summary>
+    private void ReturnToWhereTheVisitorLeft()
+    {
+        if (SessionData.Instance == null || !SessionData.Instance.TryTakeMuseumReturn(out Vector3 position, out float yaw)) return;
+
+        Quaternion facing = Quaternion.Euler(0f, yaw, 0f);
+        transform.SetPositionAndRotation(position, facing);
+        rb.position = position;
+        rb.rotation = facing;
+        rb.linearVelocity = Vector3.zero;
     }
 
     /// <summary>

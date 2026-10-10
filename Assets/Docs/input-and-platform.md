@@ -107,7 +107,9 @@ back from a game is not asked twice.
 ## The touch overlay
 
 Every touch-only control lives under a GameObject carrying `Museum.Core.TouchOnly`, which
-deactivates itself in `Awake` unless `SessionData.Instance.IsTouch` is true. Nothing in a
+deactivates itself in `Awake` unless `SessionData.Instance.IsTouch` is true.
+`Museum.Core.DesktopOnly` is its mirror, for HUD that only means something to a keyboard —
+see "The KONTROL card" below. Nothing in a
 scene needs to know what a `TouchOnly` object contains or query the scheme itself — the
 component does it once, per overlay root, and the desktop scheme (and `Unknown`, since it
 reads as desktop) simply never sees any of it.
@@ -116,16 +118,29 @@ The overlay's parts:
 
 - **Floating joystick** (`TouchJoystick`) and **look area** (`TouchLookArea`) — movement and
   camera drag, feeding `Museum.Player.TouchInputSource`, which is the touch-scheme
-  counterpart to the keyboard/mouse `FPSInputReader`.
+  counterpart to the keyboard/mouse `FPSInputReader`. The stick **rests visible** at the
+  bottom-left of its area, dimmed to `restAlpha` (0.4) through a `CanvasGroup` on the ring;
+  it still floats to wherever the finger lands and returns home on release. It used to be
+  hidden until touched, which made it a control a first-time visitor never learned was
+  there — the museum has no attendant to say "drag the left side of the screen", so the
+  control has to say it by being on screen.
 - **Lompat** — the jump button.
 - **Interaksi** — routed by `TouchInteractRouter.Interact()` to whatever the player is
-  currently standing in front of (see below).
+  currently standing in front of (see below). **Shown only while a doorway or a gallery
+  station is registered** (`CurrentPrompt` or `CurrentInteractable`).
 - **‹ ›** — page-turn buttons for lesson plaques, routed by `TouchInteractRouter.PageNext()`
-  / `PagePrev()`.
-- **Egrang's tap zone** — a full-screen button that calls `SkillCheckBar.Press()`, the same
-  public method the desktop build's Space-bound `Step` action calls. It lives on its own
-  canvas at `sortingOrder = -10` so the run HUD (timing bar, progress strip, roster) always
-  paints on top of it rather than the tap zone eating the pointer meant for something else.
+  / `PagePrev()`. **Shown only while a plaque is registered.**
+- **Egrang's JALAN button** — `Egrang UI/Run Root/Skill Check Bar/Step Button`, calling
+  `SkillCheckBar.Press()`, the same method the desktop build's Space-bound `Step` action
+  calls. It is the only touch step: it lives under the run root, so it exists only during the
+  race, on the same Screen Space – Camera canvas as every other Egrang button.
+
+  There used to be a full-screen tap zone on its own **Screen Space – Overlay** canvas at
+  `sortingOrder = -10`. The -10 never put it behind anything: uGUI ranks an Overlay canvas's
+  raycaster by its `sortingOrder` and a Camera canvas's by `int.MinValue`, so the invisible
+  zone won every tap on a phone — the stick cards, Lanjutkan and Kembali ke Museum all
+  stepped the racer instead (2026-09-11). It and its generator were removed. **Never mix an
+  Overlay canvas into a scene whose buttons live on a Camera canvas.**
 
 `VirtualStickModel` and `LookDragModel` are the pure, EditMode-tested math behind the
 joystick and the drag-to-look area — no `UnityEngine` dependency, same discipline as the game
@@ -147,8 +162,41 @@ going unwired by hand is a failure this project has already lived through once (
 `scene-setup.md`'s Museum doorway table) — self-registration means adding a fifth doorway
 later needs no new wiring step at all.
 
-The doorway's own prompt label reads differently per scheme: `Tekan Enter` on desktop,
-`Ketuk Interaksi` on touch.
+### What the doorway prompt says
+
+The HUD carries **one** prompt panel, named `Enter`, that every doorway raises and lowers —
+not one per door. It is two parts: a keycap chip and a scheme-neutral line reading
+`Untuk memulai permainan ini`. `SceneTriggerPrompt.Awake` sets the chip, and only the chip:
+**`ENTER` on desktop, `INTERAKSI` on touch** — the same word the overlay button carries, so
+the popup names something the visitor can actually reach.
+
+Until 2026-09-10 it said `ENTER` to everyone, because `promptLabel` was `None` on all four
+doorways and the runtime line therefore never ran. That is the shape of failure to expect
+here: the panel still opens and still reads plausibly, so nothing looks broken on desktop,
+where the text happens to be right. `SceneWiringRepair.WireDoorways` now wires `promptLabel`
+alongside `promptUI` so a repair run cannot leave it null again.
+
+### The KONTROL card
+
+The Museum HUD's `Tutorial` panel is a keyboard legend — WASD, the mouse, Q and E. None of
+those exist under the touch scheme, so the panel carries `Museum.Core.DesktopOnly` and is
+hidden there; the joystick, look area and Interaksi button are already on screen saying the
+same thing by being visible. `MuseumUIBuilder.StyleControls` attaches the component, so a
+rebuild keeps it.
+
+### Controls that appear only when they do something
+
+`Museum.Core.ShownWhenAvailable` gates the Interaksi and ‹ › buttons on the router actually
+holding something for them to act on — a doorway for Interaksi, a plaque for the arrows.
+A button that does nothing when tapped is worse than an absent one: the visitor who taps it
+and gets no response has been told the control is broken.
+
+It hides through a `CanvasGroup` (alpha 0, non-interactive, raycast-transparent) rather than
+`SetActive(false)`, and the difference is load-bearing — a deactivated GameObject stops
+receiving `Update`, so it could never notice the doorway it is waiting for and would never
+come back. Going raycast-transparent also stops a hidden button eating taps meant for the
+look area behind it. **Lompat is deliberately not gated:** jumping is always available, so its
+button is always meaningful.
 
 ## `FPSController`'s input surface
 
@@ -172,13 +220,11 @@ Pointer lock is skipped entirely under the touch scheme (`UsesCursorLock` is fal
 all — trying to request it there is not a graceful no-op, it is a control scheme that never
 engages.
 
-## The three rebuild menu items
+## The two rebuild menu items
 
 - **`Museum/Rebuild UI/Touch Controls`** (`TouchControlsUIBuilder`) — the joystick, look area,
   Lompat, Interaksi and ‹ › overlay used in the Museum scene (and anywhere else the player
   walks around in first person).
-- **`Museum/Rebuild UI/Egrang Touch`** (`EgrangTouchUIBuilder`) — the tap zone canvas for
-  Egrang's skill-check bar.
 - **`Museum/Rebuild UI/Main Menu`** (`MainMenuUIBuilder`) — the platform picker and the name
   screen behind it.
 

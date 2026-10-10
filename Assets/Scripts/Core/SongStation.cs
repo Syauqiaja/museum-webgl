@@ -40,11 +40,22 @@ namespace Museum.Core
             if (lyric != null) lyric.text = idleText;
         }
 
+        protected override string StationId => MuseumInteractions.Tembang;
+
         protected override void OnInteract()
         {
             ProceduralAudio.Play(source, ProceduralAudio.DolananPhrase(), 0.9f);
             _started = Time.time;
             _shown = -1;
+        }
+
+        /// <summary>
+        /// Someone else's song is heard, not read: the lyric banner stays with whoever is reading
+        /// it here, so a press across the room does not restart the words under their eyes.
+        /// </summary>
+        protected override void OnRemoteInteract(int index)
+        {
+            ProceduralAudio.Play(source, ProceduralAudio.DolananPhrase(), 0.9f);
         }
 
         protected override void Update()

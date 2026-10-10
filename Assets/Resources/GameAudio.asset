@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cd2c4ec07db8e4148bcacba12c4cf2e0, type: 3}
+  m_Name: GameAudio
+  m_EditorClassIdentifier: Museum.Core::Museum.Core.GameAudioLibrary
+  museumMusic: {fileID: 8300000, guid: 316a755f41ad1472d9e50f9066b7848a, type: 3}
+  dakonMusic: {fileID: 8300000, guid: d34059d8b3de44461a1cb19c71a70079, type: 3}
+  egrangMusic: {fileID: 8300000, guid: 89ce994a96c484b7a8143d361d3d7c15, type: 3}
+  buttonClick: {fileID: 8300000, guid: 38a8b2b5e5bc144a99defca81ef0b56f, type: 3}
+  buttonHover: {fileID: 8300000, guid: 2b3ffe83f9e8c4a7c98b8eda6ad69c06, type: 3}
+  win: {fileID: 8300000, guid: 1ac01dde3b4564bdf815db2c8a554131, type: 3}
+  musicVolume: 0.45
+  uiVolume: 0.7
+  winVolume: 0.9

@@ -94,6 +94,12 @@ namespace Museum.Core.EditorTools
             StylePanel(canvas, "Tutorial");
             StyleEyebrow(canvas, "Tutorial/Text (TMP)", "KONTROL");
 
+            // Every row on this card names a key: WASD, the mouse, E and Q. None of them exists
+            // under the touch scheme, where the joystick, the look area and the Interaksi button
+            // are on screen saying the same thing by being visible. DesktopOnly hides the whole
+            // card there rather than leaving a legend for hardware the visitor is not holding.
+            MarkDesktopOnly(canvas, "Tutorial");
+
             StyleDivider(canvas, "Tutorial/Line");
             StyleDivider(canvas, "Tutorial/Line (1)");
             StyleDivider(canvas, "Tutorial/Line (2)");
@@ -109,6 +115,28 @@ namespace Museum.Core.EditorTools
 
             // Named "E" in the scene; the shipped build's cap art reads "W". See the class summary.
             StyleKeyCap(canvas, "Tutorial/E", "E");
+        }
+
+        /// <summary>
+        /// Adds <see cref="DesktopOnly"/> to a HUD object, once. Idempotent like the rest of this
+        /// builder: re-running the menu item over a scene that already has the component leaves it
+        /// alone rather than stacking a second copy.
+        /// </summary>
+        private static void MarkDesktopOnly(Transform canvas, string path)
+        {
+            Transform target = canvas.Find(path);
+
+            if (target == null)
+            {
+                Debug.LogWarning($"MuseumUIBuilder: no '{path}' under the HUD canvas; it will stay " +
+                                 "visible under the touch scheme.");
+                return;
+            }
+
+            if (target.GetComponent<DesktopOnly>() != null) return;
+
+            Undo.AddComponent<DesktopOnly>(target.gameObject);
+            EditorUtility.SetDirty(target.gameObject);
         }
 
         private static void StyleExit(Transform canvas)

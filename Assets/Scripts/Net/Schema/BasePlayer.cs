@@ -27,5 +27,8 @@ public BasePlayer() { }
 
 		[Type(3, "boolean")]
 		public bool connected = default(bool);
+
+		[Type(4, "string")]
+		public string avatar = default(string);
 	}
 }

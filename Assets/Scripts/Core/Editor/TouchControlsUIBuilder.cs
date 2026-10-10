@@ -99,9 +99,15 @@ namespace Museum.Core.EditorTools
             backdrop.color = new Color(0f, 0f, 0f, 0f);
             backdrop.raycastTarget = true;
 
-            GameObject ring = CreateUI("Ring", area.transform, typeof(Image));
+            GameObject ring = CreateUI("Ring", area.transform, typeof(Image), typeof(CanvasGroup));
             RectTransform ringRect = ring.GetComponent<RectTransform>();
             ringRect.sizeDelta = new Vector2(160f, 160f);
+
+            // Home: bottom-left of the joystick area, where a left thumb already rests. The stick
+            // still floats to the finger on touch — this is only where it waits, and waiting
+            // somewhere visible is what tells a first-time visitor the control exists.
+            Anchor(ringRect, Vector2.zero, Vector2.zero, new Vector2(0.5f, 0.5f));
+            ringRect.anchoredPosition = new Vector2(150f, 150f);
             var ringImage = ring.GetComponent<Image>();
             ringImage.sprite = FrameSprite();
             ringImage.color = new Color(Cream.r, Cream.g, Cream.b, 0.25f);
@@ -115,7 +121,8 @@ namespace Museum.Core.EditorTools
             knobImage.color = new Color(Gold.r, Gold.g, Gold.b, 0.65f);
             knobImage.raycastTarget = false;
 
-            ring.SetActive(false);
+            // Left active: TouchJoystick rests it in Awake and dims it through the CanvasGroup.
+            ring.GetComponent<CanvasGroup>().alpha = 0.4f;
 
             var stick = area.GetComponent<TouchJoystick>();
             var serialized = new SerializedObject(stick);
@@ -148,14 +155,33 @@ namespace Museum.Core.EditorTools
             GameObject interact = CreateButton("Interaksi Button", parent, "Interaksi", 180f, 64f, 18f);
             PlaceCorner(interact, new Vector2(1f, 0f), new Vector2(-110f, 180f));
             UnityEventTools.AddPersistentListener(interact.GetComponent<Button>().onClick, router.Interact);
+            ShowWhen(interact, InteractionCue.Doorway);
 
             GameObject prev = CreateButton("Halaman Sebelumnya", parent, "‹", 64f, 64f, 24f);
             PlaceCorner(prev, new Vector2(0.5f, 0f), new Vector2(-60f, 40f));
             UnityEventTools.AddPersistentListener(prev.GetComponent<Button>().onClick, router.PagePrev);
+            ShowWhen(prev, InteractionCue.LessonPaging);
 
             GameObject next = CreateButton("Halaman Berikutnya", parent, "›", 64f, 64f, 24f);
             PlaceCorner(next, new Vector2(0.5f, 0f), new Vector2(60f, 40f));
             UnityEventTools.AddPersistentListener(next.GetComponent<Button>().onClick, router.PageNext);
+            ShowWhen(next, InteractionCue.LessonPaging);
+        }
+
+        /// <summary>
+        /// Gates a button on the router having something for it to do. Lompat is deliberately not
+        /// gated — jumping is always available, so its button is always meaningful.
+        /// </summary>
+        private static void ShowWhen(GameObject button, InteractionCue cue)
+        {
+            if (button.GetComponent<CanvasGroup>() == null) Undo.AddComponent<CanvasGroup>(button);
+
+            var gate = button.GetComponent<ShownWhenAvailable>() ?? Undo.AddComponent<ShownWhenAvailable>(button);
+
+            var serialized = new SerializedObject(gate);
+            serialized.FindProperty("cue").enumValueIndex = (int)cue;
+            serialized.ApplyModifiedPropertiesWithoutUndo();
+            EditorUtility.SetDirty(gate);
         }
 
         private static void PlaceCorner(GameObject go, Vector2 anchor, Vector2 offset)
