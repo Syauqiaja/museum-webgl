@@ -33,13 +33,7 @@ direct decision from the user, recorded here.
   URLs from `VideoCatalog`; scene objects carry keys.
 - **Don't re-embed large media.** The museum footage streams. A 141 MB WebGL payload is
   unusable on museum wifi.
-- **The Museum scene's only network is presence.** Until 2026-09-11 the rule was "no
-  `ColyseusClient` there, ever"; the user then asked to see other visitors walking the hub,
-  so `MuseumPresence` (`Assets/Scripts/Net/`) joins the server's `museum` room and mirrors
-  its `visitors` map as `MuseumVisitorAvatar`s. That is the whole allowance: no match, no
-  seat, no score, no lobby logic in the museum. The room is opened straight on
-  `ColyseusNetManager.Client`, never through its create/join helpers, so it can never be
-  mistaken for the game seat `SessionData` holds. See [networking.md §11](networking.md).
+- **The Museum scene has no network.** No `ColyseusClient` there, ever.
 - **Generated schema is generated.** `Assets/Scripts/Net/Schema/*.cs` comes from
   `schema-codegen` against the server's schema files. Hand-editing it produces state that
   decodes into the wrong fields with no error.

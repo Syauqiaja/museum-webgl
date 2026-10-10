@@ -19,7 +19,7 @@ bump client and server together, deliberately.
 Never `new Client(...)` in a scene. `ColyseusNetManager` owns the one client and builds it
 from `ServerConfig` ([architecture.md](architecture.md#endpoint-configuration)):
 
-- dev `ws://localhost:2567`, prod `wss://api.museumethnofun.com`
+- dev `ws://localhost:2567`, prod `wss://api.museum.fajrsyauqi.com`
 - the endpoint is host + port only — the Unity C# SDK has **no path setting**, so it can
   never be a subpath of the client host
 
@@ -191,9 +191,9 @@ Verified against the running server; the full list is in the server's
 
 | Thing | Value |
 |---|---|
-| Endpoint | `wss://api.museumethnofun.com` (since 2026-09-10; was `wss://api.museum.fajrsyauqi.com`) |
-| Client host | `https://museumethnofun.com` (same VPS, `212.85.25.177`) |
-| Rooms | `dakon` (2 seats), `egrang` (3 seats, `minPlayers` 2), `museum` (presence, 32 visitors) |
+| Endpoint | `wss://api.museum.fajrsyauqi.com` |
+| Client host | `https://museum.fajrsyauqi.com` (same VPS) |
+| Rooms | `dakon` (2 seats), `egrang` (3 seats, `minPlayers` 2) |
 | Room code | 6 chars, alphabet `ABCDEFGHJKMNPQRSTUVWXYZ23456789` |
 | Join options | `{ private?, displayName? (≤32), playerId? }` |
 | Start | host `start_game`; auto-starts when the room fills |
@@ -209,35 +209,7 @@ join path.
 Health checks:
 
 ```bash
-curl -s https://api.museumethnofun.com/hi
-curl -s -X POST https://api.museumethnofun.com/matchmake/joinOrCreate/dakon \
+curl -s https://api.museum.fajrsyauqi.com/hi
+curl -s -X POST https://api.museum.fajrsyauqi.com/matchmake/joinOrCreate/dakon \
   -H 'Content-Type: application/json' -d '{}'
 ```
-
-## 11. Museum presence (`museum` room)
-
-Added 2026-09-11 at the user's request ("kenapa masih belum bisa melihat character yang sama
-sama bermain di museum"). `MuseumPresence` (`Assets/Scripts/Net/MuseumPresence.cs`, on the
-`Capsule` player rig, wired by `Museum/Rebuild UI/Wire Scene References`) is the only
-network code in the Museum scene, and it is deliberately not a match:
-
-- **Join:** `ColyseusNetManager.Instance.Client.JoinOrCreate<MuseumState>("museum",
-  { displayName })` — straight on the `Client`, **not** `CreateRoom`/`JoinRoomById`, because
-  those cache the room as the seat on `SessionData` and would clobber a Dakon/Egrang
-  reconnection token. No `playerId`, no code, no host, no `start_game`.
-- **Send:** `move { x, y, z, yaw }` at ≤ 5 Hz, only when the rig moved > 2 cm or turned
-  > 1°. The server copies it into our row if finite and inside ±200 m; otherwise it drops
-  it silently — there is no `error` on this room.
-- **Read:** `state.visitors` (map by session id, 10 Hz patch). Every entry except our own
-  session becomes a `MuseumVisitorAvatar` (`Assets/Scripts/Core/`): the local capsule's
-  mesh and material with a per-session tint, a name over its head, gliding at 9 m/s to the
-  last reported position and snapping if the jump is over 6 m. No collider, so avatars
-  cannot shove each other.
-- **Leave:** `room.Leave(true)` in `OnDestroy` — i.e. when a doorway loads the Lobby. On an
-  unexpected close the avatars are cleared and up to three rejoins are tried 5 s apart.
-- **Fails soft.** No `ColyseusNetManager` in the scene, or no server: one warning, and the
-  museum is single-player as it was before. The Museum scene now ships the **full
-  bootstrap trio** (`SessionData`, `ColyseusNetManager`, `SceneLoader`) so this works when
-  the scene is opened directly in the Editor; when arriving from MainMenu the travelling
-  copies win through the usual duplicate-`Awake` guards.
-- Visitors in different `museum` rooms (past 32 per room) do not see each other.

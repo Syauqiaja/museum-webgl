@@ -20,7 +20,7 @@ code and run on an authoritative Colyseus server (separate repo).
 | Scene | File | Networked | Role |
 |---|---|---|---|
 | **MainMenu** | `Assets/Scenes/MainMenu.unity` | Bootstrap only | Nickname entry, then **Enter Museum**. No game buttons, no create/join. |
-| **Museum** | `Assets/Scenes/Museum.unity` | Room `museum` (presence only) | Walkable exhibition hub: FPS movement, video screens, doorways into the games. Other visitors are drawn as capsule avatars with their names (`MuseumPresence`); walks alone if the server is unreachable. |
+| **Museum** | `Assets/Scenes/Museum.unity` | No | Single-player walkable exhibition hub: FPS movement, video screens, doorways into the games. |
 | **Lobby** | `Assets/Scenes/Lobby.unity` | Room `dakon` / `egrang` | One generic create/join-by-code screen serving every game, parameterised by `LobbyRequest`. |
 | **Dakon** | `Assets/Scenes/Dakon.unity` | Room `dakon` (2 seats) | Congklak/mancala board game. Also plays offline hotseat when there is no seat to reclaim. |
 | **Egrang** | `Assets/Scenes/Egrang.unity` | Room `egrang` (3 seats) | Stilt race. Also runs offline in lane 1 when there is no seat to reclaim. |
